@@ -1,13 +1,28 @@
 
-import { placeholderDoctorPatients, placeholderMedicalHistory, placeholderDoctorAppointments, allClinicAppointments } from '@/lib/placeholder-data';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+"use client";
+
+import React, { useState, useEffect } from 'react';
+import { placeholderDoctorPatients, placeholderMedicalHistory, allClinicAppointments } from '@/lib/placeholder-data';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase, StickyNote } from 'lucide-react';
+import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase, StickyNote, Edit3, PlusCircle, Calendar as CalendarIconLucide } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import type { DoctorAppointment } from '@/types';
+import type { DoctorAppointment, MedicalRecordItem } from '@/types';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+
 
 export async function generateStaticParams() {
   return placeholderDoctorPatients.map((patient) => ({
@@ -16,28 +31,128 @@ export async function generateStaticParams() {
 }
 
 const getIconForMedicalRecordType = (type: string) => {
-  switch (type) {
-    case 'diagnosis': return <Stethoscope className="h-4 w-4 text-red-500" />;
-    case 'medication': return <Pill className="h-4 w-4 text-blue-500" />;
-    case 'procedure': return <FileText className="h-4 w-4 text-green-500" />;
-    case 'allergy': return <FileText className="h-4 w-4 text-orange-500" />; 
-    default: return <FileText className="h-4 w-4 text-gray-500" />;
+  switch (type.toLowerCase()) {
+    case 'diagnosis': return <Stethoscope className="h-4 w-4 mr-1.5" />;
+    case 'medication': return <Pill className="h-4 w-4 mr-1.5" />;
+    case 'procedure': return <FileText className="h-4 w-4 mr-1.5" />;
+    case 'allergy': return <FileText className="h-4 w-4 mr-1.5" />; 
+    default: return <FileText className="h-4 w-4 mr-1.5" />;
   }
 };
 
+const getBadgeForType = (type: string) => {
+  const icon = getIconForMedicalRecordType(type);
+  switch (type.toLowerCase()) {
+    case 'diagnosis': return <Badge variant="destructive" className="capitalize flex items-center">{icon}Diagnosis</Badge>;
+    case 'medication': return <Badge variant="secondary" className="capitalize flex items-center">{icon}Medication</Badge>;
+    case 'allergy': return <Badge variant="outline" className="border-amber-500 text-amber-600 capitalize flex items-center">{icon}Allergy</Badge>;
+    case 'procedure': return <Badge variant="default" className="capitalize flex items-center">{icon}Procedure</Badge>;
+    default: return <Badge variant="outline" className="capitalize flex items-center">{icon}Note</Badge>;
+  }
+};
+
+const editPatientDetailsSchema = z.object({
+  contact: z.string().min(10, "Phone number must be at least 10 digits.").optional(),
+  emergencyContact: z.string().min(3, "Emergency contact must be at least 3 characters.").optional(),
+});
+type EditPatientDetailsFormValues = z.infer<typeof editPatientDetailsSchema>;
+
+const addMedicalEntrySchema = z.object({
+  type: z.enum(['diagnosis', 'medication', 'procedure', 'allergy', 'note']),
+  description: z.string().min(5, "Description must be at least 5 characters."),
+  date: z.date({ required_error: "Date is required." }),
+  doctor: z.string().min(2, "Doctor name is required."),
+});
+type AddMedicalEntryFormValues = z.infer<typeof addMedicalEntrySchema>;
+
 
 export default function PatientChartPage({ params }: { params: { patientId: string } }) {
+  const { toast } = useToast();
   const patient = placeholderDoctorPatients.find((p) => p.id === params.patientId);
+
+  const [isEditDetailsOpen, setIsEditDetailsOpen] = useState(false);
+  const [isAddEntryOpen, setIsAddEntryOpen] = useState(false);
   
-  const patientHistory = placeholderMedicalHistory.filter((item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === params.patientId) || item.doctor === "Dr. Eleanor Vance");
-  
+  const [currentPatientDetails, setCurrentPatientDetails] = useState({
+    dob: "1980-01-01", 
+    gender: "Female", 
+    contact: "555-0101", 
+    emergencyContact: "Jane Doe (Spouse) - 555-0102" 
+  });
+
+  const [currentPatientHistory, setCurrentPatientHistory] = useState<MedicalRecordItem[]>([]);
+
+  useEffect(() => {
+    if (patient) {
+      // Simulate fetching more complete details if needed, or use existing placeholders
+      const detailsFromSource = {
+        dob: "1980-01-01", // Example, could be derived from patient data if available
+        gender: "Female", // Example
+        contact: patient.phone || "555-0101",
+        emergencyContact: "Jane Doe (Spouse) - 555-0102" // Placeholder
+      };
+      setCurrentPatientDetails(detailsFromSource);
+
+      const historyFromSource = placeholderMedicalHistory.filter(
+        (item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === params.patientId) || item.doctor === "Dr. Eleanor Vance"
+      );
+      setCurrentPatientHistory(historyFromSource.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    }
+  }, [patient, params.patientId]);
+
+
   const patientAllAppointments = allClinicAppointments
     .filter(appt => appt.patientName === patient?.name) 
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time));
 
-  const upcomingAppointments = patientAllAppointments.filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0))).reverse(); // reverse to get earliest first
+  const upcomingAppointments = patientAllAppointments.filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0))).reverse();
   const pastAppointments = patientAllAppointments.filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0)));
   const nextScheduledAppointment = upcomingAppointments[0];
+
+  const editDetailsForm = useForm<EditPatientDetailsFormValues>({
+    resolver: zodResolver(editPatientDetailsSchema),
+    defaultValues: {
+      contact: currentPatientDetails.contact,
+      emergencyContact: currentPatientDetails.emergencyContact,
+    }
+  });
+
+  useEffect(() => { // To reset form when currentPatientDetails change (e.g. after opening dialog for different patient or initial load)
+      editDetailsForm.reset({
+          contact: currentPatientDetails.contact,
+          emergencyContact: currentPatientDetails.emergencyContact,
+      });
+  }, [currentPatientDetails, editDetailsForm, isEditDetailsOpen]);
+
+
+  const addEntryForm = useForm<AddMedicalEntryFormValues>({
+    resolver: zodResolver(addMedicalEntrySchema),
+    defaultValues: {
+      type: 'note',
+      description: '',
+      doctor: 'Dr. Eleanor Vance', // Logged in doctor
+    }
+  });
+  
+  const onEditDetailsSubmit = (data: EditPatientDetailsFormValues) => {
+    setCurrentPatientDetails(prev => ({...prev, ...data}));
+    toast({ title: "Patient Details Updated", description: "Contact information has been updated (mocked)." });
+    setIsEditDetailsOpen(false);
+  };
+
+  const onAddEntrySubmit = (data: AddMedicalEntryFormValues) => {
+    const newEntry: MedicalRecordItem = {
+      id: `mr-${Date.now()}`, // Simple unique ID for mock
+      date: format(data.date, 'yyyy-MM-dd'),
+      type: data.type,
+      description: data.description,
+      doctor: data.doctor,
+    };
+    setCurrentPatientHistory(prev => [newEntry, ...prev].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    toast({ title: "Medical Entry Added", description: `A new ${data.type} record was added (mocked).` });
+    setIsAddEntryOpen(false);
+    addEntryForm.reset();
+  };
 
 
   if (!patient) {
@@ -51,13 +166,6 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
         </Button>
       </div>
     );
-  }
-
-  const patientDetails = {
-    dob: "1980-01-01", 
-    gender: "Female", 
-    contact: "555-0101", 
-    emergencyContact: "Jane Doe (Spouse) - 555-0102" 
   }
 
   const renderAppointmentList = (appointments: DoctorAppointment[], title: string) => {
@@ -108,10 +216,10 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                     <p><strong>Name:</strong> {patient.name}</p>
-                    <p><strong>Date of Birth:</strong> {new Date(patientDetails.dob).toLocaleDateString()}</p>
-                    <p><strong>Gender:</strong> {patientDetails.gender}</p>
-                    <p><strong>Contact:</strong> {patientDetails.contact}</p>
-                    <p><strong>Emergency Contact:</strong> {patientDetails.emergencyContact}</p>
+                    <p><strong>Date of Birth:</strong> {new Date(currentPatientDetails.dob).toLocaleDateString()}</p>
+                    <p><strong>Gender:</strong> {currentPatientDetails.gender}</p>
+                    <p><strong>Contact:</strong> {currentPatientDetails.contact}</p>
+                    <p><strong>Emergency Contact:</strong> {currentPatientDetails.emergencyContact}</p>
                     <p><strong>Last Visit (Recorded):</strong> {new Date(patient.lastVisit).toLocaleDateString()}</p>
                 </CardContent>
             </Card>
@@ -147,9 +255,10 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                 <Textarea 
                   placeholder="Enter care plan notes, e.g., 'Follow up every 3 months for check-up and medication review. Monitor blood pressure closely...'" 
                   className="min-h-[100px]"
-                  readOnly // For now, or implement edit functionality later
+                  defaultValue={"Monitor blood pressure closely. Patient to return in 3 months for follow-up on hypertension management. Encourage lifestyle modifications."}
+                  readOnly 
                 />
-                <Button variant="outline" size="sm" className="mt-2 opacity-50 cursor-not-allowed">Edit Care Plan</Button>
+                 <Button variant="outline" size="sm" className="mt-2 opacity-50 cursor-not-allowed">Edit Care Plan</Button>
               </CardContent>
             </Card>
         </div>
@@ -161,23 +270,14 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                     <CardDescription>Diagnoses, medications, procedures, and notes.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {patientHistory.length > 0 ? (
+                    {currentPatientHistory.length > 0 ? (
                     <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                        {patientHistory.map((item) => (
+                        {currentPatientHistory.map((item) => (
                         <div key={item.id} className="p-3 border rounded-md bg-card hover:bg-muted/50 transition-colors">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <Badge variant={
-                                      item.type === 'diagnosis' ? 'destructive' :
-                                      item.type === 'medication' ? 'secondary' :
-                                      item.type === 'procedure' ? 'default' :
-                                      item.type === 'allergy' ? 'outline' : 
-                                      'outline'
-                                    } className="capitalize mb-1">
-                                      {getIconForMedicalRecordType(item.type)}
-                                      <span className="ml-1">{item.type}</span>
-                                    </Badge>
-                                    <p className="font-semibold text-foreground">{item.description}</p>
+                                   {getBadgeForType(item.type)}
+                                  <p className="font-semibold text-foreground mt-1">{item.description}</p>
                                 </div>
                                 <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(item.date).toLocaleDateString()}</span>
                             </div>
@@ -212,9 +312,105 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
         </div>
       </div>
        <div className="mt-8 flex justify-end gap-2">
-            <Button variant="outline" className="opacity-50 cursor-not-allowed">Edit Chart Details</Button>
-            <Button className="opacity-50 cursor-not-allowed">Add New Medical Entry</Button>
+            <Dialog open={isEditDetailsOpen} onOpenChange={setIsEditDetailsOpen}>
+                <DialogTrigger asChild>
+                    <Button variant="outline"><Edit3 className="mr-2 h-4 w-4" />Edit Chart Details</Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Edit Patient Details: {patient.name}</DialogTitle>
+                        <DialogDescription>Update contact and emergency information.</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={editDetailsForm.handleSubmit(onEditDetailsSubmit)} className="space-y-4 py-2">
+                        <div>
+                            <Label htmlFor="contact">Contact Phone</Label>
+                            <Input id="contact" {...editDetailsForm.register("contact")} defaultValue={currentPatientDetails.contact} />
+                            {editDetailsForm.formState.errors.contact && <p className="text-xs text-destructive mt-1">{editDetailsForm.formState.errors.contact.message}</p>}
+                        </div>
+                        <div>
+                            <Label htmlFor="emergencyContact">Emergency Contact</Label>
+                            <Textarea id="emergencyContact" {...editDetailsForm.register("emergencyContact")} defaultValue={currentPatientDetails.emergencyContact} />
+                            {editDetailsForm.formState.errors.emergencyContact && <p className="text-xs text-destructive mt-1">{editDetailsForm.formState.errors.emergencyContact.message}</p>}
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit" disabled={editDetailsForm.formState.isSubmitting}>Save Changes</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={isAddEntryOpen} onOpenChange={setIsAddEntryOpen}>
+                <DialogTrigger asChild>
+                    <Button><PlusCircle className="mr-2 h-4 w-4" />Add New Medical Entry</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[525px]">
+                    <DialogHeader>
+                        <DialogTitle>Add New Medical Entry for {patient.name}</DialogTitle>
+                        <DialogDescription>Record a new diagnosis, medication, procedure, allergy, or note.</DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={addEntryForm.handleSubmit(onAddEntrySubmit)} className="space-y-4 py-2">
+                        <div>
+                            <Label htmlFor="entryType">Entry Type</Label>
+                            <Controller
+                                name="type"
+                                control={addEntryForm.control}
+                                render={({ field }) => (
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <SelectTrigger id="entryType"><SelectValue placeholder="Select type" /></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="diagnosis">Diagnosis</SelectItem>
+                                            <SelectItem value="medication">Medication</SelectItem>
+                                            <SelectItem value="procedure">Procedure</SelectItem>
+                                            <SelectItem value="allergy">Allergy</SelectItem>
+                                            <SelectItem value="note">Note</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                            {addEntryForm.formState.errors.type && <p className="text-xs text-destructive mt-1">{addEntryForm.formState.errors.type.message}</p>}
+                        </div>
+                         <div>
+                            <Label htmlFor="entryDate">Date</Label>
+                            <Controller
+                                name="date"
+                                control={addEntryForm.control}
+                                render={({ field }) => (
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
+                                            >
+                                                <CalendarIconLucide className="mr-2 h-4 w-4" />
+                                                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0">
+                                            <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
+                            />
+                            {addEntryForm.formState.errors.date && <p className="text-xs text-destructive mt-1">{addEntryForm.formState.errors.date.message}</p>}
+                        </div>
+                        <div>
+                            <Label htmlFor="entryDoctor">Recorded By (Doctor)</Label>
+                            <Input id="entryDoctor" {...addEntryForm.register("doctor")} />
+                            {addEntryForm.formState.errors.doctor && <p className="text-xs text-destructive mt-1">{addEntryForm.formState.errors.doctor.message}</p>}
+                        </div>
+                        <div>
+                            <Label htmlFor="entryDescription">Description / Details</Label>
+                            <Textarea id="entryDescription" {...addEntryForm.register("description")} placeholder="Enter details here..." className="min-h-[100px]" />
+                            {addEntryForm.formState.errors.description && <p className="text-xs text-destructive mt-1">{addEntryForm.formState.errors.description.message}</p>}
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit" disabled={addEntryForm.formState.isSubmitting}>Add Entry</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     </div>
   );
 }
+
