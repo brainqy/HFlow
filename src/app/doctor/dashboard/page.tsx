@@ -9,14 +9,17 @@ import { Badge } from '@/components/ui/badge';
 
 export default function DoctorDashboardPage() {
   const doctorName = "Dr. Eleanor Vance"; // Placeholder
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const todayISO = new Date().toISOString().split('T')[0];
+  const todayFormatted = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const todaysAppointments = placeholderDoctorAppointments.filter(a => a.date === todayISO);
 
   return (
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="font-headline text-3xl font-bold text-primary">Welcome, {doctorName}!</h1>
-          <p className="text-muted-foreground">Your dashboard for {today}.</p>
+          <p className="text-muted-foreground">Your dashboard for {todayFormatted}.</p>
         </div>
         <Button asChild variant="outline">
           <Link href="/doctor/profile" className="flex items-center gap-2">
@@ -33,7 +36,7 @@ export default function DoctorDashboardPage() {
             <CalendarCheck className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{placeholderDoctorAppointments.filter(a => a.date === new Date().toISOString().split('T')[0]).length || placeholderDoctorAppointments.length}</div>
+            <div className="text-2xl font-bold">{todaysAppointments.length}</div>
             <p className="text-xs text-muted-foreground">scheduled for today</p>
           </CardContent>
         </Card>
@@ -60,17 +63,17 @@ export default function DoctorDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Upcoming Appointments */}
+        {/* Today's Appointments List */}
         <Card className="shadow-lg lg:col-span-2">
           <CardHeader>
             <CardTitle className="font-headline text-xl flex items-center gap-2">
-              <CalendarCheck className="h-6 w-6 text-primary" /> Today's Appointments
+              <CalendarCheck className="h-6 w-6 text-primary" /> Today's Schedule
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {placeholderDoctorAppointments.length > 0 ? (
+            {todaysAppointments.length > 0 ? (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {placeholderDoctorAppointments.map(appt => (
+                {todaysAppointments.map(appt => (
                   <div key={appt.id} className="p-3 border rounded-md bg-primary/5 hover:bg-primary/10 transition-colors">
                     <div className="flex justify-between items-center">
                         <div>
@@ -81,7 +84,7 @@ export default function DoctorDashboardPage() {
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">{appt.reason}</p>
                     <div className="mt-2">
-                      <Button variant="link" size="sm" className="p-0 h-auto text-primary text-xs">View Patient Chart</Button>
+                      <Button variant="link" size="sm" className="p-0 h-auto text-primary text-xs opacity-50 cursor-not-allowed">View Patient Chart</Button>
                     </div>
                   </div>
                 ))}
@@ -95,7 +98,7 @@ export default function DoctorDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
+        {/* Quick Actions Column */}
         <div className="space-y-6">
             <Card className="shadow-lg">
                 <CardHeader>
@@ -107,7 +110,7 @@ export default function DoctorDashboardPage() {
                     <Button variant="outline" asChild className="w-full">
                         <Link href="/portal/ai-summary">AI Record Summarizer</Link>
                     </Button>
-                     <Button variant="outline" asChild className="w-full">
+                     <Button variant="outline" asChild className="w-full opacity-50 cursor-not-allowed">
                         <Link href="#">Differential Diagnosis Aid (Demo)</Link>
                     </Button>
                 </CardContent>
@@ -119,9 +122,9 @@ export default function DoctorDashboardPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                    <Button variant="default" className="w-full">New Prescription</Button>
-                    <Button variant="outline" className="w-full">Order Lab Test</Button>
-                    <Button variant="outline" className="w-full">Refer Patient</Button>
+                    <Button variant="default" className="w-full opacity-50 cursor-not-allowed">New Prescription</Button>
+                    <Button variant="outline" className="w-full opacity-50 cursor-not-allowed">Order Lab Test</Button>
+                    <Button variant="outline" className="w-full opacity-50 cursor-not-allowed">Refer Patient</Button>
                 </CardContent>
             </Card>
         </div>
