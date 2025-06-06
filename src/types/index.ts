@@ -148,8 +148,8 @@ export interface Receptionist {
     employeeId: string;
 }
 
-// Combined user type for Admin user management
-export type UserRole = 'Patient' | 'Doctor' | 'Nurse' | 'Receptionist' | 'Admin';
+// Combined user type for Manager user management
+export type UserRole = 'Patient' | 'Doctor' | 'Nurse' | 'Receptionist' | 'Manager';
 
 export interface ManagedUser {
   id: string;
@@ -160,3 +160,4 @@ export interface ManagedUser {
   lastLogin?: string; 
   password?: string; 
 }
+

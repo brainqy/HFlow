@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
 
 export const placeholderDoctors: Doctor[] = [
@@ -203,6 +203,11 @@ export const placeholderReceptionists: Receptionist[] = [
     { id: 'recep-2', name: 'Michael Chen', email: 'michael.chen@healthflow.clinic', employeeId: 'REC002' },
 ];
 
+export const placeholderManagerUsers: ManagedUser[] = [ // Renamed from placeholderAdminUsers
+    { id: 'manager-1', name: 'Manager User', role: 'Manager', email: 'manager@healthflow.clinic', status: 'Active', lastLogin: new Date().toLocaleDateString() }
+];
+
+
 export const placeholderSupplyItems: SupplyItem[] = [
   { id: 's1', name: '10cc Syringes', category: 'Medical Consumables', stockLevel: 50, reorderPoint: 20, status: 'In Stock' },
   { id: 's2', name: 'Gauze Pads (4x4)', category: 'Wound Care', stockLevel: 15, reorderPoint: 30, status: 'Low Stock' },
@@ -238,3 +243,4 @@ export const allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac19', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
   { id: 'ac20', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getTodayDate(), time: '04:30 PM', reason: 'Blood Pressure Check', status: 'Scheduled', reminderSent: true },
 ];
+

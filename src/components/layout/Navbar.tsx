@@ -14,7 +14,7 @@ const mainNavItems = [
   { href: '/appointments', label: 'Book Appointment' },
 ];
 
-export default function Navbar({ userType, showSidebarToggle }: { userType?: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist', showSidebarToggle?: boolean }) {
+export default function Navbar({ userType, showSidebarToggle }: { userType?: 'patient' | 'doctor' | 'nurse' | 'manager' | 'receptionist', showSidebarToggle?: boolean }) {
   let dashboardLink = '/';
   let DashboardIconComponent = LayoutDashboard;
   let portalName = '';
@@ -31,10 +31,10 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
     dashboardLink = '/nurse/dashboard';
     DashboardIconComponent = BriefcaseMedical;
     portalName = 'Nurse Portal';
-  } else if (userType === 'admin') {
-    dashboardLink = '/admin/dashboard';
-    DashboardIconComponent = ShieldAlert;
-    portalName = 'Admin Portal';
+  } else if (userType === 'manager') { // Changed from 'admin'
+    dashboardLink = '/manager/dashboard'; // Changed from '/admin/dashboard'
+    DashboardIconComponent = ShieldAlert; // Kept ShieldAlert, can be changed if needed
+    portalName = 'Manager Portal'; // Changed from 'Admin Portal'
   } else if (userType === 'receptionist') {
     dashboardLink = '/receptionist/dashboard';
     DashboardIconComponent = CalendarCheck; 

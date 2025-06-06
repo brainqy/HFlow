@@ -31,15 +31,15 @@ const portalOptions = [
     title: 'Receptionist Portal',
     description: 'Manage appointments, patient registration, and front-desk operations.',
     href: '/receptionist-login',
-    icon: CalendarCheck, // Using CalendarCheck for receptionist
+    icon: CalendarCheck, 
     imageHint: 'receptionist desk computer',
   },
   {
-    title: 'Admin Portal',
-    description: 'Manage users, system settings, and view site analytics.',
-    href: '/admin-login',
-    icon: ShieldAlert,
-    imageHint: 'admin panel secure',
+    title: 'Manager Portal', // Changed from Admin Portal
+    description: 'Manage users, system settings, and view site analytics.', // Description can remain general
+    href: '/manager-login', // Changed from /admin-login
+    icon: ShieldAlert, // Kept icon, can be changed if desired
+    imageHint: 'manager panel secure', // Changed from admin panel secure
   },
 ];
 
@@ -55,7 +55,7 @@ export default function PortalAccessPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {/* Adjusted for better layout with 5 items */}
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {}
         {portalOptions.map((option) => (
           <Card key={option.title} className="flex flex-col overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <div className="relative h-52 w-full bg-primary/10 flex items-center justify-center">
@@ -96,7 +96,7 @@ export default function PortalAccessPage() {
           New to HealthFlow? <Link href="/register" className="text-primary hover:underline">Create a patient account</Link>.
         </p>
         <p className="text-sm text-muted-foreground mt-2">
-          For staff or admin account creation, please contact administration.
+          For staff or manager account creation, please contact management.
         </p>
       </div>
     </div>
