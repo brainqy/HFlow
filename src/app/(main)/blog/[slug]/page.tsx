@@ -1,21 +1,48 @@
+
+"use client"; 
 import { placeholderBlogPosts } from '@/lib/placeholder-data';
 import Image from 'next/image';
 import { CalendarDays, UserCircle, Tag, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import type { BlogPost } from '@/types';
 
-export async function generateStaticParams() {
-  return placeholderBlogPosts.map((post) => ({
-    slug: post.slug,
-  }));
-}
+// Removed generateStaticParams as posts are now dynamic
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = placeholderBlogPosts.find((p) => p.slug === params.slug);
+export default function BlogPostPage() {
+  const params = useParams();
+  const slug = typeof params.slug === 'string' ? params.slug : '';
+  const [post, setPost] = useState<BlogPost | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (slug) {
+      // Find post from the (potentially mutated) placeholderBlogPosts
+      const foundPost = placeholderBlogPosts.find((p) => p.slug === slug);
+      setPost(foundPost);
+    }
+    setLoading(false);
+  }, [slug]);
+
+  if (loading) {
+    return <div className="container mx-auto py-12 text-center">Loading post...</div>;
+  }
 
   if (!post) {
-    return <div className="container mx-auto py-12 text-center">Post not found.</div>;
+    return (
+      <div className="container mx-auto px-4 py-12 md:px-6 md:py-16 text-center">
+        <h1 className="font-headline text-3xl text-destructive mb-4">Post Not Found</h1>
+        <p className="text-muted-foreground mb-6">The blog post you are looking for does not exist or may have been moved.</p>
+        <Button variant="outline" asChild>
+            <Link href="/blog" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" /> Back to Blog
+            </Link>
+          </Button>
+      </div>
+    );
   }
 
   return (
@@ -38,8 +65,9 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           <Image 
             src={post.imageUrl} 
             alt={post.title} 
-            layout="fill" 
-            objectFit="cover"
+            fill // Changed from layout="fill"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Example sizes
+            style={{objectFit:"cover"}} // Replaced objectFit="cover"
             data-ai-hint={post.dataAiHint || 'blog article detail'}
           />
         </div>

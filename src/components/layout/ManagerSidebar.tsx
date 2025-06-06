@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, Settings, BarChart2, LogOut, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, BarChart2, LogOut, ShieldAlert, FileText } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarHeader, 
@@ -20,6 +20,7 @@ import {
 const managerNavItems = [
   { href: '/manager/dashboard', label: 'Dashboard', icon: LayoutDashboard, tooltip: 'Dashboard' },
   { href: '/manager/users', label: 'User Management', icon: Users, tooltip: 'User Management' },
+  { href: '/manager/blogs', label: 'Manage Blogs', icon: FileText, tooltip: 'Manage Blogs' },
   { href: '/manager/settings', label: 'Clinic Settings', icon: Settings, tooltip: 'Clinic Settings' },
   { href: '/manager/reports', label: 'Reports', icon: BarChart2, tooltip: 'Reports' },
 ];

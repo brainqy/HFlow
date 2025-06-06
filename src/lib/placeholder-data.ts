@@ -2,7 +2,7 @@
 import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
 
-export const placeholderDoctors: Doctor[] = [
+export let placeholderDoctors: Doctor[] = [
   {
     id: 'emily-carter',
     name: 'Dr. Emily Carter',
@@ -76,7 +76,7 @@ export const placeholderDoctors: Doctor[] = [
   },
 ];
 
-export const placeholderServices: Service[] = [
+export let placeholderServices: Service[] = [
   { id: 'general-checkups', name: 'General Checkups', icon: Stethoscope, description: 'Routine health examinations and preventive care for all ages.', details: 'Our general checkups include a thorough physical examination, review of medical history, vital signs check, and age-appropriate screenings. We focus on preventive care to help you maintain optimal health.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'doctor patient consultation' },
   { id: 'vaccinations', name: 'Vaccinations', icon: Syringe, description: 'Comprehensive immunization services for children and adults.', details: 'We offer a full range of vaccines for infants, children, adolescents, and adults, including flu shots, travel vaccinations, and routine immunizations, following CDC guidelines.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'nurse giving injection' },
   { id: 'chronic-disease', name: 'Chronic Disease Management', icon: Activity, description: 'Ongoing care and support for managing chronic conditions like diabetes and hypertension.', details: 'Our team provides personalized care plans for managing chronic diseases, focusing on lifestyle modifications, medication management, and regular monitoring to improve your quality of life.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'blood pressure check' },
@@ -85,7 +85,7 @@ export const placeholderServices: Service[] = [
   { id: 'neurology', name: 'Neurology', icon: Brain, description: 'Care for disorders of the nervous system, including migraines and neuropathy.', details: 'Our neurologists are experts in diagnosing and treating a wide range of neurological conditions. We utilize advanced diagnostic tools and develop individualized treatment plans.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'brain activity chart' },
 ];
 
-export const placeholderBlogPosts: BlogPost[] = [
+export let placeholderBlogPosts: BlogPost[] = [
   {
     slug: 'healthy-eating-tips',
     title: 'Top 10 Healthy Eating Tips for a Vibrant Life',
@@ -121,7 +121,7 @@ export const placeholderBlogPosts: BlogPost[] = [
   },
 ];
 
-export const placeholderMedicalHistory: MedicalRecordItem[] = [
+export let placeholderMedicalHistory: MedicalRecordItem[] = [
   { id: '1', date: '2024-05-10', type: 'diagnosis', description: 'Hypertension Stage 1', doctor: 'Dr. Emily Carter' },
   { id: '2', date: '2024-05-10', type: 'medication', description: 'Lisinopril 10mg daily', doctor: 'Dr. Emily Carter' },
   { id: '3', date: '2023-11-20', type: 'procedure', description: 'Annual Physical Exam', doctor: 'Dr. Emily Carter' },
@@ -130,19 +130,19 @@ export const placeholderMedicalHistory: MedicalRecordItem[] = [
   { id: '6', date: '2022-09-05', type: 'note', description: 'Patient reports occasional migraines, advised lifestyle changes.', doctor: 'Dr. James Lee'},
 ];
 
-export const placeholderMedications: Medication[] = [
+export let placeholderMedications: Medication[] = [
   { id: '1', name: 'Lisinopril', dosage: '10mg', frequency: 'Once daily', startDate: '2024-05-10', prescribedBy: 'Dr. Emily Carter', refillsRemaining: 5 },
   { id: '2', name: 'Amoxicillin', dosage: '500mg', frequency: 'Three times daily for 7 days', startDate: '2024-06-01', endDate: '2024-06-07', prescribedBy: 'Dr. Sarah Green', refillsRemaining: 0 },
   { id: '3', name: 'Metformin', dosage: '500mg', frequency: 'Twice daily', startDate: '2023-01-15', prescribedBy: 'Dr. Emily Carter', refillsRemaining: 3 },
   { id: '4', name: 'Vitamin D3', dosage: '2000 IU', frequency: 'Once daily', startDate: '2023-02-01', prescribedBy: 'Dr. James Lee', refillsRemaining: 12 },
 ];
 
-const getFutureDate = (days: number) => new Date(new Date().setDate(new Date().getDate() + days)).toISOString().split('T')[0];
-const getPastDate = (days: number) => new Date(new Date().setDate(new Date().getDate() - days)).toISOString().split('T')[0];
-const getTodayDate = () => new Date().toISOString().split('T')[0];
+export const getFutureDate = (days: number) => new Date(new Date().setDate(new Date().getDate() + days)).toISOString().split('T')[0];
+export const getPastDate = (days: number) => new Date(new Date().setDate(new Date().getDate() - days)).toISOString().split('T')[0];
+export const getTodayDate = () => new Date().toISOString().split('T')[0];
 
 
-export const placeholderDoctorAppointments: DoctorAppointment[] = [
+export let placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(30), time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Completed', reminderSent: true },
   { id: 'da1-upcoming', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getFutureDate(20), time: '10:00 AM', reason: 'Routine Check-up', status: 'Scheduled', reminderSent: false },
   { id: 'da2', patientName: 'Bob The Builder', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: getFutureDate(3), time: '11:30 AM', reason: 'Annual physical', status: 'Scheduled', reminderSent: true },
@@ -162,7 +162,7 @@ export const placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da15', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
 ];
 
-export const placeholderDoctorPatients: DoctorPatient[] = [
+export let placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp1', name: 'Alice Wonderland', lastVisit: getPastDate(30), email: 'alice.wonderland@example.com', phone: '555-0101' },
   { id: 'dp2', name: 'Bob The Builder', lastVisit: getPastDate(120), email: 'bob.builder@example.com', phone: '555-0102' },
   { id: 'dp3', name: 'Charlie Brown', lastVisit: getPastDate(45), email: 'charlie.brown@example.com', phone: '555-0103' },
@@ -175,40 +175,40 @@ export const placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp10', name: 'John Smith', lastVisit: getPastDate(100), email: 'john.smith@example.com', phone: '555-0110'},
 ];
 
-export const placeholderNursePatientQueue: NursePatientQueueItem[] = [
+export let placeholderNursePatientQueue: NursePatientQueueItem[] = [
   { id: 'nq1', name: 'Edward Scissorhands', status: 'Waiting for Triage', arrivalTime: '09:15 AM' },
   { id: 'nq2', name: 'Fiona Gallagher', status: 'Ready for Vitals', arrivalTime: '09:30 AM' },
   { id: 'nq3', name: 'George Jetson', status: 'Waiting for Doctor', arrivalTime: '08:45 AM' },
   { id: 'nq4', name: 'Hannah Montana', status: 'Ready for Vitals', arrivalTime: '09:50 AM' },
 ];
 
-export const placeholderNurseAlerts: NurseAlert[] = [
+export let placeholderNurseAlerts: NurseAlert[] = [
   { id: 'na1', message: 'Low stock of 10cc syringes in treatment room 2.', severity: 'medium', timestamp: '2024-08-14 10:05 AM' },
   { id: 'na2', message: 'Patient in Room 5 reports increased pain.', severity: 'high', timestamp: '2024-08-14 11:30 AM' },
 ];
 
-export const placeholderNurseSchedule: NurseShiftSchedule = {
+export let placeholderNurseSchedule: NurseShiftSchedule = {
   today: '08:00 AM - 04:00 PM (Charge Nurse)',
   tomorrow: '12:00 PM - 08:00 PM',
   notes: 'Staff meeting at 3:30 PM today regarding new charting system.'
 };
 
-export const placeholderNurses: Nurse[] = [
+export let placeholderNurses: Nurse[] = [
     { id: 'nurse-1', name: 'Nurse Alex Miller', email: 'alex.miller@healthflow.clinic', department: 'General Ward', shift: 'Day Shift (7 AM - 7 PM)' },
     { id: 'nurse-2', name: 'Nurse Jordan Lee', email: 'jordan.lee@healthflow.clinic', department: 'Emergency', shift: 'Night Shift (7 PM - 7 AM)' },
 ];
 
-export const placeholderReceptionists: Receptionist[] = [
+export let placeholderReceptionists: Receptionist[] = [
     { id: 'recep-1', name: 'Sarah Bell', email: 'receptionist@example.com', employeeId: 'REC001' }, // For easy login
     { id: 'recep-2', name: 'Michael Chen', email: 'michael.chen@healthflow.clinic', employeeId: 'REC002' },
 ];
 
-export const placeholderManagerUsers: ManagedUser[] = [ // Renamed from placeholderAdminUsers
+export let placeholderManagerUsers: ManagedUser[] = [ 
     { id: 'manager-1', name: 'Manager User', role: 'Manager', email: 'manager@healthflow.clinic', status: 'Active', lastLogin: new Date().toLocaleDateString() }
 ];
 
 
-export const placeholderSupplyItems: SupplyItem[] = [
+export let placeholderSupplyItems: SupplyItem[] = [
   { id: 's1', name: '10cc Syringes', category: 'Medical Consumables', stockLevel: 50, reorderPoint: 20, status: 'In Stock' },
   { id: 's2', name: 'Gauze Pads (4x4)', category: 'Wound Care', stockLevel: 15, reorderPoint: 30, status: 'Low Stock' },
   { id: 's3', name: 'Alcohol Swabs', category: 'Medical Consumables', stockLevel: 200, reorderPoint: 100, status: 'In Stock' },
@@ -219,7 +219,7 @@ export const placeholderSupplyItems: SupplyItem[] = [
 ];
 
 
-export const allClinicAppointments: DoctorAppointment[] = [
+export let allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(30), time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Completed', reminderSent: true },
   { id: 'ac1-upcoming', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getFutureDate(20), time: '10:00 AM', reason: 'Routine Check-up', status: 'Scheduled', reminderSent: false },
   { id: 'ac2', patientName: 'Bob The Builder', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: getFutureDate(3), time: '11:30 AM', reason: 'Annual physical', status: 'Scheduled', reminderSent: true },
@@ -244,3 +244,10 @@ export const allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac20', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getTodayDate(), time: '04:30 PM', reason: 'Blood Pressure Check', status: 'Scheduled', reminderSent: true },
 ];
 
+// Function to generate a simple slug
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w-]+/g, ''); // Remove all non-word chars
+}
