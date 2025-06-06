@@ -1,8 +1,10 @@
+
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google'; // Using next/font for better performance
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
+import { GlobalLoader } from '@/components/layout/GlobalLoader';
 
 // Configure fonts
 const inter = Inter({
@@ -36,7 +38,9 @@ export default function RootLayout({
         inter.variable,
         poppins.variable
       )}>
-        {children}
+        <GlobalLoader>
+          {children}
+        </GlobalLoader>
         <Toaster />
       </body>
     </html>
