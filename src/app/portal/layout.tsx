@@ -1,3 +1,4 @@
+
 import PortalSidebar from '@/components/layout/PortalSidebar';
 import Navbar from '@/components/layout/Navbar'; // Using the main navbar for consistency on top
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ export default function PortalLayout({
   return (
     <div className="flex min-h-screen flex-col">
       {/* Main Navbar remains for branding and top-level navigation like logout */}
-      <Navbar /> 
+      <Navbar userType="patient" /> 
       <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
         {/* Desktop Sidebar */}
         <div className="hidden md:block">

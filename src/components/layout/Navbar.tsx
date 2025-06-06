@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Stethoscope, User, BriefcaseMedical, UserCog } from 'lucide-react'; // Added User, BriefcaseMedical for nurse, UserCog for doctor
+import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard } from 'lucide-react';
 
 const mainNavItems = [
   { href: '/', label: 'Home' },
@@ -13,13 +13,12 @@ const mainNavItems = [
   { href: '/appointments', label: 'Book Appointment' },
 ];
 
-const portalLoginNavItems = [
-  { href: '/login', label: 'Patient Login', icon: User },
-  { href: '/doctor-login', label: 'Doctor Login', icon: UserCog },
-  { href: '/nurse-login', label: 'Nurse Login', icon: BriefcaseMedical },
-];
+export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' | 'nurse' }) {
+  let dashboardLink = '';
+  if (userType === 'patient') dashboardLink = '/portal/dashboard';
+  else if (userType === 'doctor') dashboardLink = '/doctor/dashboard';
+  else if (userType === 'nurse') dashboardLink = '/nurse/dashboard';
 
-export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
@@ -34,14 +33,44 @@ export default function Navbar() {
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
-          {portalLoginNavItems.map((item) => (
-             <Button key={item.label} variant="outline" size="sm" asChild className="ml-2">
-              <Link href={item.href} className="flex items-center gap-2">
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </Link>
-            </Button>
-          ))}
+
+          {userType ? (
+            <>
+              <Button variant="outline" size="sm" asChild className="ml-2">
+                <Link href={dashboardLink} className="flex items-center gap-2">
+                  <LayoutDashboard className="h-4 w-4" />
+                  My Dashboard
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild className="ml-2">
+                <Link href="/" className="flex items-center gap-2">
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" size="sm" asChild className="ml-2">
+                <Link href="/login" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Patient Login
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild className="ml-2">
+                <Link href="/doctor-login" className="flex items-center gap-2">
+                  <UserCog className="h-4 w-4" />
+                  Doctor Login
+                </Link>
+              </Button>
+              <Button variant="outline" size="sm" asChild className="ml-2">
+                <Link href="/nurse-login" className="flex items-center gap-2">
+                  <BriefcaseMedical className="h-4 w-4" />
+                  Nurse Login
+                </Link>
+              </Button>
+            </>
+          )}
         </nav>
 
         <div className="md:hidden">
@@ -68,14 +97,43 @@ export default function Navbar() {
                   </Link>
                 ))}
                 <div className="mt-4 border-t pt-4 space-y-2">
-                  {portalLoginNavItems.map((item) => (
-                    <Button key={item.label} variant="ghost" asChild className="w-full justify-start text-base py-2">
-                      <Link href={item.href} className="flex items-center gap-3">
-                        <item.icon className="h-5 w-5" />
-                        {item.label}
-                      </Link>
-                    </Button>
-                  ))}
+                  {userType ? (
+                    <>
+                      <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
+                        <Link href={dashboardLink} className="flex items-center gap-3">
+                          <LayoutDashboard className="h-5 w-5" />
+                          My Dashboard
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
+                        <Link href="/" className="flex items-center gap-3">
+                          <LogOut className="h-5 w-5" />
+                          Logout
+                        </Link>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
+                        <Link href="/login" className="flex items-center gap-3">
+                          <User className="h-5 w-5" />
+                          Patient Login
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
+                        <Link href="/doctor-login" className="flex items-center gap-3">
+                            <UserCog className="h-5 w-5" />
+                            Doctor Login
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
+                          <Link href="/nurse-login" className="flex items-center gap-3">
+                              <BriefcaseMedical className="h-5 w-5" />
+                              Nurse Login
+                          </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </nav>
             </SheetContent>

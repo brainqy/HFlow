@@ -12,7 +12,7 @@ export default function NursePortalLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar /> 
+      <Navbar userType="nurse" /> 
       <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
         {/* Desktop Sidebar */}
         <div className="hidden md:block">
