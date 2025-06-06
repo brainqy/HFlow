@@ -1,11 +1,13 @@
 
-import { placeholderDoctorPatients, placeholderMedicalHistory, placeholderDoctorAppointments } from '@/lib/placeholder-data';
+import { placeholderDoctorPatients, placeholderMedicalHistory, placeholderDoctorAppointments, allClinicAppointments } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase } from 'lucide-react';
+import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase, StickyNote } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import type { DoctorAppointment } from '@/types';
+import { Textarea } from '@/components/ui/textarea';
+import { format } from 'date-fns';
 
 export async function generateStaticParams() {
   return placeholderDoctorPatients.map((patient) => ({
@@ -29,12 +31,13 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
   
   const patientHistory = placeholderMedicalHistory.filter((item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === params.patientId) || item.doctor === "Dr. Eleanor Vance");
   
-  const allPatientAppointments = placeholderDoctorAppointments
-    .filter(appt => appt.patientName === patient?.name) // Matching by name due to placeholder data structure
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time)); // Sort by date desc, then time
+  const patientAllAppointments = allClinicAppointments
+    .filter(appt => appt.patientName === patient?.name) 
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time));
 
-  const upcomingAppointments = allPatientAppointments.filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0)));
-  const pastAppointments = allPatientAppointments.filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0)));
+  const upcomingAppointments = patientAllAppointments.filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0))).reverse(); // reverse to get earliest first
+  const pastAppointments = patientAllAppointments.filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0)));
+  const nextScheduledAppointment = upcomingAppointments[0];
 
 
   if (!patient) {
@@ -123,6 +126,31 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                     <p><strong>O2 Sat:</strong> 98%</p>
                      <p className="text-xs text-muted-foreground mt-2">As of {new Date(patient.lastVisit).toLocaleDateString()}</p>
                 </CardContent>
+            </Card>
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="font-headline text-xl flex items-center gap-2">
+                  <StickyNote className="h-5 w-5 text-primary" /> Care Plan & Notes
+                </CardTitle>
+                <CardDescription>Notes for ongoing or recurring care.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {nextScheduledAppointment ? (
+                  <div className="mb-4 p-3 border border-primary/30 rounded-md bg-primary/5">
+                    <p className="text-sm font-semibold text-primary">Next Scheduled Appointment:</p>
+                    <p className="text-sm text-foreground">{format(new Date(nextScheduledAppointment.date), "PPP")} at {nextScheduledAppointment.time}</p>
+                    <p className="text-xs text-muted-foreground">Reason: {nextScheduledAppointment.reason}</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground mb-4">No upcoming appointments scheduled.</p>
+                )}
+                <Textarea 
+                  placeholder="Enter care plan notes, e.g., 'Follow up every 3 months for check-up and medication review. Monitor blood pressure closely...'" 
+                  className="min-h-[100px]"
+                  readOnly // For now, or implement edit functionality later
+                />
+                <Button variant="outline" size="sm" className="mt-2 opacity-50 cursor-not-allowed">Edit Care Plan</Button>
+              </CardContent>
             </Card>
         </div>
 
