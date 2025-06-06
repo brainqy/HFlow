@@ -1,15 +1,17 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { CalendarClock, Check, X } from 'lucide-react';
+import { CalendarClock, Check, X, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { placeholderNurseSchedule } from '@/lib/placeholder-data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 // Dummy data for upcoming shifts for demonstration
 const upcomingShifts = [
-  { date: '2024-08-16', time: '08:00 AM - 04:00 PM', role: 'Floor Nurse' },
-  { date: '2024-08-17', time: '12:00 PM - 08:00 PM', role: 'Triage Nurse' },
-  { date: '2024-08-19', time: '08:00 AM - 04:00 PM', role: 'Floor Nurse' },
-  { date: '2024-08-20', time: 'Day Off', role: '' },
+  { date: '2024-08-16', time: '08:00 AM - 04:00 PM', role: 'Floor Nurse', unit: 'General Ward' },
+  { date: '2024-08-17', time: '12:00 PM - 08:00 PM', role: 'Triage Nurse', unit: 'Emergency Dept.' },
+  { date: '2024-08-19', time: '08:00 AM - 04:00 PM', role: 'Floor Nurse', unit: 'Pediatrics' },
+  { date: '2024-08-20', time: 'Day Off', role: '', unit: '' },
+  { date: '2024-08-21', time: '07:00 AM - 07:00 PM', role: 'Staff Nurse', unit: 'ICU' },
 ];
 
 
@@ -31,10 +33,11 @@ export default function NurseSchedulePage() {
         </p>
       </header>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <Card className="shadow-lg">
+      <div className="grid md:grid-cols-3 gap-8">
+        <Card className="shadow-lg md:col-span-1">
           <CardHeader>
             <CardTitle className="font-headline text-xl">Today's Shift</CardTitle>
+            <CardDescription>{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-semibold text-foreground">{placeholderNurseSchedule.today.split('(')[0].trim()}</p>
@@ -48,23 +51,36 @@ export default function NurseSchedulePage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-lg">
+        <Card className="shadow-lg md:col-span-2">
           <CardHeader>
             <CardTitle className="font-headline text-xl">Upcoming Shifts</CardTitle>
             <CardDescription>Your schedule for the next few days.</CardDescription>
           </CardHeader>
-          <CardContent className="max-h-72 overflow-y-auto">
-            <ul className="space-y-3">
-            {upcomingShifts.map(shift => (
-              <li key={shift.date} className="flex justify-between items-center p-3 border rounded-md bg-card hover:bg-muted/50">
-                <div>
-                  <p className="font-medium text-foreground">{formatDate(shift.date)}</p>
-                  <p className="text-sm text-muted-foreground">{shift.time}</p>
-                </div>
-                <p className="text-sm text-primary font-semibold">{shift.role}</p>
-              </li>
-            ))}
-            </ul>
+          <CardContent className="max-h-96 overflow-y-auto">
+            {upcomingShifts.length > 0 ? (
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Time</TableHead>
+                            <TableHead>Role</TableHead>
+                            <TableHead>Unit</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {upcomingShifts.map(shift => (
+                        <TableRow key={shift.date + shift.time}>
+                            <TableCell className="font-medium">{formatDate(shift.date)}</TableCell>
+                            <TableCell>{shift.time}</TableCell>
+                            <TableCell>{shift.role || '-'}</TableCell>
+                            <TableCell>{shift.unit || '-'}</TableCell>
+                        </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            ) : (
+                <p className="text-muted-foreground text-center py-4">No upcoming shifts scheduled.</p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -78,14 +94,10 @@ export default function NurseSchedulePage() {
             {/* Placeholder for time off requests list or form */}
             <p className="text-muted-foreground">No pending time off requests.</p>
         </CardContent>
-        <CardFooter>
-            <Button>Request Time Off</Button>
+        <CardFooter className="border-t pt-6">
+            <Button><PlusCircle className="mr-2 h-4 w-4"/>Request Time Off</Button>
         </CardFooter>
       </Card>
-
-      <p className="text-sm text-muted-foreground text-center">
-        This is a placeholder page. Full schedule management and time-off request functionality will be implemented here.
-      </p>
     </div>
   );
 }

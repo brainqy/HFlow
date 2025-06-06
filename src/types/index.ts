@@ -93,7 +93,7 @@ export interface DoctorPatient {
 export interface NursePatientQueueItem {
   id: string;
   name: string;
-  status: string;
+  status: 'Waiting for Triage' | 'Ready for Vitals' | 'Waiting for Doctor' | 'With Doctor' | 'Discharged';
   arrivalTime: string;
 }
 
@@ -108,4 +108,13 @@ export interface NurseShiftSchedule {
   today: string;
   tomorrow?: string;
   notes?: string;
+}
+
+export interface SupplyItem {
+  id: string;
+  name: string;
+  category: string;
+  stockLevel: number;
+  reorderPoint: number;
+  status: 'In Stock' | 'Low Stock' | 'Critical' | 'Out of Stock';
 }

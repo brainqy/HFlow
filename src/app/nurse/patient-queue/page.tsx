@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { placeholderNursePatientQueue } from '@/lib/placeholder-data';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 export default function NursePatientQueuePage() {
   return (
@@ -28,10 +29,11 @@ export default function NursePatientQueuePage() {
                 Patients awaiting triage, vitals, or doctor consultation.
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <Input placeholder="Search patients..." className="max-w-sm" />
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <Input placeholder="Search patients..." className="max-w-sm flex-grow md:flex-grow-0" />
               <Button variant="outline" size="icon">
                 <ListFilter className="h-4 w-4" />
+                <span className="sr-only">Filter</span>
               </Button>
             </div>
           </div>
@@ -54,15 +56,27 @@ export default function NursePatientQueuePage() {
                     <TableCell>{patient.arrivalTime}</TableCell>
                     <TableCell>
                        <Badge 
-                        variant={patient.status === 'Waiting for Triage' ? 'destructive' : patient.status === 'Ready for Vitals' ? 'secondary' : 'default'}
+                        variant={
+                            patient.status === 'Waiting for Triage' ? 'destructive' : 
+                            patient.status === 'Ready for Vitals' ? 'secondary' : 
+                            patient.status === 'Waiting for Doctor' ? 'default' :
+                            'outline'
+                        }
                         className="capitalize"
                       >
                         {patient.status.toLowerCase()}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right space-x-2">
-                      <Button variant="outline" size="sm">View Chart</Button>
-                      {patient.status === 'Ready for Vitals' && <Button size="sm">Record Vitals</Button>}
+                      <Button variant="outline" size="sm" asChild>
+                        {/* This would link to a patient chart view, possibly a simplified one for nurses */}
+                        <Link href="#">View Chart</Link>
+                      </Button>
+                      {patient.status === 'Ready for Vitals' && (
+                        <Button size="sm" asChild>
+                           <Link href="/nurse/vitals-entry">Record Vitals</Link>
+                        </Button>
+                      )}
                       {patient.status === 'Waiting for Triage' && <Button size="sm" variant="secondary">Triage</Button>}
                     </TableCell>
                   </TableRow>
@@ -74,9 +88,6 @@ export default function NursePatientQueuePage() {
           )}
         </CardContent>
       </Card>
-      <p className="text-sm text-muted-foreground text-center">
-        This is a placeholder page. Full patient queue management functionality will be implemented here.
-      </p>
     </div>
   );
 }

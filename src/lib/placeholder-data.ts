@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby } from 'lucide-react';
 
 export const placeholderDoctors: Doctor[] = [
@@ -164,8 +164,9 @@ Summary: Patient's home BP readings consistently >140/90. Diagnosed with Hyperte
 // Placeholder data for Doctor Dashboard
 export const placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da1', patientName: 'Alice Wonderland', date: '2024-08-15', time: '10:00 AM', reason: 'Follow-up for hypertension' },
-  { id: 'da2', patientName: 'Bob The Builder', date: '2024-08-15', time: '11:30 AM', reason: 'Annual physical' },
+  { id: 'da2', patientName: 'Bob The Builder', date: new Date().toISOString().split('T')[0], time: '11:30 AM', reason: 'Annual physical' },
   { id: 'da3', patientName: 'Charlie Brown', date: '2024-08-16', time: '02:00 PM', reason: 'Migraine consultation' },
+  { id: 'da4', patientName: 'Diana Prince', date: new Date().toISOString().split('T')[0], time: '03:00 PM', reason: 'Medication review' },
 ];
 
 export const placeholderDoctorPatients: DoctorPatient[] = [
@@ -180,6 +181,7 @@ export const placeholderNursePatientQueue: NursePatientQueueItem[] = [
   { id: 'nq1', name: 'Edward Scissorhands', status: 'Waiting for Triage', arrivalTime: '09:15 AM' },
   { id: 'nq2', name: 'Fiona Gallagher', status: 'Ready for Vitals', arrivalTime: '09:30 AM' },
   { id: 'nq3', name: 'George Jetson', status: 'Waiting for Doctor', arrivalTime: '08:45 AM' },
+  { id: 'nq4', name: 'Hannah Montana', status: 'Ready for Vitals', arrivalTime: '09:50 AM' },
 ];
 
 export const placeholderNurseAlerts: NurseAlert[] = [
@@ -190,5 +192,15 @@ export const placeholderNurseAlerts: NurseAlert[] = [
 export const placeholderNurseSchedule: NurseShiftSchedule = {
   today: '08:00 AM - 04:00 PM (Charge Nurse)',
   tomorrow: '12:00 PM - 08:00 PM',
-  notes: 'Staff meeting at 3:30 PM today.'
+  notes: 'Staff meeting at 3:30 PM today regarding new charting system.'
 };
+
+export const placeholderSupplyItems: SupplyItem[] = [
+  { id: 's1', name: '10cc Syringes', category: 'Medical Consumables', stockLevel: 50, reorderPoint: 20, status: 'In Stock' },
+  { id: 's2', name: 'Gauze Pads (4x4)', category: 'Wound Care', stockLevel: 15, reorderPoint: 30, status: 'Low Stock' },
+  { id: 's3', name: 'Alcohol Swabs', category: 'Medical Consumables', stockLevel: 200, reorderPoint: 100, status: 'In Stock' },
+  { id: 's4', name: 'Disposable Gloves (M)', category: 'PPE', stockLevel: 35, reorderPoint: 50, status: 'Low Stock' },
+  { id: 's5', name: 'Saline Solution (500ml)', category: 'IV Fluids', stockLevel: 10, reorderPoint: 5, status: 'Critical' },
+  { id: 's6', name: 'Band-Aids (Assorted)', category: 'Wound Care', stockLevel: 150, reorderPoint: 50, status: 'In Stock'},
+  { id: 's7', name: 'Thermometer Probe Covers', category: 'Medical Consumables', stockLevel: 75, reorderPoint: 100, status: 'Low Stock'},
+];
