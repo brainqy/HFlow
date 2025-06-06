@@ -14,7 +14,7 @@ export default function AdminPortalLayout({
         <Navbar userType="admin" showSidebarToggle={true} />
         <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
           <AdminSidebar />
-          <SidebarInset className="px-6 py-4 overflow-y-auto">
+          <SidebarInset className="pl-4 pr-6 py-4 overflow-y-auto">
             {children}
           </SidebarInset>
         </div>

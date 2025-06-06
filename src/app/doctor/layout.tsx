@@ -14,7 +14,7 @@ export default function DoctorPortalLayout({
         <Navbar userType="doctor" showSidebarToggle={true} />
         <div className="flex flex-1 pt-16">
           <DoctorSidebar />
-          <SidebarInset className="px-6 py-4 overflow-y-auto">
+          <SidebarInset className="pl-4 pr-6 py-4 overflow-y-auto">
             {children}
           </SidebarInset>
         </div>
