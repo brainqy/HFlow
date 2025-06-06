@@ -17,7 +17,7 @@ export default function ReceptionistPortalLayout({
         <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
           <ReceptionistSidebar />
           <SidebarInset className="p-6 overflow-y-auto"> {/* SidebarInset is the <main> tag, now handles padding and scroll */}
-            <div className="hidden md:block mb-4">
+            <div className="hidden md:block"> {/* Removed mb-4 */}
               <SidebarTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <PanelLeft />
