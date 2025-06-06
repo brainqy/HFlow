@@ -23,12 +23,12 @@ import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
-
-export async function generateStaticParams() {
-  return placeholderDoctorPatients.map((patient) => ({
-    patientId: patient.id,
-  }));
-}
+// Removed generateStaticParams as it conflicts with "use client"
+// export async function generateStaticParams() {
+//   return placeholderDoctorPatients.map((patient) => ({
+//     patientId: patient.id,
+//   }));
+// }
 
 const getIconForMedicalRecordType = (type: string) => {
   switch (type.toLowerCase()) {
@@ -413,4 +413,3 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
     </div>
   );
 }
-
