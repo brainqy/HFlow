@@ -9,6 +9,7 @@ export interface Doctor {
   imageUrl: string;
   availability?: Record<string, string[]>; // e.g. { "Monday": ["9am-12pm", "2pm-5pm"] }
   dataAiHint?: string;
+  email?: string; // Added for admin user list
 }
 
 export interface Service {
@@ -88,6 +89,7 @@ export interface DoctorPatient {
   id: string;
   name: string;
   lastVisit: string;
+  email?: string; // Added for admin user list
 }
 
 export interface NursePatientQueueItem {
@@ -117,4 +119,13 @@ export interface SupplyItem {
   stockLevel: number;
   reorderPoint: number;
   status: 'In Stock' | 'Low Stock' | 'Critical' | 'Out of Stock';
+}
+
+// Could be useful for admin user list if more nurse details were stored
+export interface Nurse {
+    id: string;
+    name: string;
+    email: string;
+    department: string;
+    shift: string;
 }

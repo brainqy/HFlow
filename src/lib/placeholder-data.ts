@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby } from 'lucide-react';
 
 export const placeholderDoctors: Doctor[] = [
@@ -16,7 +16,8 @@ export const placeholderDoctors: Doctor[] = [
       Monday: ['9:00 AM - 12:00 PM', '2:00 PM - 5:00 PM'],
       Wednesday: ['9:00 AM - 1:00 PM'],
       Friday: ['2:00 PM - 5:00 PM'],
-    }
+    },
+    email: 'emily.carter@healthflow.clinic'
   },
   {
     id: 'james-lee',
@@ -30,7 +31,8 @@ export const placeholderDoctors: Doctor[] = [
      availability: {
       Tuesday: ['10:00 AM - 1:00 PM', '3:00 PM - 6:00 PM'],
       Thursday: ['9:00 AM - 12:00 PM'],
-    }
+    },
+    email: 'james.lee@healthflow.clinic'
   },
   {
     id: 'sarah-green',
@@ -45,7 +47,8 @@ export const placeholderDoctors: Doctor[] = [
       Monday: ['10:00 AM - 1:00 PM'],
       Wednesday: ['2:00 PM - 6:00 PM'],
       Thursday: ['1:00 PM - 4:00 PM'],
-    }
+    },
+    email: 'sarah.green@healthflow.clinic'
   },
 ];
 
@@ -119,10 +122,10 @@ export const placeholderDoctorAppointments: DoctorAppointment[] = [
 ];
 
 export const placeholderDoctorPatients: DoctorPatient[] = [
-  { id: 'dp1', name: 'Alice Wonderland', lastVisit: '2024-07-01' },
-  { id: 'dp2', name: 'Bob The Builder', lastVisit: '2023-12-10' },
-  { id: 'dp3', name: 'Charlie Brown', lastVisit: '2024-06-15' },
-  { id: 'dp4', name: 'Diana Prince', lastVisit: '2024-05-20' },
+  { id: 'dp1', name: 'Alice Wonderland', lastVisit: '2024-07-01', email: 'alice.wonderland@example.com' },
+  { id: 'dp2', name: 'Bob The Builder', lastVisit: '2023-12-10', email: 'bob.builder@example.com' },
+  { id: 'dp3', name: 'Charlie Brown', lastVisit: '2024-06-15', email: 'charlie.brown@example.com' },
+  { id: 'dp4', name: 'Diana Prince', lastVisit: '2024-05-20', email: 'diana.prince@example.com' },
 ];
 
 // Placeholder data for Nurse Dashboard
@@ -143,6 +146,11 @@ export const placeholderNurseSchedule: NurseShiftSchedule = {
   tomorrow: '12:00 PM - 08:00 PM',
   notes: 'Staff meeting at 3:30 PM today regarding new charting system.'
 };
+
+export const placeholderNurses: Nurse[] = [
+    { id: 'nurse-1', name: 'Nurse Alex Miller', email: 'alex.miller@healthflow.clinic', department: 'General Ward', shift: 'Day Shift (7 AM - 7 PM)' },
+    { id: 'nurse-2', name: 'Nurse Jordan Lee', email: 'jordan.lee@healthflow.clinic', department: 'Emergency', shift: 'Night Shift (7 PM - 7 AM)' },
+];
 
 export const placeholderSupplyItems: SupplyItem[] = [
   { id: 's1', name: '10cc Syringes', category: 'Medical Consumables', stockLevel: 50, reorderPoint: 20, status: 'In Stock' },

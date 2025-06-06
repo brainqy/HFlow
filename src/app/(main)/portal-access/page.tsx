@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { User, UserCog, BriefcaseMedical, ArrowRight } from 'lucide-react';
+import { User, UserCog, BriefcaseMedical, ShieldAlert, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 
 const portalOptions = [
@@ -27,6 +27,13 @@ const portalOptions = [
     icon: BriefcaseMedical,
     imageHint: 'nurse workflow digital',
   },
+  {
+    title: 'Admin Portal',
+    description: 'Manage users, system settings, and view site analytics.',
+    href: '/admin-login',
+    icon: ShieldAlert,
+    imageHint: 'admin panel secure',
+  },
 ];
 
 export default function PortalAccessPage() {
@@ -41,11 +48,10 @@ export default function PortalAccessPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {portalOptions.map((option) => (
           <Card key={option.title} className="flex flex-col overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <div className="relative h-52 w-full bg-primary/10 flex items-center justify-center">
-              {/* Placeholder for a more illustrative image or keep icon prominent */}
                <Image 
                 src={`https://placehold.co/600x300.png`} 
                 alt={`${option.title} Illustration`}
@@ -57,7 +63,7 @@ export default function PortalAccessPage() {
               <option.icon className="absolute h-16 w-16 text-primary opacity-30" />
             </div>
             <CardHeader>
-              <CardTitle className="font-headline text-2xl flex items-center gap-2">
+              <CardTitle className="font-headline text-xl flex items-center gap-2">
                 <option.icon className="h-6 w-6 text-primary" />
                 {option.title}
               </CardTitle>
@@ -83,7 +89,7 @@ export default function PortalAccessPage() {
           New to HealthFlow? <Link href="/register" className="text-primary hover:underline">Create a patient account</Link>.
         </p>
         <p className="text-sm text-muted-foreground mt-2">
-          For staff account creation, please contact administration.
+          For staff or admin account creation, please contact administration.
         </p>
       </div>
     </div>

@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn } from 'lucide-react';
+import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert } from 'lucide-react';
 
 const mainNavItems = [
   { href: '/', label: 'Home' },
@@ -13,11 +13,19 @@ const mainNavItems = [
   { href: '/appointments', label: 'Book Appointment' },
 ];
 
-export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' | 'nurse' }) {
+export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' | 'nurse' | 'admin' }) {
   let dashboardLink = '';
+  let dashboardIcon = LayoutDashboard;
+
   if (userType === 'patient') dashboardLink = '/portal/dashboard';
   else if (userType === 'doctor') dashboardLink = '/doctor/dashboard';
   else if (userType === 'nurse') dashboardLink = '/nurse/dashboard';
+  else if (userType === 'admin') {
+    dashboardLink = '/admin/dashboard';
+    dashboardIcon = ShieldAlert; // Or a more admin-specific icon
+  }
+  const DashboardIconComponent = dashboardIcon;
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
@@ -38,7 +46,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
             <>
               <Button variant="outline" size="sm" asChild className="ml-2">
                 <Link href={dashboardLink} className="flex items-center gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
+                  <DashboardIconComponent className="h-4 w-4" />
                   My Dashboard
                 </Link>
               </Button>
@@ -89,7 +97,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
                     <>
                       <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
                         <Link href={dashboardLink} className="flex items-center gap-3">
-                          <LayoutDashboard className="h-5 w-5" />
+                          <DashboardIconComponent className="h-5 w-5" />
                           My Dashboard
                         </Link>
                       </Button>
