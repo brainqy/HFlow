@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck } from 'lucide-react';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const mainNavItems = [
   { href: '/', label: 'Home' },
@@ -13,7 +14,7 @@ const mainNavItems = [
   { href: '/appointments', label: 'Book Appointment' },
 ];
 
-export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist' }) {
+export default function Navbar({ userType, showSidebarToggle }: { userType?: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist', showSidebarToggle?: boolean }) {
   let dashboardLink = '/';
   let DashboardIconComponent = LayoutDashboard;
   let portalName = '';
@@ -36,17 +37,24 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
     portalName = 'Admin Portal';
   } else if (userType === 'receptionist') {
     dashboardLink = '/receptionist/dashboard';
-    DashboardIconComponent = CalendarCheck; // Using CalendarCheck for receptionist
+    DashboardIconComponent = CalendarCheck; 
     portalName = 'Receptionist Portal';
   }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href={dashboardLink} className="flex items-center gap-2">
-          <Stethoscope className="h-7 w-7 text-primary" />
-          <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
-        </Link>
+        <div className="flex items-center">
+          {userType && showSidebarToggle && (
+            <div className="mr-2 hidden md:block">
+              <SidebarTrigger />
+            </div>
+          )}
+          <Link href={dashboardLink} className="flex items-center gap-2">
+            <Stethoscope className="h-7 w-7 text-primary" />
+            <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
+          </Link>
+        </div>
 
         <nav className="hidden items-center gap-1 md:flex">
           {!userType && mainNavItems.map((item) => (
@@ -93,10 +101,10 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-4 text-lg font-medium mt-8">
-                <Link href={dashboardLink} className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-4">
                   <Stethoscope className="h-7 w-7 text-primary" />
                   <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
-                </Link>
+                </div>
                 {!userType && mainNavItems.map((item) => (
                   <Link
                     key={item.label}
