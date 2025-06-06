@@ -54,7 +54,7 @@ export interface Appointment {
   date: string; 
   time: string; 
   reason: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
 }
 
 export interface MedicalRecordItem {
@@ -79,9 +79,12 @@ export interface Medication {
 export interface DoctorAppointment {
   id: string;
   patientName: string;
+  doctorName: string; // Added to associate appointment with a doctor for filtering
+  doctorId: string; // Added to associate appointment with a doctor for filtering
   time: string;
   reason: string;
   date: string; 
+  status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
 }
 
 export interface DoctorPatient {
@@ -89,7 +92,7 @@ export interface DoctorPatient {
   name: string;
   lastVisit: string;
   email?: string; 
-  phone?: string; // Added phone field
+  phone?: string; 
 }
 
 export interface NursePatientQueueItem {
@@ -134,4 +137,17 @@ export interface Receptionist {
     name: string;
     email: string;
     employeeId: string;
+}
+
+// Combined user type for Admin user management
+export type UserRole = 'Patient' | 'Doctor' | 'Nurse' | 'Receptionist' | 'Admin';
+
+export interface ManagedUser {
+  id: string;
+  name: string;
+  role: UserRole;
+  email: string; // Made email mandatory for managed users
+  status: 'Active' | 'Inactive'; 
+  lastLogin?: string; 
+  password?: string; // Only for creation, not typically stored/displayed
 }

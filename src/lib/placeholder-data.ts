@@ -114,12 +114,14 @@ export const placeholderMedications: Medication[] = [
 ];
 
 export const placeholderDoctorAppointments: DoctorAppointment[] = [
-  { id: 'da1', patientName: 'Alice Wonderland', date: '2024-08-15', time: '10:00 AM', reason: 'Follow-up for hypertension' },
-  { id: 'da2', patientName: 'Bob The Builder', date: new Date().toISOString().split('T')[0], time: '11:30 AM', reason: 'Annual physical' },
-  { id: 'da3', patientName: 'Charlie Brown', date: '2024-08-16', time: '02:00 PM', reason: 'Migraine consultation' },
-  { id: 'da4', patientName: 'Diana Prince', date: new Date().toISOString().split('T')[0], time: '03:00 PM', reason: 'Medication review' },
-  { id: 'da5', patientName: 'Edward Scissorhands', date: '2024-08-17', time: '09:00 AM', reason: 'Check-up' },
-  { id: 'da6', patientName: 'Fiona Gallagher', date: '2024-08-17', time: '10:30 AM', reason: 'Lab results review' },
+  { id: 'da1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: '2024-08-15', time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Scheduled' },
+  { id: 'da2', patientName: 'Bob The Builder', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date().toISOString().split('T')[0], time: '11:30 AM', reason: 'Annual physical', status: 'Scheduled' },
+  { id: 'da3', patientName: 'Charlie Brown', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-08-16', time: '02:00 PM', reason: 'Migraine consultation', status: 'Pending Confirmation' },
+  { id: 'da4', patientName: 'Diana Prince', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date().toISOString().split('T')[0], time: '03:00 PM', reason: 'Medication review', status: 'Scheduled' },
+  { id: 'da5', patientName: 'Edward Scissorhands', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: '2024-08-17', time: '09:00 AM', reason: 'Check-up', status: 'Cancelled' },
+  { id: 'da6', patientName: 'Fiona Gallagher', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-08-17', time: '10:30 AM', reason: 'Lab results review', status: 'Completed' },
+  { id: 'da7', patientName: 'Garry Poter', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0], time: '09:00 AM', reason: 'Consultation', status: 'Scheduled' },
+  { id: 'da8', patientName: 'Hermione Granger', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0], time: '10:00 AM', reason: 'Neurological exam', status: 'Scheduled' },
 ];
 
 export const placeholderDoctorPatients: DoctorPatient[] = [
@@ -129,6 +131,8 @@ export const placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp4', name: 'Diana Prince', lastVisit: '2024-05-20', email: 'diana.prince@example.com', phone: '555-0104' },
   { id: 'dp5', name: 'Edward Scissorhands', lastVisit: '2024-07-22', email: 'edward.s@example.com', phone: '555-0105' },
   { id: 'dp6', name: 'Fiona Gallagher', lastVisit: '2024-08-01', email: 'fiona.g@example.com', phone: '555-0106' },
+  { id: 'dp7', name: 'Garry Poter', lastVisit: '2024-07-11', email: 'garry.poter@example.com', phone: '555-0107' },
+  { id: 'dp8', name: 'Hermione Granger', lastVisit: '2024-06-20', email: 'hermione.granger@example.com', phone: '555-0108' },
 ];
 
 export const placeholderNursePatientQueue: NursePatientQueueItem[] = [
@@ -167,4 +171,10 @@ export const placeholderSupplyItems: SupplyItem[] = [
   { id: 's5', name: 'Saline Solution (500ml)', category: 'IV Fluids', stockLevel: 10, reorderPoint: 5, status: 'Critical' },
   { id: 's6', name: 'Band-Aids (Assorted)', category: 'Wound Care', stockLevel: 150, reorderPoint: 50, status: 'In Stock'},
   { id: 's7', name: 'Thermometer Probe Covers', category: 'Medical Consumables', stockLevel: 75, reorderPoint: 100, status: 'Low Stock'},
+];
+
+// Combined list of appointments for Receptionist view
+export const allClinicAppointments: DoctorAppointment[] = [
+  ...placeholderDoctorAppointments,
+  // You could add more appointments here if needed, or create a more diverse set
 ];
