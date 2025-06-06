@@ -66,7 +66,7 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
           {userType ? (
             <>
               <span className="text-sm font-medium text-muted-foreground mr-4">{portalName}</span>
-              <Button variant="outline" size="sm" asChild className="ml-2">
+              <Button variant="ghost" size="sm" asChild className="ml-2">
                 <Link href={dashboardLink} className="flex items-center gap-2">
                   <DashboardIconComponent className="h-4 w-4" />
                   My Dashboard
