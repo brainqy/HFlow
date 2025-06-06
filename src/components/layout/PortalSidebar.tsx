@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, FileText, Pill, LogOut, Stethoscope, PanelLeft, UserCircle } from 'lucide-react';
+import { LayoutDashboard, FileText, Pill, LogOut, Stethoscope, UserCircle } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarHeader, 
@@ -29,9 +29,6 @@ export default function PortalSidebar() {
   return (
     <Sidebar collapsible={state === 'expanded' ? "icon" : "offcanvas"}>
       <SidebarHeader>
-        <Button variant="ghost" size="icon" className="md:hidden" asChild>
-          <Link href="#"><PanelLeft /></Link>
-        </Button>
          <div className="flex items-center gap-2">
           <UserCircle className="h-7 w-7 text-primary" />
           {state === 'expanded' && <h2 className="text-lg font-semibold tracking-tight font-headline text-primary">Patient Portal</h2>}

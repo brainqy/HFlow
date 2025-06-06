@@ -10,7 +10,6 @@ import {
   Users, 
   Settings, 
   LogOut, 
-  PanelLeft,
   CalendarCheck
 } from 'lucide-react';
 import { 
@@ -39,9 +38,6 @@ export default function ReceptionistSidebar() {
   return (
     <Sidebar collapsible={state === 'expanded' ? "icon" : "offcanvas"}>
       <SidebarHeader>
-        <Button variant="ghost" size="icon" className="md:hidden" asChild>
-          <Link href="#"><PanelLeft /></Link>
-        </Button>
         <div className="flex items-center gap-2">
           <CalendarCheck className="h-7 w-7 text-primary" /> {/* Icon for Receptionist Portal */}
           {state === 'expanded' && <h2 className="text-lg font-semibold tracking-tight font-headline text-primary">Receptionist Portal</h2>}

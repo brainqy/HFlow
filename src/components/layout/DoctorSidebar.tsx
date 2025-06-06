@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, CalendarCheck, Settings, LogOut, UserCog, PanelLeft } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, Settings, LogOut, UserCog } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarHeader, 
@@ -30,9 +30,6 @@ export default function DoctorSidebar() {
   return (
     <Sidebar collapsible={state === 'expanded' ? "icon" : "offcanvas"}>
       <SidebarHeader>
-        <Button variant="ghost" size="icon" className="md:hidden" asChild>
-          <Link href="#"><PanelLeft /></Link>
-        </Button>
         <div className="flex items-center gap-2">
           <UserCog className="h-7 w-7 text-primary" />
           {state === 'expanded' && <h2 className="text-lg font-semibold tracking-tight font-headline text-primary">Doctor Portal</h2>}
