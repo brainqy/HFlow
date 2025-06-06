@@ -5,6 +5,7 @@ import { placeholderDoctorAppointments, placeholderDoctorPatients } from '@/lib/
 import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Badge } from '@/components/ui/badge';
 
 export default function DoctorDashboardPage() {
   const doctorName = "Dr. Eleanor Vance"; // Placeholder
