@@ -16,13 +16,23 @@ const mainNavItems = [
 export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' | 'nurse' | 'admin' }) {
   let dashboardLink = '';
   let dashboardIcon = LayoutDashboard;
+  let portalName = '';
 
-  if (userType === 'patient') dashboardLink = '/portal/dashboard';
-  else if (userType === 'doctor') dashboardLink = '/doctor/dashboard';
-  else if (userType === 'nurse') dashboardLink = '/nurse/dashboard';
-  else if (userType === 'admin') {
+  if (userType === 'patient') {
+    dashboardLink = '/portal/dashboard';
+    portalName = 'Patient Portal';
+  } else if (userType === 'doctor') {
+    dashboardLink = '/doctor/dashboard';
+    dashboardIcon = UserCog;
+    portalName = 'Doctor Portal';
+  } else if (userType === 'nurse') {
+    dashboardLink = '/nurse/dashboard';
+    dashboardIcon = BriefcaseMedical;
+    portalName = 'Nurse Portal';
+  } else if (userType === 'admin') {
     dashboardLink = '/admin/dashboard';
-    dashboardIcon = ShieldAlert; // Or a more admin-specific icon
+    dashboardIcon = ShieldAlert;
+    portalName = 'Admin Portal';
   }
   const DashboardIconComponent = dashboardIcon;
 
@@ -30,13 +40,13 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href={userType ? dashboardLink : "/"} className="flex items-center gap-2">
           <Stethoscope className="h-7 w-7 text-primary" />
           <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          {mainNavItems.map((item) => (
+          {!userType && mainNavItems.map((item) => (
             <Button key={item.label} variant="ghost" asChild className="text-foreground/80 hover:text-primary px-3">
               <Link href={item.href}>{item.label}</Link>
             </Button>
@@ -44,6 +54,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
 
           {userType ? (
             <>
+              <span className="text-sm font-medium text-muted-foreground mr-4">{portalName}</span>
               <Button variant="outline" size="sm" asChild className="ml-2">
                 <Link href={dashboardLink} className="flex items-center gap-2">
                   <DashboardIconComponent className="h-4 w-4" />
@@ -79,11 +90,11 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-4 text-lg font-medium mt-8">
-                <Link href="/" className="flex items-center gap-2 mb-4">
+                <Link href={userType ? dashboardLink : "/"} className="flex items-center gap-2 mb-4">
                   <Stethoscope className="h-7 w-7 text-primary" />
                   <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
                 </Link>
-                {mainNavItems.map((item) => (
+                {!userType && mainNavItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
@@ -95,6 +106,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
                 <div className="mt-4 border-t pt-4 space-y-2">
                   {userType ? (
                     <>
+                     <span className="block text-sm font-medium text-muted-foreground px-1 py-2">{portalName}</span>
                       <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
                         <Link href={dashboardLink} className="flex items-center gap-3">
                           <DashboardIconComponent className="h-5 w-5" />
