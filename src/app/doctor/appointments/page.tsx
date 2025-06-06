@@ -1,13 +1,52 @@
 
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { placeholderDoctorAppointments } from '@/lib/placeholder-data';
-import { CalendarCheck, Eye } from 'lucide-react';
+import { placeholderDoctorAppointments as initialAppointments } from '@/lib/placeholder-data';
+import type { DoctorAppointment } from '@/types';
+import { CalendarCheck, Eye, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge'; // Added Badge for potential status display
+import { Badge } from '@/components/ui/badge';
+import { useToast } from "@/hooks/use-toast";
 
 export default function DoctorAppointmentsPage() {
+  const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
+  const { toast } = useToast();
+
+  const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
+    switch (status) {
+      case 'Scheduled': return 'default'; // Primary color
+      case 'Checked-in': return 'secondary'; // A distinct color, maybe blueish or yellowish
+      case 'Completed': return 'outline'; // Greenish often implies success/completion
+      case 'Cancelled': return 'destructive';
+      case 'Pending Confirmation': return 'outline'; // A neutral/pending color
+      default: return 'outline';
+    }
+  };
+  
+  const getStatusBadgeClassName = (status: DoctorAppointment['status']) => {
+    if (status === 'Completed') return 'border-green-500 text-green-600 bg-green-500/10';
+    if (status === 'Checked-in') return 'border-yellow-500 text-yellow-600 bg-yellow-500/10';
+    return '';
+  }
+
+  const handleMarkAsCompleted = (appointmentId: string) => {
+    setAppointments(prevAppointments =>
+      prevAppointments.map(appt =>
+        appt.id === appointmentId ? { ...appt, status: 'Completed' as const } : appt
+      )
+    );
+    const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
+    toast({
+      title: "Appointment Completed",
+      description: `Appointment with ${patientName || 'Patient'} marked as completed.`,
+    });
+  };
+
+
   return (
     <div className="space-y-8">
       <header>
@@ -27,7 +66,7 @@ export default function DoctorAppointmentsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {placeholderDoctorAppointments.length > 0 ? (
+          {appointments.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -40,23 +79,33 @@ export default function DoctorAppointmentsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {placeholderDoctorAppointments.map((appointment) => (
+                {appointments.map((appointment) => (
                   <TableRow key={appointment.id}>
                     <TableCell className="font-medium">{appointment.patientName}</TableCell>
                     <TableCell>{new Date(appointment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</TableCell>
                     <TableCell>{appointment.time}</TableCell>
                     <TableCell>{appointment.reason}</TableCell>
                     <TableCell>
-                      {/* Placeholder Status - can be expanded later */}
-                      <Badge variant={new Date(appointment.date) < new Date() ? "outline" : "default"}>
-                        {new Date(appointment.date) < new Date() ? "Completed" : "Upcoming"}
+                      <Badge 
+                        variant={getStatusBadgeVariant(appointment.status)}
+                        className={getStatusBadgeClassName(appointment.status)}
+                      >
+                        {appointment.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="outline" size="sm" asChild>
-                        {/* Link to patient chart (assuming patientId is available or can be derived) */}
-                        {/* For now, this is a placeholder as appointment data doesn't directly link to patientId for chart */}
-                        <Link href="#" className="flex items-center gap-1 opacity-50 cursor-not-allowed">
+                    <TableCell className="text-right space-x-2">
+                      {(appointment.status === 'Scheduled' || appointment.status === 'Checked-in') && (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleMarkAsCompleted(appointment.id)}
+                          className="border-green-500 text-green-600 hover:bg-green-500/10 hover:text-green-700"
+                        >
+                          <CheckCircle className="mr-1 h-4 w-4" /> Mark Completed
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm" asChild className="opacity-50 cursor-not-allowed">
+                        <Link href="#" className="flex items-center gap-1">
                           <Eye className="h-4 w-4" /> View Chart
                         </Link>
                       </Button>
