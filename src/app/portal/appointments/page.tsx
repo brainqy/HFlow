@@ -10,6 +10,7 @@ import type { DoctorAppointment } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function PatientAppointmentsPage() {
   // In a real app, you'd fetch this based on the logged-in user.
@@ -21,12 +22,16 @@ export default function PatientAppointmentsPage() {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time));
   }, [patientName]);
 
-  const upcomingAppointments = patientAppointments
-    .filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0)) && appt.status !== 'Cancelled' && appt.status !== 'Completed')
-    .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time));
+  const upcomingAppointments = useMemo(() => {
+    return patientAppointments
+      .filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0)) && appt.status !== 'Cancelled' && appt.status !== 'Completed')
+      .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time));
+  }, [patientAppointments]);
 
-  const pastAppointments = patientAppointments
-    .filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0)) || appt.status === 'Cancelled' || appt.status === 'Completed');
+  const pastAppointments = useMemo(() => {
+    return patientAppointments
+      .filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0)) || appt.status === 'Cancelled' || appt.status === 'Completed');
+  }, [patientAppointments]);
 
   const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
     switch (status) {
@@ -96,6 +101,23 @@ export default function PatientAppointmentsPage() {
     );
   };
 
+  const renderAppointmentGrid = (appointments: DoctorAppointment[], emptyMessage: string) => {
+    if (appointments.length === 0) {
+      return (
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-muted-foreground text-center">{emptyMessage}</p>
+          </CardContent>
+        </Card>
+      );
+    }
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {appointments.map(appt => <AppointmentCard key={appt.id} appointment={appt} />)}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -112,35 +134,22 @@ export default function PatientAppointmentsPage() {
         </Button>
       </header>
 
-      <section>
-        <h2 className="font-headline text-2xl font-semibold text-foreground mb-6">Upcoming Appointments</h2>
-        {upcomingAppointments.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingAppointments.map(appt => <AppointmentCard key={appt.id} appointment={appt} />)}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-muted-foreground text-center">You have no upcoming appointments scheduled.</p>
-            </CardContent>
-          </Card>
-        )}
-      </section>
-
-      <section className="pt-8 border-t">
-        <h2 className="font-headline text-2xl font-semibold text-foreground mb-6">Past Appointments</h2>
-        {pastAppointments.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pastAppointments.map(appt => <AppointmentCard key={appt.id} appointment={appt} />)}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="pt-6">
-              <p className="text-muted-foreground text-center">You have no past appointment records.</p>
-            </CardContent>
-          </Card>
-        )}
-      </section>
+      <Tabs defaultValue="upcoming" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+          <TabsTrigger value="all">All Appointments</TabsTrigger>
+          <TabsTrigger value="past">Past</TabsTrigger>
+        </TabsList>
+        <TabsContent value="upcoming">
+          {renderAppointmentGrid(upcomingAppointments, "You have no upcoming appointments scheduled.")}
+        </TabsContent>
+        <TabsContent value="all">
+           {renderAppointmentGrid(patientAppointments, "You have no appointments scheduled.")}
+        </TabsContent>
+        <TabsContent value="past">
+          {renderAppointmentGrid(pastAppointments, "You have no past appointment records.")}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
