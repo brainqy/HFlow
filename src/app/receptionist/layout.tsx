@@ -16,17 +16,15 @@ export default function ReceptionistPortalLayout({
         <Navbar userType="receptionist" />
         <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
           <ReceptionistSidebar />
-          <SidebarInset className="p-0">
-            <main className="flex-1 p-6">
-              <div className="hidden md:block mb-4">
-                <SidebarTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <PanelLeft />
-                  </Button>
-                </SidebarTrigger>
-              </div>
-              {children}
-            </main>
+          <SidebarInset className="p-6 overflow-y-auto"> {/* SidebarInset is the <main> tag, now handles padding and scroll */}
+            <div className="hidden md:block mb-4">
+              <SidebarTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <PanelLeft />
+                </Button>
+              </SidebarTrigger>
+            </div>
+            {children}
           </SidebarInset>
         </div>
       </div>

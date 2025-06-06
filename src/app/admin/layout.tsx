@@ -16,20 +16,15 @@ export default function AdminPortalLayout({
         <Navbar userType="admin" />
         <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
           <AdminSidebar />
-          <SidebarInset className="p-0"> {/* Remove default padding from SidebarInset if Navbar handles it */}
-            <main className="flex-1 p-6">
-              <div className="mb-4 md:hidden"> {/* Mobile trigger, if needed outside Sidebar component itself */}
-                 {/* The Sidebar component from ui/sidebar now handles its own mobile sheet trigger if configured as such */}
-              </div>
-               <div className="hidden md:block mb-4"> {/* Desktop trigger */}
-                <SidebarTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <PanelLeft />
-                  </Button>
-                </SidebarTrigger>
-              </div>
-              {children}
-            </main>
+          <SidebarInset className="p-6 overflow-y-auto"> {/* SidebarInset is the <main> tag, now handles padding and scroll */}
+            <div className="hidden md:block mb-4"> {/* Desktop trigger */}
+              <SidebarTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <PanelLeft />
+                </Button>
+              </SidebarTrigger>
+            </div>
+            {children}
           </SidebarInset>
         </div>
       </div>
