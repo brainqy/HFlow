@@ -47,20 +47,34 @@ export default function DoctorPatientsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {placeholderDoctorPatients.map((patient) => (
-                  <TableRow key={patient.id}>
-                    <TableCell className="font-medium">{patient.name}</TableCell>
-                    <TableCell>{new Date(patient.lastVisit).toLocaleDateString()}</TableCell>
-                    <TableCell>{getNextAppointmentDate(patient.name)}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/doctor/patients/${patient.id}/chart`} className="flex items-center gap-1">
-                          <Eye className="h-4 w-4" /> View Chart
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {placeholderDoctorPatients.map((patient) => {
+                  const nextAppointmentDate = getNextAppointmentDate(patient.name);
+                  return (
+                    <TableRow key={patient.id}>
+                      <TableCell className="font-medium">{patient.name}</TableCell>
+                      <TableCell>{new Date(patient.lastVisit).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        {nextAppointmentDate !== "N/A" ? (
+                          <Link 
+                            href={`/doctor/appointments?patientName=${encodeURIComponent(patient.name)}`} 
+                            className="text-primary hover:underline"
+                          >
+                            {nextAppointmentDate}
+                          </Link>
+                        ) : (
+                          nextAppointmentDate
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/doctor/patients/${patient.id}/chart`} className="flex items-center gap-1">
+                            <Eye className="h-4 w-4" /> View Chart
+                          </Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           ) : (

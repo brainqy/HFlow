@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
+import { useSearchParams } from 'next/navigation';
 
 const appointmentStatuses = ['Scheduled', 'Checked-in', 'Completed', 'Cancelled', 'Pending Confirmation'] as const;
 
@@ -24,6 +25,14 @@ export default function DoctorAppointmentsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const patientQuery = searchParams.get('patientName');
+    if (patientQuery) {
+      setSearchTerm(decodeURIComponent(patientQuery));
+    }
+  }, [searchParams]);
 
   const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
     switch (status) {
