@@ -1,13 +1,19 @@
 
+"use client";
+
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { placeholderDoctorPatients, allClinicAppointments } from '@/lib/placeholder-data';
-import { Users, Eye, CalendarDays } from 'lucide-react';
+import type { DoctorPatient } from '@/types';
+import { Users, Eye, CalendarDays, Search } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { Input } from '@/components/ui/input';
 
 export default function DoctorPatientsPage() {
+  const [searchTerm, setSearchTerm] = useState('');
 
   const getNextAppointmentDate = (patientName: string) => {
     const upcomingAppointments = allClinicAppointments
@@ -16,6 +22,18 @@ export default function DoctorPatientsPage() {
     
     return upcomingAppointments.length > 0 ? format(new Date(upcomingAppointments[0].date), "MMM d, yyyy") : "N/A";
   };
+
+  const filteredPatients = useMemo(() => {
+    if (!searchTerm) {
+      return placeholderDoctorPatients;
+    }
+    const lowercasedFilter = searchTerm.toLowerCase();
+    return placeholderDoctorPatients.filter((patient) =>
+      patient.name.toLowerCase().includes(lowercasedFilter) ||
+      (patient.email && patient.email.toLowerCase().includes(lowercasedFilter)) ||
+      (patient.phone && patient.phone.includes(lowercasedFilter))
+    );
+  }, [searchTerm]);
 
   return (
     <div className="space-y-8">
@@ -30,28 +48,45 @@ export default function DoctorPatientsPage() {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="font-headline text-xl">Patient List</CardTitle>
-          <CardDescription>
-            A list of your currently active patients.
-          </CardDescription>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <CardTitle className="font-headline text-xl">Patient List</CardTitle>
+              <CardDescription>
+                A list of your currently active patients.
+              </CardDescription>
+            </div>
+            <div className="relative w-full sm:max-w-md">
+              <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, email, or phone..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          {placeholderDoctorPatients.length > 0 ? (
+          {filteredPatients.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Patient Name</TableHead>
+                  <TableHead className="hidden md:table-cell">Email</TableHead>
+                  <TableHead className="hidden sm:table-cell">Phone</TableHead>
                   <TableHead>Last Visit</TableHead>
                   <TableHead className="flex items-center gap-1"><CalendarDays className="h-4 w-4" />Next Appointment</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {placeholderDoctorPatients.map((patient) => {
+                {filteredPatients.map((patient) => {
                   const nextAppointmentDate = getNextAppointmentDate(patient.name);
                   return (
                     <TableRow key={patient.id}>
                       <TableCell className="font-medium">{patient.name}</TableCell>
+                      <TableCell className="hidden md:table-cell">{patient.email || 'N/A'}</TableCell>
+                      <TableCell className="hidden sm:table-cell">{patient.phone || 'N/A'}</TableCell>
                       <TableCell>{new Date(patient.lastVisit).toLocaleDateString()}</TableCell>
                       <TableCell>
                         {nextAppointmentDate !== "N/A" ? (
@@ -78,7 +113,7 @@ export default function DoctorPatientsPage() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-muted-foreground text-center py-4">You have no active patients assigned.</p>
+            <p className="text-muted-foreground text-center py-4">No patients found matching your criteria.</p>
           )}
         </CardContent>
       </Card>
