@@ -5,6 +5,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
+import Link from "next/link" // Added Link import
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -537,64 +538,88 @@ const sidebarMenuButtonVariants = cva(
   }
 )
 
+interface SidebarMenuButtonProps
+  extends Omit<React.ComponentPropsWithoutRef<"button">, "href" | "icon" | "children" >, // Omit conflicting/redefined props
+    VariantProps<typeof sidebarMenuButtonVariants> {
+  asChild?: boolean; // For TooltipTrigger
+  isActive?: boolean;
+  tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+  href?: string; // Navigation link
+  icon?: React.ReactNode; // Icon element
+  children?: React.ReactNode; // Label text
+}
+
 const SidebarMenuButton = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<"button"> & {
-    asChild?: boolean
-    isActive?: boolean
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>
-  } & VariantProps<typeof sidebarMenuButtonVariants>
+  HTMLAnchorElement | HTMLButtonElement, // Can be an anchor or button
+  SidebarMenuButtonProps
 >(
   (
     {
-      asChild = false,
+      asChild = false, // This asChild is for the TooltipTrigger
       isActive = false,
       variant = "default",
       size = "default",
       tooltip,
       className,
-      ...props
+      children, // This is the label
+      href,
+      icon,
+      ...restProps // Capture other valid HTML attributes
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : "button"
-    const { isMobile, state } = useSidebar()
+    const { isMobile, state } = useSidebar();
 
-    const button = (
-      <Comp
-        ref={ref}
-        data-sidebar="menu-button"
-        data-size={size}
-        data-active={isActive}
-        className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
-        {...props}
-      />
-    )
+    const content = (
+      <>
+        {icon}
+        {(state === "expanded" || isMobile) && <span className="truncate">{children}</span>}
+      </>
+    );
+    
+    const commonAttributes = {
+      "data-sidebar": "menu-button",
+      "data-size": size,
+      "data-active": isActive,
+      className: cn(sidebarMenuButtonVariants({ variant, size, className })),
+    };
 
-    if (!tooltip) {
-      return button
+    // Conditionally render Link or button
+    const element = href ? (
+      <Link href={href} passHref legacyBehavior>
+        <a ref={ref as React.Ref<HTMLAnchorElement>} {...commonAttributes} {...(restProps as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
+          {content}
+        </a>
+      </Link>
+    ) : (
+      <button ref={ref as React.Ref<HTMLButtonElement>} {...commonAttributes} {...(restProps as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
+        {content}
+      </button>
+    );
+
+    // Wrap with Tooltip if tooltip prop is provided
+    if (tooltip) {
+      const tooltipProps = typeof tooltip === "string" ? { children: tooltip } : tooltip;
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild={true}>
+            {element}
+          </TooltipTrigger>
+          <TooltipContent
+            side="right"
+            align="center"
+            hidden={state !== "collapsed" || isMobile} // Show tooltip only when collapsed and not on mobile
+            {...tooltipProps}
+          />
+        </Tooltip>
+      );
     }
 
-    if (typeof tooltip === "string") {
-      tooltip = {
-        children: tooltip,
-      }
-    }
-
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent
-          side="right"
-          align="center"
-          hidden={state !== "collapsed" || isMobile}
-          {...tooltip}
-        />
-      </Tooltip>
-    )
+    return element;
   }
-)
-SidebarMenuButton.displayName = "SidebarMenuButton"
+);
+SidebarMenuButton.displayName = "SidebarMenuButton";
+
 
 const SidebarMenuAction = React.forwardRef<
   HTMLButtonElement,
