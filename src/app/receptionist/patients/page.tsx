@@ -19,7 +19,8 @@ export default function ReceptionistPatientDirectoryPage() {
     }
     return placeholderDoctorPatients.filter(patient => 
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (patient.email && patient.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      (patient.email && patient.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (patient.phone && patient.phone.includes(searchTerm))
     );
   }, [searchTerm]);
 
@@ -48,7 +49,7 @@ export default function ReceptionistPatientDirectoryPage() {
                 <div className="relative flex-grow">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input 
-                        placeholder="Search by name or email..." 
+                        placeholder="Search by name, email, or phone..." 
                         className="pl-8 w-full"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -62,6 +63,7 @@ export default function ReceptionistPatientDirectoryPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
+                  <TableHead className="hidden sm:table-cell">Phone</TableHead>
                   <TableHead className="hidden md:table-cell">Email</TableHead>
                   <TableHead>Last Visit</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -71,6 +73,7 @@ export default function ReceptionistPatientDirectoryPage() {
                 {filteredPatients.map((patient) => (
                   <TableRow key={patient.id}>
                     <TableCell className="font-medium">{patient.name}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{patient.phone || 'N/A'}</TableCell>
                     <TableCell className="hidden md:table-cell">{patient.email || 'N/A'}</TableCell>
                     <TableCell>{new Date(patient.lastVisit).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right space-x-1">

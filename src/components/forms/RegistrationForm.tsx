@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -202,6 +203,9 @@ export function RegistrationForm() {
                 <FormControl>
                   <Input type="tel" placeholder="(123) 456-7890" {...field} />
                 </FormControl>
+                <FormDescription>
+                  This may be used as a primary contact or identifier.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

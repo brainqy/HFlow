@@ -33,7 +33,6 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
   const patientDetails = {
     dob: "January 1, 1980 (Placeholder)", // Placeholder
     gender: "Female (Placeholder)", // Placeholder
-    phone: `(555) 123-${Math.floor(Math.random() * 9000) + 1000} (Placeholder)`,
     address: `${Math.floor(Math.random() * 900) + 100} Main St, Anytown, CA 90210 (Placeholder)`, // Placeholder
     insuranceProvider: "MediCare Plus (Placeholder)", // Placeholder
     insurancePolicyNumber: `XYZ${Math.floor(Math.random() * 900000) + 100000} (Placeholder)`, // Placeholder
@@ -77,7 +76,7 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
                     <CardTitle className="font-headline text-xl">Contact Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                    <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /> <strong>Phone:</strong> {patientDetails.phone}</p>
+                    <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /> <strong>Phone:</strong> {patient.phone || patientDetails.phone}</p>
                     <p className="flex items-center gap-2"><Home className="h-4 w-4 text-muted-foreground" /> <strong>Address:</strong> {patientDetails.address}</p>
                 </CardContent>
             </Card>

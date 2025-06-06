@@ -123,12 +123,12 @@ export const placeholderDoctorAppointments: DoctorAppointment[] = [
 ];
 
 export const placeholderDoctorPatients: DoctorPatient[] = [
-  { id: 'dp1', name: 'Alice Wonderland', lastVisit: '2024-07-01', email: 'alice.wonderland@example.com' },
-  { id: 'dp2', name: 'Bob The Builder', lastVisit: '2023-12-10', email: 'bob.builder@example.com' },
-  { id: 'dp3', name: 'Charlie Brown', lastVisit: '2024-06-15', email: 'charlie.brown@example.com' },
-  { id: 'dp4', name: 'Diana Prince', lastVisit: '2024-05-20', email: 'diana.prince@example.com' },
-  { id: 'dp5', name: 'Edward Scissorhands', lastVisit: '2024-07-22', email: 'edward.s@example.com' },
-  { id: 'dp6', name: 'Fiona Gallagher', lastVisit: '2024-08-01', email: 'fiona.g@example.com' },
+  { id: 'dp1', name: 'Alice Wonderland', lastVisit: '2024-07-01', email: 'alice.wonderland@example.com', phone: '555-0101' },
+  { id: 'dp2', name: 'Bob The Builder', lastVisit: '2023-12-10', email: 'bob.builder@example.com', phone: '555-0102' },
+  { id: 'dp3', name: 'Charlie Brown', lastVisit: '2024-06-15', email: 'charlie.brown@example.com', phone: '555-0103' },
+  { id: 'dp4', name: 'Diana Prince', lastVisit: '2024-05-20', email: 'diana.prince@example.com', phone: '555-0104' },
+  { id: 'dp5', name: 'Edward Scissorhands', lastVisit: '2024-07-22', email: 'edward.s@example.com', phone: '555-0105' },
+  { id: 'dp6', name: 'Fiona Gallagher', lastVisit: '2024-08-01', email: 'fiona.g@example.com', phone: '555-0106' },
 ];
 
 export const placeholderNursePatientQueue: NursePatientQueueItem[] = [

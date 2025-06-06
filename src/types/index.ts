@@ -89,6 +89,7 @@ export interface DoctorPatient {
   name: string;
   lastVisit: string;
   email?: string; 
+  phone?: string; // Added phone field
 }
 
 export interface NursePatientQueueItem {
