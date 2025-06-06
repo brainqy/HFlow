@@ -20,6 +20,25 @@ import { format } from 'date-fns';
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 
 const blogPostSchema = z.object({
   slug: z.string().min(1, "Slug is required."),
@@ -207,7 +226,7 @@ export default function ManageBlogsPage() {
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleAddrUpdatePost)} className="space-y-4 py-2 pr-2">
+            <form onSubmit={form.handleSubmit(handleAddOrUpdatePost)} className="space-y-4 py-2 pr-2">
               <FormField control={form.control} name="title" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
@@ -326,3 +345,4 @@ export default function ManageBlogsPage() {
     </div>
   );
 }
+
