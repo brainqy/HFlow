@@ -14,7 +14,7 @@ export default function NursePortalLayout({
         <Navbar userType="nurse" showSidebarToggle={true} />
         <div className="flex flex-1 pt-16">
           <NurseSidebar />
-          <SidebarInset className="pl-4 pr-6 py-4 overflow-y-auto">
+          <SidebarInset className="px-4 py-4 overflow-y-auto">
             {children}
           </SidebarInset>
         </div>

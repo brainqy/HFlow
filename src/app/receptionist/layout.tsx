@@ -14,7 +14,7 @@ export default function ReceptionistPortalLayout({
         <Navbar userType="receptionist" showSidebarToggle={true} />
         <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
           <ReceptionistSidebar />
-          <SidebarInset className="pl-4 pr-6 py-4 overflow-y-auto">
+          <SidebarInset className="px-4 py-4 overflow-y-auto">
             {children}
           </SidebarInset>
         </div>
