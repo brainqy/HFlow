@@ -1,11 +1,10 @@
 
 "use client";
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data'; 
 import type { DoctorAppointment } from '@/types';
-import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send } from 'lucide-react';
+import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send, User, Stethoscope as DoctorIcon, Clock, FileText as ReasonIcon, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -51,7 +50,7 @@ export default function ReceptionistAppointmentsPage() {
       })
       .filter(appt => doctorFilter === 'all' || appt.doctorId === doctorFilter)
       .filter(appt => statusFilter === 'all' || appt.status === statusFilter)
-      .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time)); // Sort by date then time
+      .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time)); 
 
   }, [appointments, searchTerm, dateRange, doctorFilter, statusFilter]);
 
@@ -91,6 +90,13 @@ export default function ReceptionistAppointmentsPage() {
       default: return 'outline';
     }
   };
+  
+  const getStatusBadgeClassName = (status: DoctorAppointment['status']) => {
+    if (status === 'Completed') return 'border-green-500 text-green-600 bg-green-500/10';
+    if (status === 'Checked-in') return 'border-yellow-500 text-yellow-600 bg-yellow-500/10';
+    if (status === 'Pending Confirmation') return 'border-blue-500 text-blue-600 bg-blue-500/10';
+    return '';
+  }
 
 
   return (
@@ -113,13 +119,15 @@ export default function ReceptionistAppointmentsPage() {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="font-headline text-xl">Full Appointment Schedule</CardTitle>
-          <CardDescription>Filter and manage all upcoming and past appointments.</CardDescription>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+          <CardTitle className="font-headline text-xl flex items-center gap-2"><Filter className="h-5 w-5"/> Filter Appointments</CardTitle>
+          <CardDescription>Refine your view of the appointment schedule.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Input 
               placeholder="Search patient or doctor..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="lg:col-span-2"
             />
             <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
             <Select value={doctorFilter} onValueChange={setDoctorFilter}>
@@ -140,68 +148,80 @@ export default function ReceptionistAppointmentsPage() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {filteredAppointments.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Patient</TableHead>
-                  <TableHead>Doctor</TableHead>
-                  <TableHead>Date & Time</TableHead>
-                  <TableHead className="hidden md:table-cell">Reason</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Reminder</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAppointments.map((appointment) => (
-                  <TableRow key={appointment.id}>
-                    <TableCell className="font-medium">{appointment.patientName}</TableCell>
-                    <TableCell>{appointment.doctorName}</TableCell>
-                    <TableCell>{format(new Date(appointment.date), "MMM d, yyyy")} - {appointment.time}</TableCell>
-                    <TableCell className="hidden md:table-cell max-w-xs truncate">{appointment.reason}</TableCell>
-                    <TableCell>
-                      <Badge variant={getStatusBadgeVariant(appointment.status)}>
-                        {appointment.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={appointment.reminderSent ? "default" : "outline"} className={appointment.reminderSent ? "bg-green-500 hover:bg-green-600" : ""}>
-                        {appointment.reminderSent ? "Sent" : "Not Sent"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right space-x-1">
-                      {appointment.status === 'Scheduled' && !appointment.reminderSent && (
-                        <Button variant="outline" size="sm" onClick={() => handleSendReminder(appointment.id)}>
-                          <Send className="mr-1 h-3 w-3" /> Send Reminder
-                        </Button>
-                      )}
-                      {appointment.status === 'Scheduled' && (
-                        <Button variant="outline" size="sm" onClick={() => handleCheckIn(appointment.id)}>
-                          <CheckSquare className="mr-1 h-3 w-3" /> Check-in
-                        </Button>
-                      )}
-                       <Button variant="ghost" size="icon" className="hover:text-yellow-500 opacity-50 cursor-not-allowed">
-                        <Edit className="h-4 w-4" /> <span className="sr-only">Edit</span>
-                      </Button>
-                      {appointment.status !== 'Cancelled' && appointment.status !== 'Completed' && (
-                        <Button variant="ghost" size="icon" className="hover:text-destructive opacity-50 cursor-not-allowed">
-                            <Trash2 className="h-4 w-4" /> <span className="sr-only">Cancel</span>
-                        </Button>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <p className="text-muted-foreground text-center py-4">No appointments found matching your criteria.</p>
-          )}
         </CardContent>
       </Card>
+
+      {filteredAppointments.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredAppointments.map((appointment) => (
+            <Card key={appointment.id} className="shadow-lg flex flex-col">
+              <CardHeader>
+                <CardTitle className="font-headline text-lg flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" /> {appointment.patientName}
+                </CardTitle>
+                <CardDescription className="flex items-center gap-1 text-sm">
+                  <DoctorIcon className="h-4 w-4" /> With {appointment.doctorName}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm flex-grow">
+                <div className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                  <span>{format(new Date(appointment.date), "EEEE, MMM d, yyyy")}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>{appointment.time}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <ReasonIcon className="h-4 w-4 text-muted-foreground mt-0.5" />
+                  <p className="text-muted-foreground"><span className="font-medium text-foreground">Reason:</span> {appointment.reason}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="font-medium text-foreground">Status:</span>
+                    <Badge 
+                        variant={getStatusBadgeVariant(appointment.status)}
+                        className={getStatusBadgeClassName(appointment.status)}
+                    >
+                        {appointment.status}
+                    </Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                    <span className="font-medium text-foreground">Reminder:</span>
+                    <Badge variant={appointment.reminderSent ? 'default' : 'outline'} className={appointment.reminderSent ? 'bg-green-500 hover:bg-green-600' : ''}>
+                        {appointment.reminderSent ? "Sent" : "Not Sent"}
+                    </Badge>
+                </div>
+              </CardContent>
+              <CardFooter className="flex flex-wrap gap-2 justify-end border-t pt-4 mt-auto">
+                {appointment.status === 'Scheduled' && !appointment.reminderSent && (
+                  <Button variant="outline" size="sm" onClick={() => handleSendReminder(appointment.id)}>
+                    <Send className="mr-1 h-3 w-3" /> Send Reminder
+                  </Button>
+                )}
+                {appointment.status === 'Scheduled' && (
+                  <Button variant="default" size="sm" onClick={() => handleCheckIn(appointment.id)}>
+                    <CheckSquare className="mr-1 h-3 w-3" /> Check-in
+                  </Button>
+                )}
+                <Button variant="ghost" size="sm" className="text-yellow-600 hover:text-yellow-700 opacity-50 cursor-not-allowed">
+                  <Edit className="mr-1 h-3 w-3" /> Edit
+                </Button>
+                {appointment.status !== 'Cancelled' && appointment.status !== 'Completed' && (
+                  <Button variant="ghost" size="sm" className="text-destructive hover:text-red-700 opacity-50 cursor-not-allowed">
+                      <Trash2 className="mr-1 h-3 w-3" /> Cancel
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <Card>
+            <CardContent className="pt-6">
+                <p className="text-muted-foreground text-center py-8">No appointments found matching your criteria.</p>
+            </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
