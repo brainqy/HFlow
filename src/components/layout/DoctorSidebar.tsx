@@ -6,13 +6,13 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, CalendarCheck, Brain, Settings, LogOut, UserCog } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, Settings, LogOut, UserCog } from 'lucide-react';
 
 const doctorNavItems = [
   { href: '/doctor/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/doctor/patients', label: 'My Patients', icon: Users },
   { href: '/doctor/appointments', label: 'Appointments', icon: CalendarCheck },
-  { href: '/portal/ai-summary', label: 'AI Record Summary', icon: Brain }, // Link to existing AI summary
+  // { href: '/portal/ai-summary', label: 'AI Record Summary', icon: Brain }, // Link to existing AI summary
   { href: '/doctor/profile', label: 'Profile Settings', icon: Settings },
 ];
 

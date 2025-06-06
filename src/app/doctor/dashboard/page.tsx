@@ -1,4 +1,5 @@
 
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { placeholderDoctorAppointments, placeholderDoctorPatients } from '@/lib/placeholder-data';
@@ -103,21 +104,6 @@ export default function DoctorDashboardPage() {
             <Card className="shadow-lg">
                 <CardHeader>
                     <CardTitle className="font-headline text-xl flex items-center gap-2">
-                        <Brain className="h-6 w-6 text-primary" /> AI Tools
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                    <Button variant="outline" asChild className="w-full">
-                        <Link href="/portal/ai-summary">AI Record Summarizer</Link>
-                    </Button>
-                     <Button variant="outline" asChild className="w-full opacity-50 cursor-not-allowed">
-                        <Link href="#">Differential Diagnosis Aid (Demo)</Link>
-                    </Button>
-                </CardContent>
-            </Card>
-            <Card className="shadow-lg">
-                <CardHeader>
-                    <CardTitle className="font-headline text-xl flex items-center gap-2">
                         <ClipboardPlus className="h-6 w-6 text-primary" /> Common Actions
                     </CardTitle>
                 </CardHeader>
@@ -125,6 +111,18 @@ export default function DoctorDashboardPage() {
                     <Button variant="default" className="w-full opacity-50 cursor-not-allowed">New Prescription</Button>
                     <Button variant="outline" className="w-full opacity-50 cursor-not-allowed">Order Lab Test</Button>
                     <Button variant="outline" className="w-full opacity-50 cursor-not-allowed">Refer Patient</Button>
+                </CardContent>
+            </Card>
+             <Card className="shadow-lg">
+                <CardHeader>
+                    <CardTitle className="font-headline text-xl flex items-center gap-2">
+                        <Brain className="h-6 w-6 text-primary" /> Other Tools
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                     <Button variant="outline" asChild className="w-full opacity-50 cursor-not-allowed">
+                        <Link href="#">Differential Diagnosis Aid (Demo)</Link>
+                    </Button>
                 </CardContent>
             </Card>
         </div>

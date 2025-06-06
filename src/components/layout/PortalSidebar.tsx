@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -5,13 +6,13 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, FileText, Pill, Brain, LogOut, UserCircle, Stethoscope } from 'lucide-react';
+import { LayoutDashboard, FileText, Pill, LogOut, UserCircle, Stethoscope } from 'lucide-react';
 
 const portalNavItems = [
   { href: '/portal/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/portal/medical-history', label: 'Medical History', icon: FileText },
   { href: '/portal/medications', label: 'Medications', icon: Pill },
-  { href: '/portal/ai-summary', label: 'AI Record Summary', icon: Brain },
+  // { href: '/portal/ai-summary', label: 'AI Record Summary', icon: Brain },
   { href: '/appointments', label: 'Book Appointment', icon: Stethoscope },
 ];
 

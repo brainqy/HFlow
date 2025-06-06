@@ -1,6 +1,7 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays, FileText, Pill, Brain, UserCircle, Bell } from 'lucide-react';
+import { CalendarDays, FileText, Pill, UserCircle, Bell } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -29,11 +30,10 @@ export default function PortalDashboardPage() {
       </header>
 
       {/* Quick Access Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {/* Adjusted grid to 3 for better fit */}
         {[
           { title: 'Medical History', href: '/portal/medical-history', icon: FileText, description: 'View your diagnoses, procedures, and notes.' },
           { title: 'Medications', href: '/portal/medications', icon: Pill, description: 'Manage your prescriptions and refills.' },
-          { title: 'AI Summary', href: '/portal/ai-summary', icon: Brain, description: 'Get AI-powered summaries of your records.' },
           { title: 'Appointments', href: '/appointments', icon: CalendarDays, description: 'Schedule or view upcoming visits.' },
         ].map(item => (
           <Card key={item.title} className="shadow-lg hover:shadow-xl transition-shadow">

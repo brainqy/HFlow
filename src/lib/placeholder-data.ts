@@ -110,57 +110,6 @@ export const placeholderMedications: Medication[] = [
   { id: '4', name: 'Vitamin D3', dosage: '2000 IU', frequency: 'Once daily', startDate: '2023-02-01', prescribedBy: 'Dr. James Lee', refillsRemaining: 12 },
 ];
 
-export const samplePatientNotes = `Patient Name: John Doe
-DOB: 1985-03-15
-Date of Visit: 2024-07-20
-Chief Complaint: Persistent cough and fatigue for 2 weeks.
-History of Present Illness: Patient reports a dry, hacking cough that worsens at night. Accompanied by general malaise and occasional shortness of breath on exertion. No fever reported.
-Past Medical History: Hypertension, diagnosed 2022. Seasonal allergies.
-Medications: Lisinopril 10mg daily. Loratadine 10mg as needed for allergies.
-Physical Exam:
-Vitals: BP 130/85, HR 78, RR 18, Temp 98.2°F, O2 Sat 97% on room air.
-Lungs: Clear to auscultation bilaterally, no wheezes or rales. Mild pharyngeal erythema.
-Assessment: Likely viral upper respiratory infection. Rule out bronchitis.
-Plan:
-1. Recommend rest and hydration.
-2. OTC cough suppressant (dextromethorphan) as needed.
-3. Follow up in 1 week if symptoms do not improve or worsen.
-4. Consider chest X-ray if cough persists beyond 2 weeks or new symptoms develop.
-Dr. Emily Carter`;
-
-export const sampleLabResults = `Patient Name: John Doe
-Lab Report Date: 2024-07-01
-Test: Complete Blood Count (CBC)
-WBC: 7.5 x 10^9/L (Normal: 4.0-11.0)
-RBC: 4.8 x 10^12/L (Normal: 4.5-5.5)
-Hemoglobin: 14.2 g/dL (Normal: 13.5-17.5)
-Hematocrit: 42% (Normal: 40-50%)
-Platelets: 250 x 10^9/L (Normal: 150-400)
-Differential: Neutrophils 60%, Lymphocytes 30%, Monocytes 6%, Eosinophils 3%, Basophils 1% (All within normal limits)
-
-Test: Basic Metabolic Panel (BMP)
-Sodium: 140 mEq/L (Normal: 135-145)
-Potassium: 4.2 mEq/L (Normal: 3.5-5.0)
-Chloride: 102 mEq/L (Normal: 98-107)
-BUN: 15 mg/dL (Normal: 7-20)
-Creatinine: 0.9 mg/dL (Normal: 0.7-1.3)
-Glucose: 95 mg/dL (Normal: 70-99)
-Calcium: 9.5 mg/dL (Normal: 8.5-10.2)
-Interpretation: All results within normal limits.
-Lab Director: Dr. Testy McTestface`;
-
-export const sampleConsultations = `Consultation Note 1:
-Date: 2023-11-20
-Consulting Physician: Dr. Emily Carter
-Reason for Consult: Annual Physical Exam
-Summary: Patient is a 39-year-old male presenting for routine checkup. Generally in good health. Blood pressure slightly elevated at 135/88 mmHg. Discussed lifestyle modifications including diet and exercise. Recommended monitoring BP at home. Lab work ordered.
-
-Consultation Note 2:
-Date: 2022-05-10
-Consulting Physician: Dr. Emily Carter
-Reason for Consult: Follow-up for elevated blood pressure.
-Summary: Patient's home BP readings consistently >140/90. Diagnosed with Hypertension Stage 1. Initiated Lisinopril 10mg daily. Provided patient education on medication and importance of adherence. Follow-up in 3 months.`;
-
 // Placeholder data for Doctor Dashboard
 export const placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da1', patientName: 'Alice Wonderland', date: '2024-08-15', time: '10:00 AM', reason: 'Follow-up for hypertension' },
