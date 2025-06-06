@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { User, UserCog, BriefcaseMedical, ShieldAlert, ArrowRight } from 'lucide-react';
+import { User, UserCog, BriefcaseMedical, ShieldAlert, ArrowRight, CalendarCheck } from 'lucide-react';
 import Image from 'next/image';
 
 const portalOptions = [
@@ -28,6 +28,13 @@ const portalOptions = [
     imageHint: 'nurse workflow digital',
   },
   {
+    title: 'Receptionist Portal',
+    description: 'Manage appointments, patient registration, and front-desk operations.',
+    href: '/receptionist-login',
+    icon: CalendarCheck, // Using CalendarCheck for receptionist
+    imageHint: 'receptionist desk computer',
+  },
+  {
     title: 'Admin Portal',
     description: 'Manage users, system settings, and view site analytics.',
     href: '/admin-login',
@@ -48,7 +55,7 @@ export default function PortalAccessPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {/* Adjusted for better layout with 5 items */}
         {portalOptions.map((option) => (
           <Card key={option.title} className="flex flex-col overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <div className="relative h-52 w-full bg-primary/10 flex items-center justify-center">

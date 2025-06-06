@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { placeholderDoctorPatients, placeholderDoctors, placeholderNursePatientQueue } from '@/lib/placeholder-data';
+import { placeholderDoctorPatients, placeholderDoctors, placeholderNurses, placeholderReceptionists } from '@/lib/placeholder-data';
 import { Users, Edit3, Trash2, Eye, Filter, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
@@ -11,14 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import React, { useState, useMemo } from 'react';
 
-// Combine users from different sources
 interface CombinedUser {
   id: string;
   name: string;
-  role: 'Patient' | 'Doctor' | 'Nurse';
-  email?: string; // Doctors have email from placeholderDoctors (but not exposed in type), nurses and patients don't.
-  status: 'Active' | 'Inactive'; // Placeholder status
-  lastLogin?: string; // Placeholder
+  role: 'Patient' | 'Doctor' | 'Nurse' | 'Receptionist' | 'Admin';
+  email?: string;
+  status: 'Active' | 'Inactive'; 
+  lastLogin?: string; 
 }
 
 export default function AdminUsersPage() {
@@ -30,7 +29,7 @@ export default function AdminUsersPage() {
         id: `patient-${p.id}`, 
         name: p.name, 
         role: 'Patient' as const, 
-        email: `${p.name.toLowerCase().replace(/\s+/g, '.')}@example.com`, // Fake email
+        email: p.email || `${p.name.toLowerCase().replace(/\s+/g, '.')}@example.com`,
         status: 'Active' as const,
         lastLogin: new Date(new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 30))).toLocaleDateString()
     }));
@@ -38,17 +37,30 @@ export default function AdminUsersPage() {
         id: `doctor-${d.id}`, 
         name: d.name, 
         role: 'Doctor' as const, 
-        email: `${d.name.toLowerCase().replace('dr. ', '').replace(/\s+/g, '.')}@healthflow.clinic`, // Fake email
+        email: d.email || `${d.name.toLowerCase().replace('dr. ', '').replace(/\s+/g, '.')}@healthflow.clinic`,
         status: 'Active' as const,
         lastLogin: new Date(new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 10))).toLocaleDateString()
-
     }));
-    // Adding a few placeholder nurses
-    const nurses: CombinedUser[] = [
-        { id: 'nurse-1', name: 'Nurse Alex Miller', role: 'Nurse', email: 'alex.miller@healthflow.clinic', status: 'Active', lastLogin: new Date().toLocaleDateString() },
-        { id: 'nurse-2', name: 'Nurse Jordan Lee', role: 'Nurse', email: 'jordan.lee@healthflow.clinic', status: 'Active', lastLogin: new Date(new Date().setDate(new Date().getDate() - 2)).toLocaleDateString() },
+    const nurses = placeholderNurses.map(n => ({
+        id: `nurse-${n.id}`,
+        name: n.name,
+        role: 'Nurse' as const,
+        email: n.email,
+        status: 'Active' as const,
+        lastLogin: new Date(new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 5))).toLocaleDateString()
+    }));
+    const receptionists = placeholderReceptionists.map(r => ({
+        id: `receptionist-${r.id}`,
+        name: r.name,
+        role: 'Receptionist' as const,
+        email: r.email,
+        status: 'Active' as const,
+        lastLogin: new Date(new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 3))).toLocaleDateString()
+    }));
+    const admins: CombinedUser[] = [
+        { id: 'admin-1', name: 'Admin User', role: 'Admin', email: 'admin@example.com', status: 'Active', lastLogin: new Date().toLocaleDateString() }
     ];
-    return [...patients, ...doctors, ...nurses];
+    return [...patients, ...doctors, ...nurses, ...receptionists, ...admins];
   }, []);
 
   const filteredUsers = useMemo(() => {
@@ -96,6 +108,8 @@ export default function AdminUsersPage() {
                         <SelectItem value="patient">Patient</SelectItem>
                         <SelectItem value="doctor">Doctor</SelectItem>
                         <SelectItem value="nurse">Nurse</SelectItem>
+                        <SelectItem value="receptionist">Receptionist</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -120,9 +134,13 @@ export default function AdminUsersPage() {
                     <TableCell>
                         <Badge variant={
                             user.role === 'Doctor' ? 'secondary' : 
+                            user.role === 'Admin' ? 'destructive' :
                             user.role === 'Nurse' ? 'default' : 
-                            'outline'
-                        }>{user.role}</Badge>
+                            user.role === 'Receptionist' ? 'outline' : // Choose a distinct variant
+                            'outline' 
+                        } className={user.role === 'Receptionist' ? 'border-purple-500 text-purple-600' : ''}>
+                            {user.role}
+                        </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{user.email || 'N/A'}</TableCell>
                     <TableCell className="hidden sm:table-cell">
@@ -132,13 +150,13 @@ export default function AdminUsersPage() {
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">{user.lastLogin || 'Never'}</TableCell>
                     <TableCell className="text-right space-x-1">
-                      <Button variant="ghost" size="icon" className="hover:text-primary">
+                      <Button variant="ghost" size="icon" className="hover:text-primary opacity-50 cursor-not-allowed">
                         <Eye className="h-4 w-4" /> <span className="sr-only">View</span>
                       </Button>
-                      <Button variant="ghost" size="icon" className="hover:text-yellow-500">
+                      <Button variant="ghost" size="icon" className="hover:text-yellow-500 opacity-50 cursor-not-allowed">
                         <Edit3 className="h-4 w-4" /> <span className="sr-only">Edit</span>
                       </Button>
-                      <Button variant="ghost" size="icon" className="hover:text-destructive">
+                      <Button variant="ghost" size="icon" className="hover:text-destructive opacity-50 cursor-not-allowed">
                         <Trash2 className="h-4 w-4" /> <span className="sr-only">Deactivate</span>
                       </Button>
                     </TableCell>

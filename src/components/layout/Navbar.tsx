@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert } from 'lucide-react';
+import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck } from 'lucide-react';
 
 const mainNavItems = [
   { href: '/', label: 'Home' },
@@ -13,34 +13,37 @@ const mainNavItems = [
   { href: '/appointments', label: 'Book Appointment' },
 ];
 
-export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' | 'nurse' | 'admin' }) {
-  let dashboardLink = '';
-  let dashboardIcon = LayoutDashboard;
+export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' | 'nurse' | 'admin' | 'receptionist' }) {
+  let dashboardLink = '/';
+  let DashboardIconComponent = LayoutDashboard;
   let portalName = '';
 
   if (userType === 'patient') {
     dashboardLink = '/portal/dashboard';
     portalName = 'Patient Portal';
+    DashboardIconComponent = User;
   } else if (userType === 'doctor') {
     dashboardLink = '/doctor/dashboard';
-    dashboardIcon = UserCog;
+    DashboardIconComponent = UserCog;
     portalName = 'Doctor Portal';
   } else if (userType === 'nurse') {
     dashboardLink = '/nurse/dashboard';
-    dashboardIcon = BriefcaseMedical;
+    DashboardIconComponent = BriefcaseMedical;
     portalName = 'Nurse Portal';
   } else if (userType === 'admin') {
     dashboardLink = '/admin/dashboard';
-    dashboardIcon = ShieldAlert;
+    DashboardIconComponent = ShieldAlert;
     portalName = 'Admin Portal';
+  } else if (userType === 'receptionist') {
+    dashboardLink = '/receptionist/dashboard';
+    DashboardIconComponent = CalendarCheck; // Using CalendarCheck for receptionist
+    portalName = 'Receptionist Portal';
   }
-  const DashboardIconComponent = dashboardIcon;
-
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href={userType ? dashboardLink : "/"} className="flex items-center gap-2">
+        <Link href={dashboardLink} className="flex items-center gap-2">
           <Stethoscope className="h-7 w-7 text-primary" />
           <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
         </Link>
@@ -62,7 +65,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild className="ml-2">
-                <Link href="/" className="flex items-center gap-2"> {/* Should ideally go to a logout action */}
+                <Link href="/" className="flex items-center gap-2">
                   <LogOut className="h-4 w-4" />
                   Logout
                 </Link>
@@ -90,7 +93,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-4 text-lg font-medium mt-8">
-                <Link href={userType ? dashboardLink : "/"} className="flex items-center gap-2 mb-4">
+                <Link href={dashboardLink} className="flex items-center gap-2 mb-4">
                   <Stethoscope className="h-7 w-7 text-primary" />
                   <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
                 </Link>
@@ -114,7 +117,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
                         </Link>
                       </Button>
                       <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
-                        <Link href="/" className="flex items-center gap-3"> {/* Should ideally go to a logout action */}
+                        <Link href="/" className="flex items-center gap-3">
                           <LogOut className="h-5 w-5" />
                           Logout
                         </Link>

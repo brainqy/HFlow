@@ -9,14 +9,14 @@ export interface Doctor {
   imageUrl: string;
   availability?: Record<string, string[]>; // e.g. { "Monday": ["9am-12pm", "2pm-5pm"] }
   dataAiHint?: string;
-  email?: string; // Added for admin user list
+  email?: string; 
 }
 
 export interface Service {
   id: string;
   name: string;
   description: string;
-  icon?: React.ElementType; // Lucide icon component
+  icon?: React.ElementType; 
   details?: string;
   imageUrl?: string;
   dataAiHint?: string;
@@ -51,8 +51,8 @@ export interface Appointment {
   id: string;
   patientId: string;
   doctorId: string;
-  date: string; // ISO string
-  time: string; // e.g., "10:00 AM"
+  date: string; 
+  time: string; 
   reason: string;
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
 }
@@ -62,7 +62,7 @@ export interface MedicalRecordItem {
   date: string;
   type: 'diagnosis' | 'medication' | 'allergy' | 'procedure' | 'note';
   description: string;
-  doctor?: string; // Name of the doctor associated with the record
+  doctor?: string; 
 }
 
 export interface Medication {
@@ -72,11 +72,10 @@ export interface Medication {
   frequency: string;
   startDate: string;
   endDate?: string;
-  prescribedBy: string; // Doctor's name
+  prescribedBy: string; 
   refillsRemaining?: number;
 }
 
-// New types for Doctor/Nurse dashboards
 export interface DoctorAppointment {
   id: string;
   patientName: string;
@@ -89,7 +88,7 @@ export interface DoctorPatient {
   id: string;
   name: string;
   lastVisit: string;
-  email?: string; // Added for admin user list
+  email?: string; 
 }
 
 export interface NursePatientQueueItem {
@@ -121,11 +120,17 @@ export interface SupplyItem {
   status: 'In Stock' | 'Low Stock' | 'Critical' | 'Out of Stock';
 }
 
-// Could be useful for admin user list if more nurse details were stored
 export interface Nurse {
     id: string;
     name: string;
     email: string;
     department: string;
     shift: string;
+}
+
+export interface Receptionist {
+    id: string;
+    name: string;
+    email: string;
+    employeeId: string;
 }

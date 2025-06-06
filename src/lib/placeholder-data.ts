@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby } from 'lucide-react';
 
 export const placeholderDoctors: Doctor[] = [
@@ -113,12 +113,13 @@ export const placeholderMedications: Medication[] = [
   { id: '4', name: 'Vitamin D3', dosage: '2000 IU', frequency: 'Once daily', startDate: '2023-02-01', prescribedBy: 'Dr. James Lee', refillsRemaining: 12 },
 ];
 
-// Placeholder data for Doctor Dashboard
 export const placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da1', patientName: 'Alice Wonderland', date: '2024-08-15', time: '10:00 AM', reason: 'Follow-up for hypertension' },
   { id: 'da2', patientName: 'Bob The Builder', date: new Date().toISOString().split('T')[0], time: '11:30 AM', reason: 'Annual physical' },
   { id: 'da3', patientName: 'Charlie Brown', date: '2024-08-16', time: '02:00 PM', reason: 'Migraine consultation' },
   { id: 'da4', patientName: 'Diana Prince', date: new Date().toISOString().split('T')[0], time: '03:00 PM', reason: 'Medication review' },
+  { id: 'da5', patientName: 'Edward Scissorhands', date: '2024-08-17', time: '09:00 AM', reason: 'Check-up' },
+  { id: 'da6', patientName: 'Fiona Gallagher', date: '2024-08-17', time: '10:30 AM', reason: 'Lab results review' },
 ];
 
 export const placeholderDoctorPatients: DoctorPatient[] = [
@@ -126,9 +127,10 @@ export const placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp2', name: 'Bob The Builder', lastVisit: '2023-12-10', email: 'bob.builder@example.com' },
   { id: 'dp3', name: 'Charlie Brown', lastVisit: '2024-06-15', email: 'charlie.brown@example.com' },
   { id: 'dp4', name: 'Diana Prince', lastVisit: '2024-05-20', email: 'diana.prince@example.com' },
+  { id: 'dp5', name: 'Edward Scissorhands', lastVisit: '2024-07-22', email: 'edward.s@example.com' },
+  { id: 'dp6', name: 'Fiona Gallagher', lastVisit: '2024-08-01', email: 'fiona.g@example.com' },
 ];
 
-// Placeholder data for Nurse Dashboard
 export const placeholderNursePatientQueue: NursePatientQueueItem[] = [
   { id: 'nq1', name: 'Edward Scissorhands', status: 'Waiting for Triage', arrivalTime: '09:15 AM' },
   { id: 'nq2', name: 'Fiona Gallagher', status: 'Ready for Vitals', arrivalTime: '09:30 AM' },
@@ -150,6 +152,11 @@ export const placeholderNurseSchedule: NurseShiftSchedule = {
 export const placeholderNurses: Nurse[] = [
     { id: 'nurse-1', name: 'Nurse Alex Miller', email: 'alex.miller@healthflow.clinic', department: 'General Ward', shift: 'Day Shift (7 AM - 7 PM)' },
     { id: 'nurse-2', name: 'Nurse Jordan Lee', email: 'jordan.lee@healthflow.clinic', department: 'Emergency', shift: 'Night Shift (7 PM - 7 AM)' },
+];
+
+export const placeholderReceptionists: Receptionist[] = [
+    { id: 'recep-1', name: 'Sarah Bell', email: 'sarah.bell@healthflow.clinic', employeeId: 'REC001' },
+    { id: 'recep-2', name: 'Michael Chen', email: 'michael.chen@healthflow.clinic', employeeId: 'REC002' },
 ];
 
 export const placeholderSupplyItems: SupplyItem[] = [
