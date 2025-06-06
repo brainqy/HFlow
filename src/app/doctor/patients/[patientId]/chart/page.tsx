@@ -1,10 +1,11 @@
 
-import { placeholderDoctorPatients, placeholderMedicalHistory } from '@/lib/placeholder-data';
+import { placeholderDoctorPatients, placeholderMedicalHistory, placeholderDoctorAppointments } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill } from 'lucide-react';
+import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import type { DoctorAppointment } from '@/types';
 
 export async function generateStaticParams() {
   return placeholderDoctorPatients.map((patient) => ({
@@ -17,7 +18,7 @@ const getIconForMedicalRecordType = (type: string) => {
     case 'diagnosis': return <Stethoscope className="h-4 w-4 text-red-500" />;
     case 'medication': return <Pill className="h-4 w-4 text-blue-500" />;
     case 'procedure': return <FileText className="h-4 w-4 text-green-500" />;
-    case 'allergy': return <FileText className="h-4 w-4 text-orange-500" />; // Consider a specific allergy icon if available
+    case 'allergy': return <FileText className="h-4 w-4 text-orange-500" />; 
     default: return <FileText className="h-4 w-4 text-gray-500" />;
   }
 };
@@ -25,9 +26,15 @@ const getIconForMedicalRecordType = (type: string) => {
 
 export default function PatientChartPage({ params }: { params: { patientId: string } }) {
   const patient = placeholderDoctorPatients.find((p) => p.id === params.patientId);
-  // For now, let's filter some generic medical history for this patient.
-  // In a real app, you'd fetch specific history for this patientId.
+  
   const patientHistory = placeholderMedicalHistory.filter((item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === params.patientId) || item.doctor === "Dr. Eleanor Vance");
+  
+  const allPatientAppointments = placeholderDoctorAppointments
+    .filter(appt => appt.patientName === patient?.name) // Matching by name due to placeholder data structure
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time)); // Sort by date desc, then time
+
+  const upcomingAppointments = allPatientAppointments.filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0)));
+  const pastAppointments = allPatientAppointments.filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0)));
 
 
   if (!patient) {
@@ -43,12 +50,33 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
     );
   }
 
-  // Simulate more patient details
   const patientDetails = {
-    dob: "1980-01-01", // Placeholder
-    gender: "Female", // Placeholder
-    contact: "555-0101", // Placeholder
-    emergencyContact: "Jane Doe (Spouse) - 555-0102" // Placeholder
+    dob: "1980-01-01", 
+    gender: "Female", 
+    contact: "555-0101", 
+    emergencyContact: "Jane Doe (Spouse) - 555-0102" 
+  }
+
+  const renderAppointmentList = (appointments: DoctorAppointment[], title: string) => {
+    if (appointments.length === 0) {
+      return <p className="text-sm text-muted-foreground">No {title.toLowerCase()} found.</p>;
+    }
+    return (
+      <div className="space-y-3">
+        {appointments.map((appt) => (
+          <div key={appt.id} className="p-3 border rounded-md bg-muted/30">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="font-semibold text-foreground">{new Date(appt.date).toLocaleDateString()} - {appt.time}</p>
+                <p className="text-sm text-muted-foreground">With: {appt.doctorName}</p>
+              </div>
+              <Badge variant={appt.status === "Completed" || new Date(appt.date) < new Date() ? "outline" : "default"}>{appt.status}</Badge>
+            </div>
+            <p className="text-sm text-foreground mt-1">Reason: {appt.reason}</p>
+          </div>
+        ))}
+      </div>
+    );
   }
 
   return (
@@ -81,7 +109,7 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                     <p><strong>Gender:</strong> {patientDetails.gender}</p>
                     <p><strong>Contact:</strong> {patientDetails.contact}</p>
                     <p><strong>Emergency Contact:</strong> {patientDetails.emergencyContact}</p>
-                    <p><strong>Last Visit:</strong> {new Date(patient.lastVisit).toLocaleDateString()}</p>
+                    <p><strong>Last Visit (Recorded):</strong> {new Date(patient.lastVisit).toLocaleDateString()}</p>
                 </CardContent>
             </Card>
              <Card className="shadow-lg">
@@ -98,7 +126,7 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
             </Card>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
             <Card className="shadow-lg">
                 <CardHeader>
                     <CardTitle className="font-headline text-xl">Medical History</CardTitle>
@@ -106,7 +134,7 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                 </CardHeader>
                 <CardContent>
                     {patientHistory.length > 0 ? (
-                    <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                    <div className="space-y-4 max-h-[400px] overflow-y-auto">
                         {patientHistory.map((item) => (
                         <div key={item.id} className="p-3 border rounded-md bg-card hover:bg-muted/50 transition-colors">
                             <div className="flex justify-between items-start">
@@ -115,7 +143,7 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                                       item.type === 'diagnosis' ? 'destructive' :
                                       item.type === 'medication' ? 'secondary' :
                                       item.type === 'procedure' ? 'default' :
-                                      item.type === 'allergy' ? 'outline' : // Consider custom variant for allergy
+                                      item.type === 'allergy' ? 'outline' : 
                                       'outline'
                                     } className="capitalize mb-1">
                                       {getIconForMedicalRecordType(item.type)}
@@ -134,11 +162,30 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                     )}
                 </CardContent>
             </Card>
+            
+            <Card className="shadow-lg">
+                <CardHeader>
+                    <CardTitle className="font-headline text-xl flex items-center gap-2">
+                        <Briefcase className="h-5 w-5" /> Patient Appointments Log
+                    </CardTitle>
+                    <CardDescription>Overview of patient's visits. Useful for understanding recurring care patterns.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 max-h-[400px] overflow-y-auto">
+                    <div>
+                        <h3 className="text-md font-semibold mb-2 text-primary">Upcoming Appointments</h3>
+                        {renderAppointmentList(upcomingAppointments, "Upcoming Appointments")}
+                    </div>
+                    <div className="pt-3 border-t">
+                        <h3 className="text-md font-semibold mb-2 text-primary">Past Appointments</h3>
+                        {renderAppointmentList(pastAppointments, "Past Appointments")}
+                    </div>
+                </CardContent>
+            </Card>
         </div>
       </div>
        <div className="mt-8 flex justify-end gap-2">
-            <Button variant="outline">Edit Chart (Not Implemented)</Button>
-            <Button>Add New Entry (Not Implemented)</Button>
+            <Button variant="outline" className="opacity-50 cursor-not-allowed">Edit Chart Details</Button>
+            <Button className="opacity-50 cursor-not-allowed">Add New Medical Entry</Button>
         </div>
     </div>
   );

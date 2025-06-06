@@ -1,14 +1,14 @@
 
-import { placeholderDoctorPatients, placeholderDoctorAppointments } from '@/lib/placeholder-data';
+import { placeholderDoctorPatients, allClinicAppointments } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, User, CalendarDays, Phone, Mail, Home, Briefcase, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import type { DoctorAppointment } from '@/types';
 
 export async function generateStaticParams() {
-  // Use a smaller set or a specific list if placeholderDoctorPatients is very large
-  return placeholderDoctorPatients.slice(0, 10).map((patient) => ({ // Limiting for build time
+  return placeholderDoctorPatients.slice(0, 10).map((patient) => ({ 
     patientId: patient.id,
   }));
 }
@@ -29,18 +29,43 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
     );
   }
 
-  // Simulate more detailed (but non-sensitive) patient data - these are illustrative placeholders
   const patientDetails = {
-    dob: "January 1, 1980 (Placeholder)", // Placeholder
-    gender: "Female (Placeholder)", // Placeholder
-    address: `${Math.floor(Math.random() * 900) + 100} Main St, Anytown, CA 90210 (Placeholder)`, // Placeholder
-    insuranceProvider: "MediCare Plus (Placeholder)", // Placeholder
-    insurancePolicyNumber: `XYZ${Math.floor(Math.random() * 900000) + 100000} (Placeholder)`, // Placeholder
+    dob: "January 1, 1980 (Placeholder)", 
+    gender: "Female (Placeholder)", 
+    address: `${Math.floor(Math.random() * 900) + 100} Main St, Anytown, CA 90210 (Placeholder)`, 
+    insuranceProvider: "MediCare Plus (Placeholder)", 
+    insurancePolicyNumber: `XYZ${Math.floor(Math.random() * 900000) + 100000} (Placeholder)`, 
   };
 
-  const patientAppointments = placeholderDoctorAppointments.filter(
-    appt => appt.patientName === patient.name && new Date(appt.date) >= new Date() // Note: filtering by name is a limitation of placeholder data
-  ).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const patientAppointments = allClinicAppointments.filter(
+    appt => appt.patientName === patient.name 
+  ).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time)); // Sort desc by date
+
+  const upcomingAppointments = patientAppointments.filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0))).reverse(); // then reverse for upcoming chronological
+  const pastAppointments = patientAppointments.filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0))).slice(0, 3); // Show last 3 past
+
+  const renderAppointmentList = (appointments: DoctorAppointment[], title: string) => {
+    if (appointments.length === 0) {
+        return <p className="text-sm text-muted-foreground italic">No {title.toLowerCase()} recorded.</p>;
+    }
+    return (
+        <ul className="space-y-3">
+            {appointments.map((appt) => (
+                <li key={appt.id} className="p-3 border rounded-md bg-muted/30">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="font-semibold text-foreground">{new Date(appt.date).toLocaleDateString()} at {appt.time}</p>
+                            <p className="text-sm text-muted-foreground">With: {appt.doctorName}</p>
+                        </div>
+                        <Badge variant={appt.status === "Completed" || new Date(appt.date) < new Date() ? "outline" : "default"}>{appt.status}</Badge>
+                    </div>
+                    <p className="text-sm text-foreground mt-1">Reason: {appt.reason}</p>
+                </li>
+            ))}
+        </ul>
+    );
+  };
+
 
   return (
     <div className="space-y-8">
@@ -76,7 +101,7 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
                     <CardTitle className="font-headline text-xl">Contact Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                    <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /> <strong>Phone:</strong> {patient.phone || patientDetails.phone}</p>
+                    <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /> <strong>Phone:</strong> {patient.phone || 'N/A'}</p>
                     <p className="flex items-center gap-2"><Home className="h-4 w-4 text-muted-foreground" /> <strong>Address:</strong> {patientDetails.address}</p>
                 </CardContent>
             </Card>
@@ -94,24 +119,20 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
             </Card>
             <Card className="shadow-lg">
                 <CardHeader>
-                    <CardTitle className="font-headline text-xl">Upcoming Appointments</CardTitle>
-                    <CardDescription>Appointments for {patient.name}. (Based on name match, may not be fully accurate)</CardDescription>
+                    <CardTitle className="font-headline text-xl">Appointment History</CardTitle>
+                    <CardDescription>Recent and upcoming appointments for {patient.name}.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    {patientAppointments.length > 0 ? (
-                        <ul className="space-y-3">
-                        {patientAppointments.map((appt) => (
-                            <li key={appt.id} className="p-3 border rounded-md bg-muted/30">
-                            <p className="font-semibold">{new Date(appt.date).toLocaleDateString()} at {appt.time}</p>
-                            <p className="text-sm text-muted-foreground">With Dr. Placeholder for: {appt.reason}</p>
-                            </li>
-                        ))}
-                        </ul>
-                    ) : (
-                        <p className="text-muted-foreground">No upcoming appointments scheduled for this patient.</p>
-                    )}
-                    <Button asChild className="mt-4 w-full">
-                        <Link href={`/receptionist/appointments?patientId=${patient.id}&patientName=${encodeURIComponent(patient.name)}`}>Schedule New Appointment</Link>
+                <CardContent className="space-y-4 max-h-[400px] overflow-y-auto">
+                    <div>
+                        <h3 className="text-md font-semibold mb-2 text-primary">Upcoming Appointments</h3>
+                        {renderAppointmentList(upcomingAppointments, "Upcoming Appointments")}
+                    </div>
+                    <div className="pt-3 border-t mt-4">
+                        <h3 className="text-md font-semibold mb-2 text-primary">Recent Past Appointments (Last 3)</h3>
+                        {renderAppointmentList(pastAppointments, "Recent Past Appointments")}
+                    </div>
+                    <Button asChild className="mt-6 w-full">
+                        <Link href={`/receptionist/appointments?patientName=${encodeURIComponent(patient.name)}`}>View Full Schedule / Book New</Link>
                     </Button>
                 </CardContent>
             </Card>
@@ -120,3 +141,4 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
     </div>
   );
 }
+
