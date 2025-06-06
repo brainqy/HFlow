@@ -1,3 +1,10 @@
+import MainLayout from "./(main)/layout";
+import HomePageContent from "./(main)/page";
+
 export default function Home() {
-  return <></>;
+  return (
+    <MainLayout>
+      <HomePageContent />
+    </MainLayout>
+  );
 }
