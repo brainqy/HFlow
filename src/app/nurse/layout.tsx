@@ -16,8 +16,8 @@ export default function NursePortalLayout({
         <Navbar userType="nurse" />
         <div className="flex flex-1 pt-16">
           <NurseSidebar />
-          <SidebarInset className="p-6 overflow-y-auto"> {/* SidebarInset is the <main> tag, now handles padding and scroll */}
-            <div className="hidden md:block"> {/* Removed mb-4 */}
+          <SidebarInset className="px-6 py-4 overflow-y-auto"> {/* Reduced vertical padding */}
+            <div className="hidden md:block"> 
               <SidebarTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <PanelLeft />

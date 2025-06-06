@@ -16,8 +16,8 @@ export default function AdminPortalLayout({
         <Navbar userType="admin" />
         <div className="flex flex-1 pt-16"> {/* pt-16 to offset fixed Navbar height */}
           <AdminSidebar />
-          <SidebarInset className="p-6 overflow-y-auto"> {/* SidebarInset is the <main> tag, now handles padding and scroll */}
-            <div className="hidden md:block"> {/* Desktop trigger, removed mb-4 */}
+          <SidebarInset className="px-6 py-4 overflow-y-auto"> {/* Reduced vertical padding */}
+            <div className="hidden md:block"> 
               <SidebarTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <PanelLeft />
