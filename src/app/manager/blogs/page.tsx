@@ -34,6 +34,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -230,7 +231,9 @@ export default function ManageBlogsPage() {
               <FormField control={form.control} name="title" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Title</FormLabel>
-                    <Input {...field} onChange={handleTitleChangeForSlug} />
+                    <FormControl>
+                        <Input {...field} onChange={handleTitleChangeForSlug} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -238,7 +241,9 @@ export default function ManageBlogsPage() {
               <FormField control={form.control} name="slug" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Slug</FormLabel>
-                    <Input {...field} placeholder="e.g., healthy-eating-tips" />
+                    <FormControl>
+                        <Input {...field} placeholder="e.g., healthy-eating-tips" />
+                    </FormControl>
                     <FormDescription>URL-friendly version of the title (auto-generated or custom).</FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -248,7 +253,9 @@ export default function ManageBlogsPage() {
                 <FormField control={form.control} name="author" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Author</FormLabel>
-                        <Input {...field} />
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
                         <FormMessage />
                     </FormItem>
                     )}
@@ -259,10 +266,12 @@ export default function ManageBlogsPage() {
                         <FormLabel>Publication Date</FormLabel>
                         <Popover>
                         <PopoverTrigger asChild>
+                           <FormControl>
                             <Button variant={"outline"} className={cn("justify-start text-left font-normal", !field.value && "text-muted-foreground")}>
                             <CalendarDaysIcon className="mr-2 h-4 w-4" />
                             {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
                             </Button>
+                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0">
                             <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
@@ -276,7 +285,9 @@ export default function ManageBlogsPage() {
               <FormField control={form.control} name="excerpt" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Excerpt</FormLabel>
-                    <Textarea {...field} placeholder="A short summary of the post..." className="min-h-[80px]" />
+                    <FormControl>
+                        <Textarea {...field} placeholder="A short summary of the post..." className="min-h-[80px]" />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -284,7 +295,9 @@ export default function ManageBlogsPage() {
               <FormField control={form.control} name="content" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Full Content</FormLabel>
-                    <Textarea {...field} placeholder="Write the full blog post here. Use HTML for formatting if needed." className="min-h-[150px]" />
+                    <FormControl>
+                        <Textarea {...field} placeholder="Write the full blog post here. Use HTML for formatting if needed." className="min-h-[150px]" />
+                    </FormControl>
                      <FormDescription>Basic HTML can be used for formatting (e.g., &lt;p&gt;, &lt;strong&gt;, &lt;ul&gt;).</FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -294,7 +307,9 @@ export default function ManageBlogsPage() {
                 <FormField control={form.control} name="imageUrl" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Image URL</FormLabel>
-                        <Input {...field} />
+                        <FormControl>
+                            <Input {...field} />
+                        </FormControl>
                         <FormMessage />
                     </FormItem>
                     )}
@@ -302,7 +317,9 @@ export default function ManageBlogsPage() {
                 <FormField control={form.control} name="dataAiHint" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Image AI Hint (Optional)</FormLabel>
-                        <Input {...field} placeholder="e.g., healthy food"/>
+                        <FormControl>
+                            <Input {...field} placeholder="e.g., healthy food"/>
+                        </FormControl>
                         <FormMessage />
                     </FormItem>
                     )}
@@ -311,7 +328,9 @@ export default function ManageBlogsPage() {
               <FormField control={form.control} name="tags" render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tags (Optional)</FormLabel>
-                    <Input {...field} placeholder="e.g., nutrition, wellness, tips" />
+                    <FormControl>
+                        <Input {...field} placeholder="e.g., nutrition, wellness, tips" />
+                    </FormControl>
                     <FormDescription>Comma-separated list of tags.</FormDescription>
                     <FormMessage />
                   </FormItem>
