@@ -1,6 +1,6 @@
 
 import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist } from '@/types';
-import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby } from 'lucide-react';
+import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
 
 export const placeholderDoctors: Doctor[] = [
   {
@@ -132,7 +132,10 @@ export const placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getFutureDate(7), time: '11:00 AM', reason: 'Regular check-up', status: 'Scheduled', reminderSent: false },
   { id: 'da10', patientName: 'John Smith', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: getFutureDate(14), time: '02:30 PM', reason: 'Follow-up on test results', status: 'Scheduled', reminderSent: true },
   { id: 'da11', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getPastDate(60), time: '03:30 PM', reason: 'Post-op check', status: 'Completed', reminderSent: true },
-
+  { id: 'da12', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: getFutureDate(25), time: '09:30 AM', reason: 'Follow-up consultation', status: 'Scheduled', reminderSent: false },
+  { id: 'da13', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(15), time: '02:00 PM', reason: 'ECG results review', status: 'Completed', reminderSent: true },
+  { id: 'da14', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(120), time: '10:00 AM', reason: 'Annual Wellness Visit', status: 'Completed', reminderSent: true },
+  { id: 'da15', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
 ];
 
 export const placeholderDoctorPatients: DoctorPatient[] = [
@@ -144,7 +147,7 @@ export const placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp6', name: 'Fiona Gallagher', lastVisit: getPastDate(50), email: 'fiona.g@example.com', phone: '555-0106' },
   { id: 'dp7', name: 'Garry Poter', lastVisit: getPastDate(60), email: 'garry.poter@example.com', phone: '555-0107' },
   { id: 'dp8', name: 'Hermione Granger', lastVisit: getPastDate(70), email: 'hermione.granger@example.com', phone: '555-0108' },
-  { id: 'dp9', name: 'Jane Doe (Patient Portal User)', lastVisit: getPastDate(60), email: 'patient@example.com', phone: '555-0109'},
+  { id: 'dp9', name: 'Jane Doe (Patient Portal User)', lastVisit: getPastDate(15), email: 'patient@example.com', phone: '555-0109'},
   { id: 'dp10', name: 'John Smith', lastVisit: getPastDate(100), email: 'john.smith@example.com', phone: '555-0110'},
 ];
 
@@ -205,4 +208,9 @@ export const allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac13', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getFutureDate(7), time: '11:00 AM', reason: 'Regular check-up', status: 'Scheduled', reminderSent: false },
   { id: 'ac14', patientName: 'John Smith', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: getFutureDate(14), time: '02:30 PM', reason: 'Follow-up on test results', status: 'Scheduled', reminderSent: true },
   { id: 'ac15', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getPastDate(60), time: '03:30 PM', reason: 'Post-op check', status: 'Completed', reminderSent: true },
+  { id: 'ac16', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: getFutureDate(25), time: '09:30 AM', reason: 'Follow-up consultation', status: 'Scheduled', reminderSent: false },
+  { id: 'ac17', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(15), time: '02:00 PM', reason: 'ECG results review', status: 'Completed', reminderSent: true },
+  { id: 'ac18', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(120), time: '10:00 AM', reason: 'Annual Wellness Visit', status: 'Completed', reminderSent: true },
+  { id: 'ac19', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
+  { id: 'ac20', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getTodayDate(), time: '04:30 PM', reason: 'Blood Pressure Check', status: 'Scheduled', reminderSent: true },
 ];

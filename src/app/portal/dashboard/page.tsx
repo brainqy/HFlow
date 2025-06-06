@@ -4,16 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { CalendarDays, FileText, Pill, UserCircle, Bell, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { placeholderDoctorAppointments } from '@/lib/placeholder-data'; // Assuming this contains patient's appointments
+import { placeholderDoctorAppointments, placeholderDoctors } from '@/lib/placeholder-data'; 
+import { format } from 'date-fns';
 
 export default function PortalDashboardPage() {
-  const patientName = "Jane Doe"; // Placeholder
+  const patientName = "Jane Doe (Patient Portal User)"; // Placeholder to match data
   
-  // Filter appointments for "Jane Doe" and only show upcoming/today's appointments
   const upcomingAppointments = placeholderDoctorAppointments
     .filter(appt => appt.patientName === patientName && new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0)))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time))
-    .slice(0, 3); // Show up to 3
+    .slice(0, 3); 
 
   const recentActivity = [
     { id: '1', description: 'New lab results available for blood test.', date: '2024-07-20', type: 'lab' },
@@ -24,7 +24,7 @@ export default function PortalDashboardPage() {
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="font-headline text-3xl font-bold text-primary">Welcome, {patientName}!</h1>
+          <h1 className="font-headline text-3xl font-bold text-primary">Welcome, {patientName.split('(')[0].trim()}!</h1>
           <p className="text-muted-foreground">Here's a quick overview of your health portal.</p>
         </div>
         <Button asChild>
@@ -39,7 +39,7 @@ export default function PortalDashboardPage() {
         {[
           { title: 'Medical History', href: '/portal/medical-history', icon: FileText, description: 'View your diagnoses, procedures, and notes.' },
           { title: 'Medications', href: '/portal/medications', icon: Pill, description: 'Manage your prescriptions and refills.' },
-          { title: 'Appointments', href: '/appointments', icon: CalendarDays, description: 'Schedule or view upcoming visits.' },
+          { title: 'My Appointments', href: '/portal/appointments', icon: CalendarDays, description: 'View all your appointments.' },
         ].map(item => (
           <Card key={item.title} className="shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -71,7 +71,7 @@ export default function PortalDashboardPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-semibold text-foreground">{appt.doctorName} <span className="text-sm text-muted-foreground">({placeholderDoctors.find(d => d.id === appt.doctorId)?.specialty || 'Specialist'})</span></p>
-                      <p className="text-sm text-muted-foreground">{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} at {appt.time}</p>
+                      <p className="text-sm text-muted-foreground">{format(new Date(appt.date), "EEEE, MMM d, yyyy")} at {appt.time}</p>
                     </div>
                     {appt.reminderSent && (
                       <div className="flex items-center text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
@@ -81,17 +81,22 @@ export default function PortalDashboardPage() {
                   </div>
                    <p className="text-sm text-muted-foreground mt-1">Reason: {appt.reason}</p>
                   <div className="mt-2">
-                    <Button variant="link" size="sm" className="p-0 h-auto text-primary">View Details</Button>
-                    <Button variant="link" size="sm" className="p-0 h-auto text-amber-600 ml-2">Reschedule</Button>
+                    <Button variant="link" size="sm" className="p-0 h-auto text-primary opacity-50 cursor-not-allowed">View Details</Button>
+                    <Button variant="link" size="sm" className="p-0 h-auto text-amber-600 ml-2 opacity-50 cursor-not-allowed">Reschedule</Button>
                   </div>
                 </div>
               ))
             ) : (
               <p className="text-muted-foreground">You have no upcoming appointments.</p>
             )}
-            <Button asChild className="mt-4 w-full">
-              <Link href="/appointments">Schedule New Appointment</Link>
-            </Button>
+             <div className="mt-4 space-y-2">
+              <Button asChild className="w-full">
+                <Link href="/portal/appointments">View All Appointments</Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full">
+                 <Link href="/appointments">Schedule New Appointment</Link>
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, FileText, Pill, LogOut, Stethoscope, UserCircle } from 'lucide-react';
+import { LayoutDashboard, FileText, Pill, LogOut, Stethoscope, UserCircle, CalendarDays } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarHeader, 
@@ -17,9 +17,10 @@ import {
 
 const portalNavItems = [
   { href: '/portal/dashboard', label: 'Dashboard', icon: LayoutDashboard, tooltip: "Dashboard" },
+  { href: '/portal/appointments', label: 'My Appointments', icon: CalendarDays, tooltip: "My Appointments" },
   { href: '/portal/medical-history', label: 'Medical History', icon: FileText, tooltip: "Medical History" },
   { href: '/portal/medications', label: 'Medications', icon: Pill, tooltip: "Medications" },
-  { href: '/appointments', label: 'Book Appointment', icon: Stethoscope, tooltip: "Book Appointment" },
+  { href: '/appointments', label: 'Book New Appointment', icon: Stethoscope, tooltip: "Book New Appointment" },
 ];
 
 export default function PortalSidebar() {
@@ -58,3 +59,4 @@ export default function PortalSidebar() {
     </Sidebar>
   );
 }
+```
