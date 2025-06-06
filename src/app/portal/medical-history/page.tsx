@@ -1,16 +1,28 @@
+
 import { placeholderMedicalHistory } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, CalendarDays, User, ChevronDown, ChevronUp } from 'lucide-react'; // Replaced UserMd with User
+import { FileText, CalendarDays, User, Stethoscope, Pill } from 'lucide-react'; 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from '@/components/ui/badge';
 
-const getIconForType = (type: string) => {
-  switch (type) {
-    case 'diagnosis': return <Badge variant="destructive">Diagnosis</Badge>;
-    case 'medication': return <Badge variant="secondary">Medication</Badge>; // A blue-ish variant
-    case 'allergy': return <Badge variant="outline" className="border-amber-500 text-amber-600">Allergy</Badge>;
-    case 'procedure': return <Badge variant="default">Procedure</Badge>; // Primary color
-    default: return <Badge variant="outline">Note</Badge>;
+const getIconForMedicalRecordType = (type: string) => {
+  switch (type.toLowerCase()) {
+    case 'diagnosis': return <Stethoscope className="h-4 w-4 mr-1.5" />;
+    case 'medication': return <Pill className="h-4 w-4 mr-1.5" />;
+    case 'procedure': return <FileText className="h-4 w-4 mr-1.5" />; // Using FileText for procedure as a general icon
+    case 'allergy': return <FileText className="h-4 w-4 mr-1.5" />; // Using FileText, color will differentiate
+    default: return <FileText className="h-4 w-4 mr-1.5" />;
+  }
+};
+
+const getBadgeForType = (type: string) => {
+  const icon = getIconForMedicalRecordType(type);
+  switch (type.toLowerCase()) {
+    case 'diagnosis': return <Badge variant="destructive" className="capitalize flex items-center">{icon}Diagnosis</Badge>;
+    case 'medication': return <Badge variant="secondary" className="capitalize flex items-center">{icon}Medication</Badge>;
+    case 'allergy': return <Badge variant="outline" className="border-amber-500 text-amber-600 capitalize flex items-center">{icon}Allergy</Badge>;
+    case 'procedure': return <Badge variant="default" className="capitalize flex items-center">{icon}Procedure</Badge>;
+    default: return <Badge variant="outline" className="capitalize flex items-center">{icon}Note</Badge>;
   }
 };
 
@@ -50,11 +62,11 @@ export default function MedicalHistoryPage() {
               <AccordionContent className="px-6 pb-6 pt-0">
                 <div className="space-y-4">
                 {groupedHistory[year].map((item) => (
-                  <Card key={item.id} className="overflow-hidden border-l-4 border-primary/50 bg-background/50">
+                  <Card key={item.id} className="overflow-hidden border-l-4 border-primary/30 bg-background/50">
                     <CardHeader className="pb-3">
                       <div className="flex justify-between items-start">
                         <div>
-                           {getIconForType(item.type)}
+                           {getBadgeForType(item.type)}
                           <CardTitle className="text-lg mt-2">{item.description}</CardTitle>
                         </div>
                        

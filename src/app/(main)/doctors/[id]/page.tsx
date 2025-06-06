@@ -1,9 +1,11 @@
+
 import { placeholderDoctors } from '@/lib/placeholder-data';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CalendarDays, Clock, GraduationCap, BriefcaseMedical, Stethoscope, Phone } from 'lucide-react';
 import Link from 'next/link';
+import { Badge } from '@/components/ui/badge'; // Import official Badge
 
 export async function generateStaticParams() {
   return placeholderDoctors.map((doctor) => ({
@@ -114,16 +116,5 @@ export default function DoctorProfilePage({ params }: { params: { id: string } }
         </div>
       </div>
     </div>
-  );
-}
-
-// ShadCN Badge is not available by default. Let's create a simple one for now.
-function Badge({ children, variant, className }: { children: React.ReactNode, variant?: string, className?: string }) {
-  return (
-    <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${
-      variant === 'secondary' ? 'bg-secondary text-secondary-foreground border-secondary' : 'bg-primary text-primary-foreground border-primary'
-    } ${className || ''}`}>
-      {children}
-    </span>
   );
 }

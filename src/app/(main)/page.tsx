@@ -1,14 +1,25 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Stethoscope, Users, FileText, HeartPulse, Brain, Bone } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Stethoscope, Users, FileText, HeartPulse, Brain, Bone, Building } from 'lucide-react';
 import Image from 'next/image';
+import { placeholderServices } from '@/lib/placeholder-data'; // Assuming placeholderServices has 'details'
 
-const services = [
-  { name: 'Cardiology', icon: HeartPulse, description: 'Expert heart care and diagnostics.', dataAiHint: 'heart medical' },
-  { name: 'Neurology', icon: Brain, description: 'Comprehensive neurological services.', dataAiHint: 'brain scan' },
-  { name: 'Orthopedics', icon: Bone, description: 'Treatment for bone and joint issues.', dataAiHint: 'x-ray skeleton' },
+const servicesToDisplay = placeholderServices.filter(s => ['Cardiology', 'Neurology', 'Orthopedics'].includes(s.name));
+
+// Find full service objects for icons and details
+const cardiologyService = placeholderServices.find(s => s.name === 'Cardiology') || { name: 'Cardiology', icon: HeartPulse, description: 'Expert heart care and diagnostics.', details: 'Detailed cardiology service information not available.', dataAiHint: 'heart medical' };
+const neurologyService = placeholderServices.find(s => s.name === 'Neurology') || { name: 'Neurology', icon: Brain, description: 'Comprehensive neurological services.', details: 'Detailed neurology service information not available.', dataAiHint: 'brain scan' };
+const orthopedicsService = placeholderServices.find(s => s.name === 'Orthopedics') || { name: 'Orthopedics', icon: Bone, description: 'Treatment for bone and joint issues.', details: 'Detailed orthopedics service information not available.', dataAiHint: 'x-ray skeleton' };
+
+const homePageServices = [
+  cardiologyService,
+  neurologyService,
+  orthopedicsService,
 ];
+
 
 const doctors = [
   { id: '1', name: 'Dr. Emily Carter', specialty: 'Cardiologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'doctor portrait' },
@@ -44,7 +55,7 @@ export default function HomePageContent() {
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Our Services</h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {services.map((service) => (
+            {homePageServices.map((service) => (
               <Card key={service.name} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader>
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
@@ -54,9 +65,37 @@ export default function HomePageContent() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">{service.description}</p>
-                  <Button variant="link" asChild className="mt-4 text-primary">
-                     <Link href="/services">Learn More</Link>
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="link" className="mt-4 text-primary">Learn More</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[525px]">
+                      <DialogHeader>
+                        <DialogTitle className="font-headline text-2xl text-primary flex items-center gap-2">
+                          <service.icon className="h-6 w-6" /> {service.name}
+                        </DialogTitle>
+                        <DialogDescription className="text-base pt-2 text-muted-foreground">
+                          {service.description}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-4 text-foreground">
+                        <p className="leading-relaxed">{service.details || 'More detailed information about this service will be available soon.'}</p>
+                      </div>
+                        {service.imageUrl && (
+                           <Image 
+                            src={service.imageUrl} 
+                            alt={service.name} 
+                            data-ai-hint={service.dataAiHint || "service illustration"}
+                            width={400} 
+                            height={250} 
+                            className="rounded-md object-cover mx-auto mt-2"
+                            />
+                        )}
+                       <Button asChild className="mt-6 w-full">
+                         <Link href="/appointments">Book an Appointment</Link>
+                       </Button>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
             ))}
@@ -89,7 +128,7 @@ export default function HomePageContent() {
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-primary mt-1 shrink-0 lucide lucide-building"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+                   <Building className="h-6 w-6 text-primary mt-1 shrink-0" />
                   <div>
                     <h3 className="font-semibold text-foreground">Modern Facilities</h3>
                     <p className="text-muted-foreground text-sm">Equipped with the latest medical technology.</p>
