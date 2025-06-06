@@ -2,7 +2,7 @@
 import { placeholderDoctorPatients, placeholderDoctorAppointments } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, CalendarDays, Phone, Mail, Home, Briefcase } from 'lucide-react';
+import { ArrowLeft, User, CalendarDays, Phone, Mail, Home, Briefcase, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 
@@ -29,19 +29,18 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
     );
   }
 
-  // Simulate more detailed (but non-sensitive) patient data
+  // Simulate more detailed (but non-sensitive) patient data - these are illustrative placeholders
   const patientDetails = {
-    dob: new Date(new Date(patient.lastVisit).setFullYear(new Date(patient.lastVisit).getFullYear() - 30)).toLocaleDateString(), // Placeholder
-    gender: "Female", // Placeholder
-    phone: `(555) 123-${Math.floor(Math.random() * 9000) + 1000}`,
-    email: patient.email || `${patient.name.toLowerCase().replace(' ', '.')}@example.com`,
-    address: `${Math.floor(Math.random() * 900) + 100} Main St, Anytown, CA 90210`, // Placeholder
-    insuranceProvider: "MediCare Plus", // Placeholder
-    insurancePolicyNumber: `XYZ${Math.floor(Math.random() * 900000) + 100000}`, // Placeholder
+    dob: "January 1, 1980 (Placeholder)", // Placeholder
+    gender: "Female (Placeholder)", // Placeholder
+    phone: `(555) 123-${Math.floor(Math.random() * 9000) + 1000} (Placeholder)`,
+    address: `${Math.floor(Math.random() * 900) + 100} Main St, Anytown, CA 90210 (Placeholder)`, // Placeholder
+    insuranceProvider: "MediCare Plus (Placeholder)", // Placeholder
+    insurancePolicyNumber: `XYZ${Math.floor(Math.random() * 900000) + 100000} (Placeholder)`, // Placeholder
   };
 
   const patientAppointments = placeholderDoctorAppointments.filter(
-    appt => appt.patientName === patient.name && new Date(appt.date) >= new Date()
+    appt => appt.patientName === patient.name && new Date(appt.date) >= new Date() // Note: filtering by name is a limitation of placeholder data
   ).sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
@@ -70,6 +69,7 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
                     <p className="flex items-center gap-2"><User className="h-4 w-4 text-muted-foreground" /> <strong>Name:</strong> {patient.name}</p>
                     <p className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-muted-foreground" /> <strong>DOB:</strong> {patientDetails.dob}</p>
                     <p className="flex items-center gap-2"><User className="h-4 w-4 text-muted-foreground" /> <strong>Gender:</strong> {patientDetails.gender}</p>
+                     <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /> <strong>Email:</strong> {patient.email || 'N/A'}</p>
                 </CardContent>
             </Card>
              <Card className="shadow-lg">
@@ -78,7 +78,6 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                     <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-muted-foreground" /> <strong>Phone:</strong> {patientDetails.phone}</p>
-                    <p className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /> <strong>Email:</strong> {patientDetails.email}</p>
                     <p className="flex items-center gap-2"><Home className="h-4 w-4 text-muted-foreground" /> <strong>Address:</strong> {patientDetails.address}</p>
                 </CardContent>
             </Card>
@@ -87,7 +86,7 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
         <div className="lg:col-span-2 space-y-6">
             <Card className="shadow-lg">
                 <CardHeader>
-                    <CardTitle className="font-headline text-xl">Insurance Details</CardTitle>
+                    <CardTitle className="font-headline text-xl">Insurance Details (Placeholder)</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                      <p className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-muted-foreground" /> <strong>Provider:</strong> {patientDetails.insuranceProvider}</p>
@@ -97,6 +96,7 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
             <Card className="shadow-lg">
                 <CardHeader>
                     <CardTitle className="font-headline text-xl">Upcoming Appointments</CardTitle>
+                    <CardDescription>Appointments for {patient.name}. (Based on name match, may not be fully accurate)</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {patientAppointments.length > 0 ? (
@@ -109,10 +109,10 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
                         ))}
                         </ul>
                     ) : (
-                        <p className="text-muted-foreground">No upcoming appointments scheduled.</p>
+                        <p className="text-muted-foreground">No upcoming appointments scheduled for this patient.</p>
                     )}
                     <Button asChild className="mt-4 w-full">
-                        <Link href={`/receptionist/appointments?patientId=${patient.id}`}>Schedule New Appointment</Link>
+                        <Link href={`/receptionist/appointments?patientId=${patient.id}&patientName=${encodeURIComponent(patient.name)}`}>Schedule New Appointment</Link>
                     </Button>
                 </CardContent>
             </Card>

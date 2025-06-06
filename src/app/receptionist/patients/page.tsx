@@ -3,39 +3,25 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { placeholderDoctorPatients } from '@/lib/placeholder-data'; // Using existing patient data
+import { placeholderDoctorPatients } from '@/lib/placeholder-data'; 
+import type { DoctorPatient } from '@/types';
 import { Users, Eye, Edit3, UserPlus, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import React, { useState, useMemo } from 'react';
 
-interface PatientForDirectory {
-  id: string;
-  name: string;
-  dob?: string; // Placeholder DOB
-  phone?: string; // Placeholder phone
-  lastVisit: string;
-}
-
 export default function ReceptionistPatientDirectoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const patients: PatientForDirectory[] = useMemo(() => 
-    placeholderDoctorPatients.map(p => ({
-      id: p.id,
-      name: p.name,
-      dob: new Date(new Date().setFullYear(new Date().getFullYear() - (Math.floor(Math.random() * 60) + 18))).toLocaleDateString(), // Random DOB
-      phone: `(555) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`, // Random phone
-      lastVisit: p.lastVisit,
-    }))
-  , []);
-
   const filteredPatients = useMemo(() => {
-    return patients.filter(patient => 
+    if (!searchTerm) {
+      return placeholderDoctorPatients;
+    }
+    return placeholderDoctorPatients.filter(patient => 
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (patient.phone && patient.phone.includes(searchTerm))
+      (patient.email && patient.email.toLowerCase().includes(searchTerm.toLowerCase()))
     );
-  }, [patients, searchTerm]);
+  }, [searchTerm]);
 
   return (
     <div className="space-y-8">
@@ -62,7 +48,7 @@ export default function ReceptionistPatientDirectoryPage() {
                 <div className="relative flex-grow">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input 
-                        placeholder="Search by name or phone..." 
+                        placeholder="Search by name or email..." 
                         className="pl-8 w-full"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -76,8 +62,7 @@ export default function ReceptionistPatientDirectoryPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead className="hidden sm:table-cell">Date of Birth</TableHead>
-                  <TableHead className="hidden md:table-cell">Phone</TableHead>
+                  <TableHead className="hidden md:table-cell">Email</TableHead>
                   <TableHead>Last Visit</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -86,8 +71,7 @@ export default function ReceptionistPatientDirectoryPage() {
                 {filteredPatients.map((patient) => (
                   <TableRow key={patient.id}>
                     <TableCell className="font-medium">{patient.name}</TableCell>
-                    <TableCell className="hidden sm:table-cell">{patient.dob}</TableCell>
-                    <TableCell className="hidden md:table-cell">{patient.phone}</TableCell>
+                    <TableCell className="hidden md:table-cell">{patient.email || 'N/A'}</TableCell>
                     <TableCell>{new Date(patient.lastVisit).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right space-x-1">
                       <Button variant="outline" size="sm" asChild>
