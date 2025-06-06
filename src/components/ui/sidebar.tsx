@@ -5,7 +5,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
-import Link from "next/link" // Added Link import
+import LinkImport from "next/link" // Renamed Link to LinkImport to avoid conflict with local Link type
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -539,32 +539,32 @@ const sidebarMenuButtonVariants = cva(
 )
 
 interface SidebarMenuButtonProps
-  extends Omit<React.ComponentPropsWithoutRef<"button">, "href" | "icon" | "children" >, // Omit conflicting/redefined props
+  extends Omit<React.ComponentPropsWithoutRef<"button">, "href" | "icon" | "children" >,
     VariantProps<typeof sidebarMenuButtonVariants> {
-  asChild?: boolean; // For TooltipTrigger
+  asChild?: boolean;
   isActive?: boolean;
   tooltip?: string | React.ComponentProps<typeof TooltipContent>;
-  href?: string; // Navigation link
-  icon?: React.ReactNode; // Icon element
-  children?: React.ReactNode; // Label text
+  href?: string; 
+  icon?: React.ReactNode; 
+  children?: React.ReactNode; 
 }
 
 const SidebarMenuButton = React.forwardRef<
-  HTMLAnchorElement | HTMLButtonElement, // Can be an anchor or button
+  HTMLAnchorElement | HTMLButtonElement, 
   SidebarMenuButtonProps
 >(
   (
     {
-      asChild = false, // This asChild is for the TooltipTrigger
+      asChild = false,
       isActive = false,
       variant = "default",
       size = "default",
       tooltip,
       className,
-      children, // This is the label
+      children,
       href,
       icon,
-      ...restProps // Capture other valid HTML attributes
+      ...restProps
     },
     ref
   ) => {
@@ -577,27 +577,33 @@ const SidebarMenuButton = React.forwardRef<
       </>
     );
     
-    const commonAttributes = {
-      "data-sidebar": "menu-button",
-      "data-size": size,
-      "data-active": isActive,
-      className: cn(sidebarMenuButtonVariants({ variant, size, className })),
-    };
+    const resolvedClassName = cn(sidebarMenuButtonVariants({ variant, size, className }));
 
-    // Conditionally render Link or button
     const element = href ? (
-      <Link href={href} passHref legacyBehavior>
-        <a ref={ref as React.Ref<HTMLAnchorElement>} {...commonAttributes} {...(restProps as React.AnchorHTMLAttributes<HTMLAnchorElement>)}>
-          {content}
-        </a>
-      </Link>
+      <LinkImport
+        href={href}
+        ref={ref as React.Ref<HTMLAnchorElement>}
+        className={resolvedClassName}
+        data-sidebar="menu-button"
+        data-size={size}
+        data-active={isActive}
+        {...restProps}
+      >
+        {content}
+      </LinkImport>
     ) : (
-      <button ref={ref as React.Ref<HTMLButtonElement>} {...commonAttributes} {...(restProps as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
+      <button
+        ref={ref as React.Ref<HTMLButtonElement>}
+        className={resolvedClassName}
+        data-sidebar="menu-button"
+        data-size={size}
+        data-active={isActive}
+        {...restProps}
+      >
         {content}
       </button>
     );
 
-    // Wrap with Tooltip if tooltip prop is provided
     if (tooltip) {
       const tooltipProps = typeof tooltip === "string" ? { children: tooltip } : tooltip;
       return (
@@ -608,7 +614,7 @@ const SidebarMenuButton = React.forwardRef<
           <TooltipContent
             side="right"
             align="center"
-            hidden={state !== "collapsed" || isMobile} // Show tooltip only when collapsed and not on mobile
+            hidden={state !== "collapsed" || isMobile} 
             {...tooltipProps}
           />
         </Tooltip>
