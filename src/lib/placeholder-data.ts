@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
 
 export const placeholderDoctors: Doctor[] = [
@@ -12,11 +12,21 @@ export const placeholderDoctors: Doctor[] = [
     experience: ['Attending Cardiologist, City General Hospital (10 years)', 'Chief of Cardiology, HealthFlow Clinic (5 years)'],
     imageUrl: 'https://placehold.co/400x400.png',
     dataAiHint: 'female doctor smiling',
-    availability: {
-      Monday: ['9:00 AM - 12:00 PM', '2:00 PM - 5:00 PM'],
-      Wednesday: ['9:00 AM - 1:00 PM'],
-      Friday: ['2:00 PM - 5:00 PM'],
-    },
+    availability: [
+      { day: 'Monday', startTime: '09:00 AM', endTime: '10:00 AM', maxPatients: 4 },
+      { day: 'Monday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 4 },
+      { day: 'Monday', startTime: '11:00 AM', endTime: '12:00 PM', maxPatients: 4 },
+      { day: 'Monday', startTime: '02:00 PM', endTime: '03:00 PM', maxPatients: 3 },
+      { day: 'Monday', startTime: '03:00 PM', endTime: '04:00 PM', maxPatients: 3 },
+      { day: 'Monday', startTime: '04:00 PM', endTime: '05:00 PM', maxPatients: 3 },
+      { day: 'Wednesday', startTime: '09:00 AM', endTime: '10:00 AM', maxPatients: 5 },
+      { day: 'Wednesday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 5 },
+      { day: 'Wednesday', startTime: '11:00 AM', endTime: '12:00 PM', maxPatients: 5 },
+      { day: 'Wednesday', startTime: '12:00 PM', endTime: '01:00 PM', maxPatients: 2 },
+      { day: 'Friday', startTime: '02:00 PM', endTime: '03:00 PM', maxPatients: 4 },
+      { day: 'Friday', startTime: '03:00 PM', endTime: '04:00 PM', maxPatients: 4 },
+      { day: 'Friday', startTime: '04:00 PM', endTime: '05:00 PM', maxPatients: 4 },
+    ],
     email: 'emily.carter@healthflow.clinic'
   },
   {
@@ -28,10 +38,17 @@ export const placeholderDoctors: Doctor[] = [
     experience: ['Neurologist, Boston Medical Center (8 years)', 'Senior Neurologist, HealthFlow Clinic (current)'],
     imageUrl: 'https://placehold.co/400x400.png',
     dataAiHint: 'male doctor friendly',
-     availability: {
-      Tuesday: ['10:00 AM - 1:00 PM', '3:00 PM - 6:00 PM'],
-      Thursday: ['9:00 AM - 12:00 PM'],
-    },
+     availability: [
+      { day: 'Tuesday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 3 },
+      { day: 'Tuesday', startTime: '11:00 AM', endTime: '12:00 PM', maxPatients: 3 },
+      { day: 'Tuesday', startTime: '12:00 PM', endTime: '01:00 PM', maxPatients: 3 },
+      { day: 'Tuesday', startTime: '03:00 PM', endTime: '04:00 PM', maxPatients: 2 },
+      { day: 'Tuesday', startTime: '04:00 PM', endTime: '05:00 PM', maxPatients: 2 },
+      { day: 'Tuesday', startTime: '05:00 PM', endTime: '06:00 PM', maxPatients: 2 },
+      { day: 'Thursday', startTime: '09:00 AM', endTime: '10:00 AM', maxPatients: 4 },
+      { day: 'Thursday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 4 },
+      { day: 'Thursday', startTime: '11:00 AM', endTime: '12:00 PM', maxPatients: 4 },
+    ],
     email: 'james.lee@healthflow.clinic'
   },
   {
@@ -43,11 +60,18 @@ export const placeholderDoctors: Doctor[] = [
     experience: ['Orthopedic Surgeon, Sports Medicine Clinic (7 years)', 'Consultant Orthopedic Surgeon, HealthFlow Clinic (current)'],
     imageUrl: 'https://placehold.co/400x400.png',
     dataAiHint: 'female surgeon confident',
-    availability: {
-      Monday: ['10:00 AM - 1:00 PM'],
-      Wednesday: ['2:00 PM - 6:00 PM'],
-      Thursday: ['1:00 PM - 4:00 PM'],
-    },
+    availability: [
+      { day: 'Monday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 2 },
+      { day: 'Monday', startTime: '11:00 AM', endTime: '12:00 PM', maxPatients: 2 },
+      { day: 'Monday', startTime: '12:00 PM', endTime: '01:00 PM', maxPatients: 2 },
+      { day: 'Wednesday', startTime: '02:00 PM', endTime: '03:00 PM', maxPatients: 3 },
+      { day: 'Wednesday', startTime: '03:00 PM', endTime: '04:00 PM', maxPatients: 3 },
+      { day: 'Wednesday', startTime: '04:00 PM', endTime: '05:00 PM', maxPatients: 3 },
+      { day: 'Wednesday', startTime: '05:00 PM', endTime: '06:00 PM', maxPatients: 3 },
+      { day: 'Thursday', startTime: '01:00 PM', endTime: '02:00 PM', maxPatients: 4 },
+      { day: 'Thursday', startTime: '02:00 PM', endTime: '03:00 PM', maxPatients: 4 },
+      { day: 'Thursday', startTime: '03:00 PM', endTime: '04:00 PM', maxPatients: 4 },
+    ],
     email: 'sarah.green@healthflow.clinic'
   },
 ];

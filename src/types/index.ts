@@ -1,4 +1,11 @@
 
+export interface AvailabilitySlot {
+  day: string;
+  startTime: string;
+  endTime: string;
+  maxPatients: number;
+}
+
 export interface Doctor {
   id: string;
   name: string;
@@ -7,7 +14,7 @@ export interface Doctor {
   education: string[];
   experience: string[];
   imageUrl: string;
-  availability?: Record<string, string[]>; // e.g. { "Monday": ["9am-12pm", "2pm-5pm"] }
+  availability?: AvailabilitySlot[]; 
   dataAiHint?: string;
   email?: string; 
 }
@@ -82,7 +89,7 @@ export interface DoctorAppointment {
   patientName: string;
   doctorName: string; 
   doctorId: string; 
-  time: string;
+  time: string; // This likely needs to align with AvailabilitySlot startTime or be derived
   reason: string;
   date: string; 
   status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';

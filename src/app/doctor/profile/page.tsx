@@ -2,24 +2,22 @@
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { UserCog, Mail, Phone, KeyRound, CalendarDays, Clock } from 'lucide-react';
+import { UserCog, Mail, Phone, KeyRound, CalendarDays, Clock, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { placeholderDoctors } from '@/lib/placeholder-data'; // Assuming current doctor can be identified
+import { placeholderDoctors } from '@/lib/placeholder-data'; 
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import type { AvailabilitySlot } from '@/types';
 
 export default function DoctorProfilePage() {
   const { toast } = useToast();
-  // Placeholder: In a real app, you'd get the logged-in doctor's ID and fetch their data.
-  // For this example, we'll use the first doctor from the placeholder data.
   const doctorProfile = placeholderDoctors.find(doc => doc.id === 'emily-carter') || placeholderDoctors[0];
 
 
   const handleSaveChanges = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Collect data from form
     toast({title: "Profile Updated", description: "Your personal information has been saved."});
   };
 
@@ -34,6 +32,20 @@ export default function DoctorProfilePage() {
       description: "Your request to update availability has been noted. (Full feature coming soon)"
     });
   };
+
+  const groupAvailabilityByDay = (availability: AvailabilitySlot[] = []) => {
+    return availability.reduce((acc, slot) => {
+      (acc[slot.day] = acc[slot.day] || []).push(slot);
+      return acc;
+    }, {} as Record<string, AvailabilitySlot[]>);
+  };
+
+  const groupedAvailability = groupAvailabilityByDay(doctorProfile.availability);
+  const sortedDays = Object.keys(groupedAvailability).sort((a, b) => {
+    const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    return daysOrder.indexOf(a) - daysOrder.indexOf(b);
+  });
+
 
   return (
     <div className="space-y-8">
@@ -91,18 +103,23 @@ export default function DoctorProfilePage() {
           <CardTitle className="font-headline text-xl flex items-center gap-2">
             <CalendarDays className="h-5 w-5 text-primary" /> My Availability
           </CardTitle>
-          <CardDescription>Your current weekly schedule. Contact admin to make changes.</CardDescription>
+          <CardDescription>Your current weekly schedule including time slots and patient capacity. Contact admin to make changes.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {doctorProfile.availability && Object.keys(doctorProfile.availability).length > 0 ? (
-            Object.entries(doctorProfile.availability).map(([day, times]) => (
+          {sortedDays.length > 0 ? (
+            sortedDays.map((day) => (
               <div key={day} className="text-sm">
-                <p className="font-semibold text-foreground">{day}</p>
-                {times.length > 0 ? (
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {times.map((time, index) => (
-                      <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" /> {time}
+                <p className="font-semibold text-foreground text-md mb-1">{day}</p>
+                {groupedAvailability[day].length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {groupedAvailability[day].map((slot, index) => (
+                      <Badge key={index} variant="secondary" className="flex flex-col items-start p-2 h-auto">
+                        <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {slot.startTime} - {slot.endTime}
+                        </div>
+                        <div className="flex items-center gap-1 mt-0.5 text-xs">
+                            <Users className="h-3 w-3" /> Max Patients: {slot.maxPatients}
+                        </div>
                       </Badge>
                     ))}
                   </div>

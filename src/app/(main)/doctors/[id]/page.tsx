@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { CalendarDays, Clock, GraduationCap, BriefcaseMedical, Stethoscope, Phone } from 'lucide-react';
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge'; // Import official Badge
+import { Badge } from '@/components/ui/badge'; 
+import type { AvailabilitySlot } from '@/types';
 
 export async function generateStaticParams() {
   return placeholderDoctors.map((doctor) => ({
@@ -13,12 +14,25 @@ export async function generateStaticParams() {
   }));
 }
 
+const groupAvailabilityByDay = (availability: AvailabilitySlot[] = []) => {
+  return availability.reduce((acc, slot) => {
+    (acc[slot.day] = acc[slot.day] || []).push(slot);
+    return acc;
+  }, {} as Record<string, AvailabilitySlot[]>);
+};
+
 export default function DoctorProfilePage({ params }: { params: { id: string } }) {
   const doctor = placeholderDoctors.find((d) => d.id === params.id);
 
   if (!doctor) {
     return <div className="container mx-auto py-12 text-center">Doctor not found.</div>;
   }
+
+  const groupedAvailability = groupAvailabilityByDay(doctor.availability);
+  const sortedDays = Object.keys(groupedAvailability).sort((a, b) => {
+    const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    return daysOrder.indexOf(a) - daysOrder.indexOf(b);
+  });
 
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 md:py-16">
@@ -85,7 +99,7 @@ export default function DoctorProfilePage({ params }: { params: { id: string } }
             </CardContent>
           </Card>
 
-          {doctor.availability && (
+          {doctor.availability && sortedDays.length > 0 && (
             <Card className="mt-8 shadow-lg">
               <CardHeader>
                 <CardTitle className="font-headline text-2xl text-foreground flex items-center gap-2">
@@ -94,13 +108,15 @@ export default function DoctorProfilePage({ params }: { params: { id: string } }
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {Object.entries(doctor.availability).map(([day, times]) => (
-                    <div key={day} className="flex items-center gap-4">
-                      <span className="font-semibold text-foreground w-20">{day}:</span>
+                  {sortedDays.map((day) => (
+                    <div key={day} className="flex items-start gap-4">
+                      <span className="font-semibold text-foreground w-24 shrink-0">{day}:</span>
                       <div className="flex flex-wrap gap-2">
-                        {times.map((time, index) => (
+                        {groupedAvailability[day]
+                          .sort((a, b) => a.startTime.localeCompare(b.startTime)) // Sort slots by start time
+                          .map((slot, index) => (
                           <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {time}
+                            <Clock className="h-3 w-3" /> {slot.startTime} - {slot.endTime}
                           </Badge>
                         ))}
                       </div>
