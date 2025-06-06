@@ -114,14 +114,14 @@ export const placeholderMedications: Medication[] = [
 ];
 
 export const placeholderDoctorAppointments: DoctorAppointment[] = [
-  { id: 'da1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: '2024-08-15', time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Scheduled' },
-  { id: 'da2', patientName: 'Bob The Builder', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date().toISOString().split('T')[0], time: '11:30 AM', reason: 'Annual physical', status: 'Scheduled' },
-  { id: 'da3', patientName: 'Charlie Brown', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-08-16', time: '02:00 PM', reason: 'Migraine consultation', status: 'Pending Confirmation' },
-  { id: 'da4', patientName: 'Diana Prince', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date().toISOString().split('T')[0], time: '03:00 PM', reason: 'Medication review', status: 'Scheduled' },
-  { id: 'da5', patientName: 'Edward Scissorhands', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: '2024-08-17', time: '09:00 AM', reason: 'Check-up', status: 'Cancelled' },
-  { id: 'da6', patientName: 'Fiona Gallagher', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-08-17', time: '10:30 AM', reason: 'Lab results review', status: 'Completed' },
-  { id: 'da7', patientName: 'Garry Poter', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0], time: '09:00 AM', reason: 'Consultation', status: 'Scheduled' },
-  { id: 'da8', patientName: 'Hermione Granger', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0], time: '10:00 AM', reason: 'Neurological exam', status: 'Scheduled' },
+  { id: 'da1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: '2024-08-20', time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Scheduled', reminderSent: false },
+  { id: 'da2', patientName: 'Bob The Builder', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date().toISOString().split('T')[0], time: '11:30 AM', reason: 'Annual physical', status: 'Scheduled', reminderSent: true },
+  { id: 'da3', patientName: 'Charlie Brown', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-08-21', time: '02:00 PM', reason: 'Migraine consultation', status: 'Pending Confirmation', reminderSent: false },
+  { id: 'da4', patientName: 'Diana Prince', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date().toISOString().split('T')[0], time: '03:00 PM', reason: 'Medication review', status: 'Checked-in', reminderSent: true },
+  { id: 'da5', patientName: 'Edward Scissorhands', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: '2024-07-17', time: '09:00 AM', reason: 'Check-up', status: 'Cancelled', reminderSent: false },
+  { id: 'da6', patientName: 'Fiona Gallagher', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-07-10', time: '10:30 AM', reason: 'Lab results review', status: 'Completed', reminderSent: true },
+  { id: 'da7', patientName: 'Garry Poter', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0], time: '09:00 AM', reason: 'Consultation', status: 'Scheduled', reminderSent: false },
+  { id: 'da8', patientName: 'Hermione Granger', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString().split('T')[0], time: '10:00 AM', reason: 'Neurological exam', status: 'Scheduled', reminderSent: true },
 ];
 
 export const placeholderDoctorPatients: DoctorPatient[] = [
@@ -175,6 +175,14 @@ export const placeholderSupplyItems: SupplyItem[] = [
 
 // Combined list of appointments for Receptionist view
 export const allClinicAppointments: DoctorAppointment[] = [
-  ...placeholderDoctorAppointments,
-  // You could add more appointments here if needed, or create a more diverse set
+  { id: 'da1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: '2024-08-20', time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Scheduled', reminderSent: false },
+  { id: 'da2', patientName: 'Bob The Builder', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date(new Date().setDate(new Date().getDate() + 3)).toISOString().split('T')[0], time: '11:30 AM', reason: 'Annual physical', status: 'Scheduled', reminderSent: true },
+  { id: 'da3', patientName: 'Charlie Brown', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-08-21', time: '02:00 PM', reason: 'Migraine consultation', status: 'Pending Confirmation', reminderSent: false },
+  { id: 'da4', patientName: 'Diana Prince', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date().toISOString().split('T')[0], time: '03:00 PM', reason: 'Medication review', status: 'Checked-in', reminderSent: true },
+  { id: 'da5', patientName: 'Edward Scissorhands', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: '2024-07-17', time: '09:00 AM', reason: 'Check-up', status: 'Cancelled', reminderSent: false },
+  { id: 'da6', patientName: 'Fiona Gallagher', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: '2024-07-10', time: '10:30 AM', reason: 'Lab results review', status: 'Completed', reminderSent: true },
+  { id: 'da7', patientName: 'Garry Poter', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0], time: '09:00 AM', reason: 'Consultation', status: 'Scheduled', reminderSent: false },
+  { id: 'da8', patientName: 'Hermione Granger', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: new Date(new Date().setDate(new Date().getDate() + 2)).toISOString().split('T')[0], time: '10:00 AM', reason: 'Neurological exam', status: 'Scheduled', reminderSent: true },
+  { id: 'da9', patientName: 'Ivy Smith', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: new Date().toISOString().split('T')[0], time: '09:30 AM', reason: 'Chest pain evaluation', status: 'Scheduled', reminderSent: false },
+  { id: 'da10', patientName: 'Jack Frost', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: new Date(new Date().setDate(new Date().getDate() + 4)).toISOString().split('T')[0], time: '02:30 PM', reason: 'Knee injury follow-up', status: 'Scheduled', reminderSent: true },
 ];

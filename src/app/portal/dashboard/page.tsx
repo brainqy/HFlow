@@ -1,15 +1,20 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays, FileText, Pill, UserCircle, Bell } from 'lucide-react';
+import { CalendarDays, FileText, Pill, UserCircle, Bell, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { placeholderDoctorAppointments } from '@/lib/placeholder-data'; // Assuming this contains patient's appointments
 
 export default function PortalDashboardPage() {
   const patientName = "Jane Doe"; // Placeholder
-  const upcomingAppointments = [
-    { id: '1', doctor: 'Dr. Emily Carter', specialty: 'Cardiology', date: '2024-08-15', time: '10:00 AM' },
-  ];
+  
+  // Filter appointments for "Jane Doe" and only show upcoming/today's appointments
+  const upcomingAppointments = placeholderDoctorAppointments
+    .filter(appt => appt.patientName === patientName && new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0)))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time))
+    .slice(0, 3); // Show up to 3
+
   const recentActivity = [
     { id: '1', description: 'New lab results available for blood test.', date: '2024-07-20', type: 'lab' },
     { id: '2', description: 'Medication refill for Lisinopril processed.', date: '2024-07-18', type: 'medication' },
@@ -30,7 +35,7 @@ export default function PortalDashboardPage() {
       </header>
 
       {/* Quick Access Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {/* Adjusted grid to 3 for better fit */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {[
           { title: 'Medical History', href: '/portal/medical-history', icon: FileText, description: 'View your diagnoses, procedures, and notes.' },
           { title: 'Medications', href: '/portal/medications', icon: Pill, description: 'Manage your prescriptions and refills.' },
@@ -63,8 +68,18 @@ export default function PortalDashboardPage() {
             {upcomingAppointments.length > 0 ? (
               upcomingAppointments.map(appt => (
                 <div key={appt.id} className="mb-4 p-3 border rounded-md bg-primary/5">
-                  <p className="font-semibold text-foreground">{appt.doctor} <span className="text-sm text-muted-foreground">({appt.specialty})</span></p>
-                  <p className="text-sm text-muted-foreground">{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} at {appt.time}</p>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold text-foreground">{appt.doctorName} <span className="text-sm text-muted-foreground">({placeholderDoctors.find(d => d.id === appt.doctorId)?.specialty || 'Specialist'})</span></p>
+                      <p className="text-sm text-muted-foreground">{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} at {appt.time}</p>
+                    </div>
+                    {appt.reminderSent && (
+                      <div className="flex items-center text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                        <CheckCircle className="h-3 w-3 mr-1" /> Reminder Sent
+                      </div>
+                    )}
+                  </div>
+                   <p className="text-sm text-muted-foreground mt-1">Reason: {appt.reason}</p>
                   <div className="mt-2">
                     <Button variant="link" size="sm" className="p-0 h-auto text-primary">View Details</Button>
                     <Button variant="link" size="sm" className="p-0 h-auto text-amber-600 ml-2">Reschedule</Button>

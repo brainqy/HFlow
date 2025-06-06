@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data'; 
 import type { DoctorAppointment } from '@/types';
-import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare } from 'lucide-react';
+import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -37,20 +37,22 @@ export default function ReceptionistAppointmentsPage() {
       .filter(appt => {
         if (!dateRange?.from) return true;
         const apptDate = new Date(appt.date);
-        apptDate.setHours(0,0,0,0); // Normalize apptDate to start of day for comparison
+        apptDate.setHours(0,0,0,0); 
         
         let fromDate = new Date(dateRange.from);
-        fromDate.setHours(0,0,0,0); // Normalize fromDate
+        fromDate.setHours(0,0,0,0); 
 
         if (!dateRange.to) return apptDate.getTime() === fromDate.getTime();
         
         let toDate = new Date(dateRange.to);
-        toDate.setHours(0,0,0,0); // Normalize toDate
+        toDate.setHours(0,0,0,0); 
 
         return apptDate >= fromDate && apptDate <= toDate;
       })
       .filter(appt => doctorFilter === 'all' || appt.doctorId === doctorFilter)
-      .filter(appt => statusFilter === 'all' || appt.status === statusFilter);
+      .filter(appt => statusFilter === 'all' || appt.status === statusFilter)
+      .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time)); // Sort by date then time
+
   }, [appointments, searchTerm, dateRange, doctorFilter, statusFilter]);
 
   const handleCheckIn = (appointmentId: string) => {
@@ -65,14 +67,27 @@ export default function ReceptionistAppointmentsPage() {
       description: `${patientName || 'Patient'} has been successfully checked-in.`,
     });
   };
+
+  const handleSendReminder = (appointmentId: string) => {
+    setAppointments(prev => 
+      prev.map(appt => 
+        appt.id === appointmentId ? { ...appt, reminderSent: true } : appt
+      )
+    );
+    const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
+    toast({
+      title: "Reminder Sent",
+      description: `Appointment reminder sent to ${patientName || 'Patient'}.`,
+    });
+  };
   
   const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
     switch (status) {
       case 'Scheduled': return 'default';
-      case 'Checked-in': return 'secondary'; // Or a custom variant like 'info' if you add one
+      case 'Checked-in': return 'secondary'; 
       case 'Completed': return 'outline';
       case 'Cancelled': return 'destructive';
-      case 'Pending Confirmation': return 'outline'; // Could be 'warning'
+      case 'Pending Confirmation': return 'outline'; 
       default: return 'outline';
     }
   };
@@ -134,10 +149,10 @@ export default function ReceptionistAppointmentsPage() {
                 <TableRow>
                   <TableHead>Patient</TableHead>
                   <TableHead>Doctor</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Time</TableHead>
+                  <TableHead>Date & Time</TableHead>
                   <TableHead className="hidden md:table-cell">Reason</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Reminder</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -146,15 +161,24 @@ export default function ReceptionistAppointmentsPage() {
                   <TableRow key={appointment.id}>
                     <TableCell className="font-medium">{appointment.patientName}</TableCell>
                     <TableCell>{appointment.doctorName}</TableCell>
-                    <TableCell>{format(new Date(appointment.date), "MMM d, yyyy")}</TableCell>
-                    <TableCell>{appointment.time}</TableCell>
+                    <TableCell>{format(new Date(appointment.date), "MMM d, yyyy")} - {appointment.time}</TableCell>
                     <TableCell className="hidden md:table-cell max-w-xs truncate">{appointment.reason}</TableCell>
                     <TableCell>
                       <Badge variant={getStatusBadgeVariant(appointment.status)}>
                         {appointment.status}
                       </Badge>
                     </TableCell>
+                    <TableCell>
+                      <Badge variant={appointment.reminderSent ? "default" : "outline"} className={appointment.reminderSent ? "bg-green-500 hover:bg-green-600" : ""}>
+                        {appointment.reminderSent ? "Sent" : "Not Sent"}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="text-right space-x-1">
+                      {appointment.status === 'Scheduled' && !appointment.reminderSent && (
+                        <Button variant="outline" size="sm" onClick={() => handleSendReminder(appointment.id)}>
+                          <Send className="mr-1 h-3 w-3" /> Send Reminder
+                        </Button>
+                      )}
                       {appointment.status === 'Scheduled' && (
                         <Button variant="outline" size="sm" onClick={() => handleCheckIn(appointment.id)}>
                           <CheckSquare className="mr-1 h-3 w-3" /> Check-in
