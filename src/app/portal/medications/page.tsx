@@ -1,7 +1,7 @@
 import { placeholderMedications } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Pill, CalendarDays, UserMd, RefreshCw, AlertTriangle, PlusCircle } from 'lucide-react';
+import { Pill, CalendarDays, RefreshCw, AlertTriangle, PlusCircle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
