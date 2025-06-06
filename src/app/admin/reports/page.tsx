@@ -3,15 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { BarChart2, CalendarRange, Users, Activity, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DatePickerWithRange } from "@/components/ui/date-range-picker"; // Assuming this component exists or will be created
-
-// Mock for DatePickerWithRange if it doesn't exist
-const DatePickerWithRange = ({ className }: { className?: string }) => (
-  <div className={cn("grid gap-2", className)}>
-    <Button variant="outline">Pick a date range</Button>
-  </div>
-);
-
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 
 export default function AdminReportsPage() {
   const reportTypes = [
@@ -88,16 +80,3 @@ export default function AdminReportsPage() {
     </div>
   );
 }
-
-// Minimal DatePickerWithRange component for UI to render
-import { cn } from "@/lib/utils"; // Make sure cn is imported if used in the actual component
-// If you have a real DatePickerWithRange, you can remove this mock.
-// export function DatePickerWithRange({ className }: { className?: string }) {
-//   return (
-//     <div className={cn("grid gap-2", className)}>
-//       <Button variant={"outline"} className="w-full justify-start text-left font-normal">
-//         Pick a date range
-//       </Button>
-//     </div>
-//   )
-// }
