@@ -4,23 +4,44 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, User, Clock, Stethoscope, BriefcaseMedical, CheckCircle, Info } from 'lucide-react';
+import { CalendarDays, User, Clock, Stethoscope, CheckCircle, Info, Filter as FilterIcon, RotateCcw } from 'lucide-react';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import type { DateRange } from "react-day-picker";
 
 export default function PatientAppointmentsPage() {
-  // In a real app, you'd fetch this based on the logged-in user.
-  // For now, we'll filter for "Jane Doe (Patient Portal User)".
   const patientName = "Jane Doe (Patient Portal User)";
+
+  const [doctorFilter, setDoctorFilter] = useState<string>('all');
+  const [dateFilter, setDateFilter] = useState<DateRange | undefined>(undefined);
+
   const patientAppointments = useMemo(() => {
     return allClinicAppointments
       .filter(appt => appt.patientName === patientName)
+      .filter(appt => doctorFilter === 'all' || appt.doctorId === doctorFilter)
+      .filter(appt => {
+        if (!dateFilter?.from) return true;
+        const apptDate = new Date(appt.date);
+        apptDate.setHours(0,0,0,0);
+        
+        let fromDate = new Date(dateFilter.from);
+        fromDate.setHours(0,0,0,0);
+
+        if (!dateFilter.to) return apptDate.getTime() === fromDate.getTime();
+        
+        let toDate = new Date(dateFilter.to);
+        toDate.setHours(0,0,0,0);
+
+        return apptDate >= fromDate && apptDate <= toDate;
+      })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time));
-  }, [patientName]);
+  }, [patientName, doctorFilter, dateFilter]);
 
   const upcomingAppointments = useMemo(() => {
     return patientAppointments
@@ -32,6 +53,11 @@ export default function PatientAppointmentsPage() {
     return patientAppointments
       .filter(appt => new Date(appt.date) < new Date(new Date().setHours(0,0,0,0)) || appt.status === 'Cancelled' || appt.status === 'Completed');
   }, [patientAppointments]);
+
+  const clearFilters = () => {
+    setDoctorFilter('all');
+    setDateFilter(undefined);
+  };
 
   const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
     switch (status) {
@@ -106,7 +132,7 @@ export default function PatientAppointmentsPage() {
       return (
         <Card>
           <CardContent className="pt-6">
-            <p className="text-muted-foreground text-center">{emptyMessage}</p>
+            <p className="text-muted-foreground text-center py-8">{emptyMessage}</p>
           </CardContent>
         </Card>
       );
@@ -126,13 +152,41 @@ export default function PatientAppointmentsPage() {
             <CalendarDays className="h-8 w-8" /> My Appointments
           </h1>
           <p className="text-muted-foreground mt-1">
-            View your upcoming and past appointments.
+            View and filter your upcoming and past appointments.
           </p>
         </div>
         <Button asChild>
             <Link href="/appointments">Book New Appointment</Link>
         </Button>
       </header>
+
+      <Card className="shadow-lg">
+        <CardHeader>
+            <CardTitle className="font-headline text-xl flex items-center gap-2"><FilterIcon className="h-5 w-5 text-primary" /> Filter Appointments</CardTitle>
+            <CardDescription>Refine your view by doctor or date range.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
+            <div className="lg:col-span-1">
+                <label htmlFor="doctorFilter" className="block text-sm font-medium text-foreground mb-1">Doctor</label>
+                <Select value={doctorFilter} onValueChange={setDoctorFilter}>
+                    <SelectTrigger id="doctorFilter"><SelectValue placeholder="Filter by doctor" /></SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Doctors</SelectItem>
+                        {placeholderDoctors.map(doc => (
+                        <SelectItem key={doc.id} value={doc.id}>{doc.name} - {doc.specialty}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="lg:col-span-1">
+                 <label className="block text-sm font-medium text-foreground mb-1">Date Range</label>
+                <DatePickerWithRange date={dateFilter} onDateChange={setDateFilter} />
+            </div>
+            <Button onClick={clearFilters} variant="outline" className="w-full sm:w-auto lg:self-end">
+              <RotateCcw className="mr-2 h-4 w-4" /> Clear Filters
+            </Button>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="upcoming" className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-6">
@@ -141,13 +195,13 @@ export default function PatientAppointmentsPage() {
           <TabsTrigger value="past">Past</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming">
-          {renderAppointmentGrid(upcomingAppointments, "You have no upcoming appointments scheduled.")}
+          {renderAppointmentGrid(upcomingAppointments, "You have no upcoming appointments matching your filters.")}
         </TabsContent>
         <TabsContent value="all">
-           {renderAppointmentGrid(patientAppointments, "You have no appointments scheduled.")}
+           {renderAppointmentGrid(patientAppointments, "You have no appointments matching your filters.")}
         </TabsContent>
         <TabsContent value="past">
-          {renderAppointmentGrid(pastAppointments, "You have no past appointment records.")}
+          {renderAppointmentGrid(pastAppointments, "You have no past appointment records matching your filters.")}
         </TabsContent>
       </Tabs>
     </div>
