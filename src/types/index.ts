@@ -1,3 +1,4 @@
+
 export interface Doctor {
   id: string;
   name: string;
@@ -72,4 +73,39 @@ export interface Medication {
   endDate?: string;
   prescribedBy: string; // Doctor's name
   refillsRemaining?: number;
+}
+
+// New types for Doctor/Nurse dashboards
+export interface DoctorAppointment {
+  id: string;
+  patientName: string;
+  time: string;
+  reason: string;
+  date: string; 
+}
+
+export interface DoctorPatient {
+  id: string;
+  name: string;
+  lastVisit: string;
+}
+
+export interface NursePatientQueueItem {
+  id: string;
+  name: string;
+  status: string;
+  arrivalTime: string;
+}
+
+export interface NurseAlert {
+  id: string;
+  message: string;
+  severity: 'low' | 'medium' | 'high';
+  timestamp?: string;
+}
+
+export interface NurseShiftSchedule {
+  today: string;
+  tomorrow?: string;
+  notes?: string;
 }

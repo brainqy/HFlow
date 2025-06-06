@@ -1,4 +1,5 @@
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication } from '@/types';
+
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby } from 'lucide-react';
 
 export const placeholderDoctors: Doctor[] = [
@@ -159,3 +160,35 @@ Date: 2022-05-10
 Consulting Physician: Dr. Emily Carter
 Reason for Consult: Follow-up for elevated blood pressure.
 Summary: Patient's home BP readings consistently >140/90. Diagnosed with Hypertension Stage 1. Initiated Lisinopril 10mg daily. Provided patient education on medication and importance of adherence. Follow-up in 3 months.`;
+
+// Placeholder data for Doctor Dashboard
+export const placeholderDoctorAppointments: DoctorAppointment[] = [
+  { id: 'da1', patientName: 'Alice Wonderland', date: '2024-08-15', time: '10:00 AM', reason: 'Follow-up for hypertension' },
+  { id: 'da2', patientName: 'Bob The Builder', date: '2024-08-15', time: '11:30 AM', reason: 'Annual physical' },
+  { id: 'da3', patientName: 'Charlie Brown', date: '2024-08-16', time: '02:00 PM', reason: 'Migraine consultation' },
+];
+
+export const placeholderDoctorPatients: DoctorPatient[] = [
+  { id: 'dp1', name: 'Alice Wonderland', lastVisit: '2024-07-01' },
+  { id: 'dp2', name: 'Bob The Builder', lastVisit: '2023-12-10' },
+  { id: 'dp3', name: 'Charlie Brown', lastVisit: '2024-06-15' },
+  { id: 'dp4', name: 'Diana Prince', lastVisit: '2024-05-20' },
+];
+
+// Placeholder data for Nurse Dashboard
+export const placeholderNursePatientQueue: NursePatientQueueItem[] = [
+  { id: 'nq1', name: 'Edward Scissorhands', status: 'Waiting for Triage', arrivalTime: '09:15 AM' },
+  { id: 'nq2', name: 'Fiona Gallagher', status: 'Ready for Vitals', arrivalTime: '09:30 AM' },
+  { id: 'nq3', name: 'George Jetson', status: 'Waiting for Doctor', arrivalTime: '08:45 AM' },
+];
+
+export const placeholderNurseAlerts: NurseAlert[] = [
+  { id: 'na1', message: 'Low stock of 10cc syringes in treatment room 2.', severity: 'medium', timestamp: '2024-08-14 10:05 AM' },
+  { id: 'na2', message: 'Patient in Room 5 reports increased pain.', severity: 'high', timestamp: '2024-08-14 11:30 AM' },
+];
+
+export const placeholderNurseSchedule: NurseShiftSchedule = {
+  today: '08:00 AM - 04:00 PM (Charge Nurse)',
+  tomorrow: '12:00 PM - 08:00 PM',
+  notes: 'Staff meeting at 3:30 PM today.'
+};
