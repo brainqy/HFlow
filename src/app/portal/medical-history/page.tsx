@@ -1,6 +1,6 @@
 import { placeholderMedicalHistory } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, CalendarDays, UserMd, ChevronDown, ChevronUp } from 'lucide-react'; // Assuming UserMd for doctor icon
+import { FileText, CalendarDays, User, ChevronDown, ChevronUp } from 'lucide-react'; // Replaced UserMd with User
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from '@/components/ui/badge';
 
@@ -67,7 +67,7 @@ export default function MedicalHistoryPage() {
                         </p>
                         {item.doctor && (
                           <p className="flex items-center gap-2">
-                            <UserMd className="h-4 w-4" /> Provider: {item.doctor}
+                            <User className="h-4 w-4" /> Provider: {item.doctor}
                           </p>
                         )}
                       </div>
