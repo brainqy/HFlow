@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn } from 'lucide-react';
 
 const mainNavItems = [
   { href: '/', label: 'Home' },
@@ -43,7 +43,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
                 </Link>
               </Button>
               <Button variant="ghost" size="sm" asChild className="ml-2">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/" className="flex items-center gap-2"> {/* Should ideally go to a logout action */}
                   <LogOut className="h-4 w-4" />
                   Logout
                 </Link>
@@ -51,22 +51,10 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
             </>
           ) : (
             <>
-              <Button variant="outline" size="sm" asChild className="ml-2">
-                <Link href="/login" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Patient Login
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild className="ml-2">
-                <Link href="/doctor-login" className="flex items-center gap-2">
-                  <UserCog className="h-4 w-4" />
-                  Doctor Login
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild className="ml-2">
-                <Link href="/nurse-login" className="flex items-center gap-2">
-                  <BriefcaseMedical className="h-4 w-4" />
-                  Nurse Login
+              <Button variant="default" size="sm" asChild className="ml-2">
+                <Link href="/portal-access" className="flex items-center gap-2">
+                  <LogIn className="h-4 w-4" />
+                  Sign In
                 </Link>
               </Button>
             </>
@@ -106,7 +94,7 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
                         </Link>
                       </Button>
                       <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
-                        <Link href="/" className="flex items-center gap-3">
+                        <Link href="/" className="flex items-center gap-3"> {/* Should ideally go to a logout action */}
                           <LogOut className="h-5 w-5" />
                           Logout
                         </Link>
@@ -115,22 +103,10 @@ export default function Navbar({ userType }: { userType?: 'patient' | 'doctor' |
                   ) : (
                     <>
                       <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
-                        <Link href="/login" className="flex items-center gap-3">
-                          <User className="h-5 w-5" />
-                          Patient Login
+                        <Link href="/portal-access" className="flex items-center gap-3">
+                          <LogIn className="h-5 w-5" />
+                          Sign In
                         </Link>
-                      </Button>
-                      <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
-                        <Link href="/doctor-login" className="flex items-center gap-3">
-                            <UserCog className="h-5 w-5" />
-                            Doctor Login
-                        </Link>
-                      </Button>
-                      <Button variant="ghost" asChild className="w-full justify-start text-base py-2">
-                          <Link href="/nurse-login" className="flex items-center gap-3">
-                              <BriefcaseMedical className="h-5 w-5" />
-                              Nurse Login
-                          </Link>
                       </Button>
                     </>
                   )}
