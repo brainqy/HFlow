@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Badge } from '@/components/ui/badge';
 
 const mainNavItems = [
   { href: '/', label: 'Home' },
@@ -18,6 +19,7 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
   let dashboardLink = '/';
   let DashboardIconComponent = LayoutDashboard;
   let portalName = '';
+  const appVersion = "v0.5.0 Beta";
 
   if (userType === 'patient') {
     dashboardLink = '/portal/dashboard';
@@ -54,6 +56,7 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
             <Stethoscope className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
           </Link>
+          <Badge variant="outline" className="ml-2 text-xs text-muted-foreground">{appVersion}</Badge>
         </div>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -101,10 +104,11 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-4 text-lg font-medium mt-8">
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-2">
                   <Stethoscope className="h-7 w-7 text-primary" />
                   <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
                 </div>
+                <Badge variant="outline" className="text-xs text-muted-foreground w-fit mb-4">{appVersion}</Badge>
                 {!userType && mainNavItems.map((item) => (
                   <Link
                     key={item.label}
