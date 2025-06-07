@@ -30,8 +30,8 @@ interface HeroSlideItem {
 const heroSlides: HeroSlideItem[] = [
   {
     id: 'hero1',
-    imageUrl: 'https://placehold.co/1920x1080.png',
-    altText: 'Modern medical facility with caring staff',
+    imageUrl: '/banner1.jpg',
+    altText: 'Clean and modern hospital corridor',
     dataAiHint: 'modern hospital interior',
     title: 'Your Health, Our Priority',
     subtitle: 'Experience compassionate and expert healthcare at HealthFlow. We are dedicated to providing top-quality medical services to our community.',
@@ -40,8 +40,8 @@ const heroSlides: HeroSlideItem[] = [
   },
   {
     id: 'hero2',
-    imageUrl: 'https://placehold.co/1920x1080.png',
-    altText: 'Team of dedicated medical professionals',
+    imageUrl: '/banner2.jpg',
+    altText: 'Diverse group of medical professionals smiling',
     dataAiHint: 'doctors team smiling',
     title: 'Expert Care, Advanced Technology',
     subtitle: 'Our skilled team uses cutting-edge technology to deliver the best possible outcomes.',
@@ -50,8 +50,8 @@ const heroSlides: HeroSlideItem[] = [
   },
   {
     id: 'hero3',
-    imageUrl: 'https://placehold.co/1920x1080.png',
-    altText: 'Patient focused healthcare environment',
+    imageUrl: '/banner3.jpg',
+    altText: 'Doctor comforting a patient in a clinic room',
     dataAiHint: 'doctor patient interaction',
     title: 'A Community of Wellness',
     subtitle: 'Join us on your journey to better health and a more vibrant life.',
