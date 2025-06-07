@@ -446,7 +446,7 @@ export let homepageWidgetSettings: HomepageWidgetSetting[] = [
 export let heroSlides: HeroSlideItem[] = [
   {
     id: 'hero1',
-    imageUrl: 'https://placehold.co/1920x1080.png',
+    imageUrl: '/banner1.jpg',
     altText: 'Modern medical facility with caring staff',
     dataAiHint: 'modern hospital interior',
     title: 'Your Health, Our Priority',
@@ -456,7 +456,7 @@ export let heroSlides: HeroSlideItem[] = [
   },
   {
     id: 'hero2',
-    imageUrl: 'https://placehold.co/1920x1080.png',
+    imageUrl: '/banner2.jpg',
     altText: 'Team of dedicated medical professionals',
     dataAiHint: 'doctors team smiling',
     title: 'Expert Care, Advanced Technology',
@@ -466,7 +466,7 @@ export let heroSlides: HeroSlideItem[] = [
   },
   {
     id: 'hero3',
-    imageUrl: 'https://placehold.co/1920x1080.png',
+    imageUrl: '/banner3.jpg',
     altText: 'Patient focused healthcare environment',
     dataAiHint: 'doctor patient interaction',
     title: 'A Community of Wellness',
