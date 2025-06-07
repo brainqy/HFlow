@@ -119,7 +119,6 @@ export let placeholderServices: Service[] = [
   { id: 'pediatrics', name: 'Pediatrics', iconName: 'PaediatricsIcon', description: 'Comprehensive healthcare for infants, children, and adolescents.', details: 'Our pediatric team provides compassionate and comprehensive care for your child from birth through adolescence, including well-child visits, immunizations, and sick care.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'child doctor' },
   { id: 'lab-services', name: 'Lab Services', iconName: 'Microscope', description: 'On-site laboratory for quick and accurate diagnostic testing.', details: 'Our CLIA-certified laboratory offers a wide range of tests, providing fast and reliable results to aid in diagnosis and treatment planning.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'lab tests' },
   { id: 'pharmacy', name: 'Pharmacy Services', iconName: 'Pill', description: 'Convenient on-site pharmacy for prescriptions and medication counseling.', details: 'Our on-site pharmacy makes it easy to get your prescriptions filled quickly. Our pharmacists are also available for medication counseling and to answer any questions.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'pharmacy counter' },
-  // Adding some specialized services based on the user's image
   { id: 'ivf', name: 'IVF', iconName: 'Baby', description: 'Advanced In Vitro Fertilization services and fertility treatments.', details: 'Our fertility specialists offer comprehensive IVF treatments and support to help you achieve your dream of parenthood.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'fertility clinic' },
   { id: 'oncology', name: 'Oncology', iconName: 'ShieldCheck', description: 'Comprehensive cancer care including diagnosis, treatment, and support.', details: 'Our oncology department provides multidisciplinary cancer care, from early detection and diagnosis to advanced treatments and survivorship programs.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'cancer care team' },
   { id: 'gastroenterology', name: 'Gastroenterology', iconName: 'GastroenterologyIcon', description: 'Diagnosis and treatment of digestive system disorders.', details: 'Expert care for conditions affecting the esophagus, stomach, intestines, liver, and pancreas, including endoscopy services.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'digestive system diagram' },
@@ -162,6 +161,28 @@ export let placeholderBlogPosts: BlogPost[] = [
     dataAiHint: 'person jogging park',
     tags: ['exercise', 'fitness', 'healthy lifestyle'],
   },
+  {
+    slug: 'managing-stress-effectively',
+    title: 'Effective Strategies for Managing Stress',
+    date: '2024-06-28',
+    author: 'Dr. Emily Carter',
+    excerpt: 'Learn practical techniques to cope with stress and improve your mental resilience in today\'s fast-paced world.',
+    content: '<p>Stress is a normal part of life, but chronic stress can take a toll on your health. Effective stress management techniques include:</p><ul><li>Regular physical activity.</li><li>Mindfulness and meditation.</li><li>Adequate sleep.</li><li>Spending time in nature.</li><li>Connecting with loved ones.</li><li>Setting realistic goals and priorities.</li></ul><p>Finding what works for you is key to building resilience.</p>',
+    imageUrl: 'https://placehold.co/800x450.png',
+    dataAiHint: 'person meditating calm',
+    tags: ['stress management', 'mental health', 'wellness'],
+  },
+  {
+    slug: 'hydration-importance',
+    title: 'Why Hydration is Key to Your Well-being',
+    date: '2024-06-20',
+    author: 'Dr. James Lee',
+    excerpt: 'Discover the crucial role water plays in your body and simple tips to ensure you stay properly hydrated throughout the day.',
+    content: '<p>Water is essential for life. Proper hydration supports numerous bodily functions, including:</p><ul><li>Regulating body temperature.</li><li>Transporting nutrients and oxygen to cells.</li><li>Flushing out waste products.</li><li>Lubricating joints.</li><li>Improving skin health.</li></ul><p>Aim to drink water consistently throughout the day. Carry a water bottle as a reminder.</p>',
+    imageUrl: 'https://placehold.co/800x450.png',
+    dataAiHint: 'glass water fresh',
+    tags: ['hydration', 'health tips', 'nutrition'],
+  },
 ];
 
 export let placeholderMedicalHistory: MedicalRecordItem[] = [
@@ -176,6 +197,8 @@ export let placeholderMedicalHistory: MedicalRecordItem[] = [
   { id: '9', date: '2023-03-17', type: 'allergy', description: 'Latex - contact dermatitis', doctor: 'Dr. Michael Brown' },
   { id: '10', date: '2024-03-01', type: 'allergy', description: 'Dust Mites - mild respiratory symptoms', doctor: 'Dr. Michael Brown' },
   { id: '11', date: '2022-10-15', type: 'allergy', description: 'Shellfish - severe reaction, carries EpiPen', doctor: 'Dr. Emily Carter' },
+  { id: '12', date: '2024-07-01', type: 'allergy', description: 'Ragweed Pollen - seasonal allergic rhinitis', doctor: 'Dr. James Lee' },
+  { id: '13', date: '2023-09-10', type: 'allergy', description: 'Aspirin - gastrointestinal upset', doctor: 'Dr. Sarah Green' },
 ];
 
 export let placeholderMedications: Medication[] = [
@@ -189,6 +212,12 @@ export const getFutureDate = (days: number) => new Date(new Date().setDate(new D
 export const getPastDate = (days: number) => new Date(new Date().setDate(new Date().getDate() - days)).toISOString().split('T')[0];
 export const getTodayDate = () => new Date().toISOString().split('T')[0];
 
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/\s+/g, '-') // Replace spaces with -
+    .replace(/[^\w-]+/g, ''); // Remove all non-word chars
+}
 
 export let placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp1', name: 'Alice Wonderland', lastVisit: getPastDate(30), email: 'alice.wonderland@example.com', phone: '555-0101' },
@@ -231,15 +260,7 @@ export let placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da15', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
 ];
 
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '');
-}
-
 export let placeholderAnnouncements: Announcement[] = [];
-
 
 export let placeholderTestimonials: Testimonial[] = [
   {
@@ -248,7 +269,8 @@ export let placeholderTestimonials: Testimonial[] = [
     authorName: "Sarah Miller",
     authorRole: "Patient",
     authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "happy patient"
+    dataAiHint: "happy patient",
+    rating: 5,
   },
   {
     id: 'testimonial-2',
@@ -257,8 +279,9 @@ export let placeholderTestimonials: Testimonial[] = [
     authorRole: "Patient",
     authorImageUrl: "https://placehold.co/100x100.png",
     dataAiHint: "satisfied person",
-    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Placeholder video URL
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 
     videoPlaceholderImageUrl: "https://placehold.co/600x400.png",
+    rating: 5,
   },
   {
     id: 'testimonial-3',
@@ -266,7 +289,8 @@ export let placeholderTestimonials: Testimonial[] = [
     authorName: "Alice W.",
     authorRole: "Long-time Patient",
     authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "smiling woman"
+    dataAiHint: "smiling woman",
+    rating: 4,
   },
   {
     id: 'testimonial-4',
@@ -275,9 +299,19 @@ export let placeholderTestimonials: Testimonial[] = [
     authorRole: "Patient",
     authorImageUrl: "https://placehold.co/100x100.png",
     dataAiHint: "content man",
-    videoUrl: "#",
-    videoPlaceholderImageUrl: "https://placehold.co/600x400.png", // Generic placeholder
-  }
+    videoUrl: "#", // Using # as a placeholder for non-functional links
+    videoPlaceholderImageUrl: "https://placehold.co/600x300.png", 
+    rating: 4,
+  },
+  {
+    id: 'testimonial-5',
+    quote: "Excellent care and very efficient service. The new clinic facilities are top-notch. Five stars!",
+    authorName: "Maria G.",
+    authorRole: "New Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "pleased woman",
+    rating: 5,
+  },
 ];
 
 export let placeholderTrustSignals: TrustSignal[] = [
@@ -324,7 +358,6 @@ export let placeholderManagerUsers: ManagedUser[] = [
     { id: 'manager-1', name: 'Manager User', role: 'Manager', email: 'manager@healthflow.clinic', status: 'Active', lastLogin: new Date().toLocaleDateString() }
 ];
 
-
 export let placeholderSupplyItems: SupplyItem[] = [
   { id: 's1', name: '10cc Syringes', category: 'Medical Consumables', stockLevel: 50, reorderPoint: 20, status: 'In Stock' },
   { id: 's2', name: 'Gauze Pads (4x4)', category: 'Wound Care', stockLevel: 15, reorderPoint: 30, status: 'Low Stock' },
@@ -334,7 +367,6 @@ export let placeholderSupplyItems: SupplyItem[] = [
   { id: 's6', name: 'Band-Aids (Assorted)', category: 'Wound Care', stockLevel: 150, reorderPoint: 50, status: 'In Stock'},
   { id: 's7', name: 'Thermometer Probe Covers', category: 'Medical Consumables', stockLevel: 75, reorderPoint: 100, status: 'Low Stock'},
 ];
-
 
 export let allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac1', patientId: patientIdMap.get('Alice Wonderland') || 'dp1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(30), time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Completed', reminderSent: true },

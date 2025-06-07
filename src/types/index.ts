@@ -184,8 +184,9 @@ export interface Testimonial {
   authorRole: string;
   authorImageUrl?: string;
   dataAiHint?: string;
-  videoUrl?: string; // For actual video link (e.g. YouTube)
-  videoPlaceholderImageUrl?: string; // For a thumbnail image if videoUrl is present
+  videoUrl?: string;
+  videoPlaceholderImageUrl?: string;
+  rating?: number; // Added rating
 }
 
 export interface TrustSignal {
