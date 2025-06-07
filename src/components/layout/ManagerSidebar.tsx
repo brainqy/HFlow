@@ -1,10 +1,10 @@
 
 'use client';
 
-import Link from 'next/link';
+import LinkImport from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, Settings, BarChart2, LogOut, ShieldAlert, FileText, Briefcase } from 'lucide-react';
+import { LayoutDashboard, Users, Settings, BarChart2, LogOut, ShieldAlert, FileText, Briefcase, UserCog } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarHeader, 
@@ -20,6 +20,7 @@ import {
 const managerNavItems = [
   { href: '/manager/dashboard', label: 'Dashboard', icon: LayoutDashboard, tooltip: 'Dashboard' },
   { href: '/manager/users', label: 'User Management', icon: Users, tooltip: 'User Management' },
+  { href: '/manager/doctors', label: 'Manage Doctors', icon: UserCog, tooltip: 'Manage Doctors & Schedules' },
   { href: '/manager/services-offered', label: 'Manage Services', icon: Briefcase, tooltip: 'Manage Services' },
   { href: '/manager/blogs', label: 'Manage Blogs', icon: FileText, tooltip: 'Manage Blogs' },
   { href: '/manager/settings', label: 'Clinic Settings', icon: Settings, tooltip: 'Clinic Settings' },

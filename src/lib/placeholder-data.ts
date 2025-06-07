@@ -160,6 +160,8 @@ export let placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp12', name: 'Jack Frost', lastVisit: getPastDate(35), email: 'jack.frost@example.com', phone: '555-0112'},
   { id: 'dp13', name: 'George Jetson', lastVisit: getPastDate(55), email: 'george.jetson@example.com', phone: '555-0113'},
   { id: 'dp14', name: 'Hannah Montana', lastVisit: getPastDate(65), email: 'hannah.montana@example.com', phone: '555-0114'},
+  { id: 'dp15', name: 'Laura Croft', lastVisit: getPastDate(20), email: 'laura.croft@example.com', phone: '555-0115'},
+  { id: 'dp16', name: 'Peter Parker', lastVisit: getPastDate(80), email: 'peter.parker@example.com', phone: '555-0116'},
 ];
 
 const patientIdMap = new Map(placeholderDoctorPatients.map(p => [p.name, p.id]));
