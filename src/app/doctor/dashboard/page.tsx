@@ -6,6 +6,7 @@ import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered, Eye } from 'lu
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import PortalAnnouncements from '@/components/sections/PortalAnnouncements';
 
 export default function DoctorDashboardPage() {
   const doctorName = "Dr. Eleanor Vance"; 
@@ -27,6 +28,8 @@ export default function DoctorDashboardPage() {
           </Link>
         </Button>
       </header>
+      
+      <PortalAnnouncements portalType="doctor_portal" />
 
       {/* Quick Stats/Overview */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

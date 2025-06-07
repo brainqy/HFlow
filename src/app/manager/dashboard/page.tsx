@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { placeholderDoctorPatients, placeholderDoctors, placeholderDoctorAppointments } from '@/lib/placeholder-data'; // Assuming appointments can be counted here
 import { Users, Stethoscope, CalendarCheck, AlertTriangle, Settings } from 'lucide-react';
 import Link from 'next/link';
+import PortalAnnouncements from '@/components/sections/PortalAnnouncements';
 
 export default function ManagerDashboardPage() {
   const managerName = "Manager"; // Placeholder
@@ -26,6 +27,8 @@ export default function ManagerDashboardPage() {
           </Link>
         </Button>
       </header>
+
+      <PortalAnnouncements portalType="manager_portal" />
 
       {/* Quick Stats/Overview */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

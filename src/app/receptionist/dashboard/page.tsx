@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { placeholderDoctorAppointments } from '@/lib/placeholder-data'; // Using existing appointments for now
 import { CalendarDays, UserPlus, Users, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import PortalAnnouncements from '@/components/sections/PortalAnnouncements';
 
 export default function ReceptionistDashboardPage() {
   const receptionistName = "Sarah Bell"; // Placeholder
@@ -27,6 +28,8 @@ export default function ReceptionistDashboardPage() {
           </Link>
         </Button>
       </header>
+
+      <PortalAnnouncements portalType="receptionist_portal" />
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

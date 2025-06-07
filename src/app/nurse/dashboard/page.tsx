@@ -5,6 +5,7 @@ import { placeholderNursePatientQueue, placeholderNurseAlerts, placeholderNurseS
 import { UsersRound, ActivitySquare, TriangleAlert, CalendarClock, Syringe, ClipboardList } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import PortalAnnouncements from '@/components/sections/PortalAnnouncements';
 
 export default function NurseDashboardPage() {
   const nurseName = "Alex Miller"; // Placeholder
@@ -23,6 +24,8 @@ export default function NurseDashboardPage() {
           </Link>
         </Button>
       </header>
+
+      <PortalAnnouncements portalType="nurse_portal" />
 
       {/* Quick Stats/Overview */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

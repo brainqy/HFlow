@@ -265,10 +265,37 @@ export let placeholderAnnouncements: Announcement[] = [
     id: 'welcome-new-patients',
     title: 'Welcome New Patients!',
     content: 'HealthFlow is pleased to welcome all new patients to our clinic. Explore our services and book your first appointment online.',
-    displayLocations: ['homepage', 'all_portals'], // Will show on homepage and all specific portals
-    startDate: new Date(new Date().setDate(new Date().getDate() - 7)), // Started 7 days ago
-    endDate: new Date(new Date().setDate(new Date().getDate() + 30)), // Ends 30 days from now
+    displayLocations: ['homepage', 'all_portals'],
+    startDate: new Date(new Date().setDate(new Date().getDate() - 7)), 
+    endDate: new Date(new Date().setDate(new Date().getDate() + 30)), 
     createdAt: new Date(new Date().setDate(new Date().getDate() - 7)),
+  },
+  {
+    id: 'doctor-portal-update',
+    title: 'Doctor Portal Maintenance Scheduled',
+    content: 'The Doctor Portal will undergo scheduled maintenance on Sunday from 2 AM to 4 AM. Access may be intermittent.',
+    displayLocations: ['doctor_portal'],
+    startDate: new Date(new Date().setDate(new Date().getDate() - 1)), 
+    endDate: new Date(new Date().setDate(new Date().getDate() + 2)), 
+    createdAt: new Date(new Date().setDate(new Date().getDate() - 1)),
+  },
+  {
+    id: 'flu-shot-clinic',
+    title: 'Flu Shot Clinic - Now Open!',
+    content: 'Our annual flu shot clinic is now open. Protect yourself and your family this season. Walk-ins welcome or book an appointment.',
+    displayLocations: ['homepage', 'patient_portal', 'receptionist_portal'],
+    startDate: new Date(), 
+    endDate: new Date(new Date().setDate(new Date().getDate() + 60)), 
+    createdAt: new Date(),
+  },
+  {
+    id: 'system-wide-policy-update',
+    title: 'Important: New Privacy Policy Update',
+    content: 'Please review our updated privacy policy, effective next month. Available in all portals under "Clinic Policies".',
+    displayLocations: ['all_portals'],
+    startDate: new Date(),
+    endDate: new Date(new Date().setDate(new Date().getDate() + 45)),
+    createdAt: new Date(),
   },
 ];
 

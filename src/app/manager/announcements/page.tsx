@@ -44,6 +44,9 @@ const displayLocationOptions: { id: AnnouncementDisplayLocation; label: string }
   { id: 'homepage', label: 'Homepage' },
   { id: 'patient_portal', label: 'Patient Portal' },
   { id: 'doctor_portal', label: 'Doctor Portal' },
+  { id: 'nurse_portal', label: 'Nurse Portal' },
+  { id: 'receptionist_portal', label: 'Receptionist Portal' },
+  { id: 'manager_portal', label: 'Manager Portal' },
   { id: 'all_portals', label: 'All Portals (Overrides others)' },
 ];
 

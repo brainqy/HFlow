@@ -165,7 +165,14 @@ export interface ManagedUser {
   password?: string;
 }
 
-export type AnnouncementDisplayLocation = 'homepage' | 'patient_portal' | 'doctor_portal' | 'all_portals';
+export type AnnouncementDisplayLocation = 
+  | 'homepage' 
+  | 'patient_portal' 
+  | 'doctor_portal' 
+  | 'nurse_portal'
+  | 'receptionist_portal'
+  | 'manager_portal'
+  | 'all_portals';
 
 export interface Announcement {
   id: string;
@@ -186,7 +193,7 @@ export interface Testimonial {
   dataAiHint?: string;
   videoUrl?: string;
   videoPlaceholderImageUrl?: string;
-  rating?: number; // Added rating
+  rating?: number; 
 }
 
 export interface TrustSignal {
@@ -199,7 +206,18 @@ export interface TrustSignal {
 }
 
 export interface HomepageWidgetSetting {
-  id: string; // e.g., 'promoBanner', 'testimonialsSection'
-  name: string; // Friendly name for manager UI, e.g., "Promotional Banner"
+  id: string; 
+  name: string; 
   isVisible: boolean;
+}
+
+export interface HeroSlideItem {
+  id: string;
+  imageUrl: string;
+  altText: string;
+  dataAiHint: string;
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  ctaLink: string;
 }

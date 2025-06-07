@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { placeholderDoctorAppointments, placeholderDoctors } from '@/lib/placeholder-data'; 
 import { format } from 'date-fns';
+import PortalAnnouncements from '@/components/sections/PortalAnnouncements';
 
 export default function PortalDashboardPage() {
   const patientName = "Jane Doe (Patient Portal User)"; // Placeholder to match data
@@ -33,6 +34,8 @@ export default function PortalDashboardPage() {
           </Link>
         </Button>
       </header>
+      
+      <PortalAnnouncements portalType="patient_portal" />
 
       {/* Quick Access Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
