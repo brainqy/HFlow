@@ -1,11 +1,12 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
 
 export let placeholderDoctors: Doctor[] = [
   {
     id: 'emily-carter',
     name: 'Dr. Emily Carter',
+    email: 'emily.carter@healthflow.clinic',
     specialty: 'Cardiologist',
     bio: 'Dr. Emily Carter is a board-certified cardiologist with over 15 years of experience in treating complex heart conditions. She is passionate about preventive care and patient education.',
     education: ['MD, Stanford University School of Medicine', 'Residency, Johns Hopkins Hospital', 'Fellowship in Cardiology, Mayo Clinic'],
@@ -27,11 +28,11 @@ export let placeholderDoctors: Doctor[] = [
       { day: 'Friday', startTime: '03:00 PM', endTime: '04:00 PM', maxPatients: 4 },
       { day: 'Friday', startTime: '04:00 PM', endTime: '05:00 PM', maxPatients: 4 },
     ],
-    email: 'emily.carter@healthflow.clinic'
   },
   {
     id: 'james-lee',
     name: 'Dr. James Lee',
+    email: 'james.lee@healthflow.clinic',
     specialty: 'Neurologist',
     bio: 'Dr. James Lee specializes in neurological disorders, including epilepsy, stroke, and Alzheimer\'s disease. He is known for his compassionate approach and dedication to research.',
     education: ['MD, Harvard Medical School', 'Residency in Neurology, Massachusetts General Hospital'],
@@ -49,11 +50,11 @@ export let placeholderDoctors: Doctor[] = [
       { day: 'Thursday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 4 },
       { day: 'Thursday', startTime: '11:00 AM', endTime: '12:00 PM', maxPatients: 4 },
     ],
-    email: 'james.lee@healthflow.clinic'
   },
   {
     id: 'sarah-green',
     name: 'Dr. Sarah Green',
+    email: 'sarah.green@healthflow.clinic',
     specialty: 'Orthopedic Surgeon',
     bio: 'Dr. Sarah Green is an accomplished orthopedic surgeon with expertise in sports medicine and joint replacement. She helps patients regain mobility and improve their quality of life.',
     education: ['MD, Yale School of Medicine', 'Residency in Orthopedic Surgery, UCSF Medical Center'],
@@ -72,7 +73,39 @@ export let placeholderDoctors: Doctor[] = [
       { day: 'Thursday', startTime: '02:00 PM', endTime: '03:00 PM', maxPatients: 4 },
       { day: 'Thursday', startTime: '03:00 PM', endTime: '04:00 PM', maxPatients: 4 },
     ],
-    email: 'sarah.green@healthflow.clinic'
+  },
+   {
+    id: 'michael-brown',
+    name: 'Dr. Michael Brown',
+    email: 'michael.brown@healthflow.clinic',
+    specialty: 'Pediatrician',
+    bio: 'Dr. Michael Brown is a dedicated pediatrician with a focus on child development and immunizations. He enjoys working with families to ensure children grow up healthy and happy.',
+    education: ['MD, Duke University School of Medicine', 'Residency in Pediatrics, Children\'s Hospital of Philadelphia'],
+    experience: ['Pediatrician, Community Health Clinic (6 years)', 'Pediatrician, HealthFlow Clinic (current)'],
+    imageUrl: 'https://placehold.co/400x400.png',
+    dataAiHint: 'male doctor children',
+    availability: [
+      { day: 'Monday', startTime: '08:00 AM', endTime: '12:00 PM', maxPatients: 10 },
+      { day: 'Tuesday', startTime: '01:00 PM', endTime: '05:00 PM', maxPatients: 8 },
+      { day: 'Wednesday', startTime: '08:00 AM', endTime: '12:00 PM', maxPatients: 10 },
+      { day: 'Friday', startTime: '08:00 AM', endTime: '12:00 PM', maxPatients: 10 },
+    ],
+  },
+  {
+    id: 'jessica-davis',
+    name: 'Dr. Jessica Davis',
+    email: 'jessica.davis@healthflow.clinic',
+    specialty: 'Dermatologist',
+    bio: 'Dr. Jessica Davis specializes in medical and cosmetic dermatology. She is committed to providing excellent skin care and helping patients achieve healthy skin.',
+    education: ['MD, Columbia University Vagelos College of Physicians and Surgeons', 'Residency in Dermatology, NewYork-Presbyterian Hospital'],
+    experience: ['Dermatologist, NYC Skin & Laser Center (4 years)', 'Dermatologist, HealthFlow Clinic (current)'],
+    imageUrl: 'https://placehold.co/400x400.png',
+    dataAiHint: 'female doctor skin',
+    availability: [
+      { day: 'Tuesday', startTime: '09:00 AM', endTime: '01:00 PM', maxPatients: 6 },
+      { day: 'Thursday', startTime: '09:00 AM', endTime: '01:00 PM', maxPatients: 6 },
+      { day: 'Friday', startTime: '01:00 PM', endTime: '05:00 PM', maxPatients: 7 },
+    ],
   },
 ];
 
@@ -255,9 +288,47 @@ export let allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac20', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getTodayDate(), time: '04:30 PM', reason: 'Blood Pressure Check', status: 'Scheduled', reminderSent: true },
 ];
 
+export let placeholderAnnouncements: Announcement[] = [];
+
+
 export function generateSlug(title: string): string {
   return title
     .toLowerCase()
     .replace(/\s+/g, '-') 
     .replace(/[^\w-]+/g, ''); 
 }
+
+export let placeholderTestimonials: Testimonial[] = [
+  {
+    id: 'testimonial-1',
+    quote: "HealthFlow has transformed how I manage my health. The doctors are attentive, and the portal makes everything so easy!",
+    authorName: "Sarah Miller",
+    authorRole: "Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "happy patient"
+  },
+  {
+    id: 'testimonial-2',
+    quote: "Booking appointments is a breeze, and I always feel well-cared for. Highly recommend HealthFlow to everyone.",
+    authorName: "John B.",
+    authorRole: "Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "satisfied person"
+  },
+  {
+    id: 'testimonial-3',
+    quote: "The team at HealthFlow is professional and compassionate. They truly prioritize patient well-being.",
+    authorName: "Alice W.",
+    authorRole: "Long-time Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "smiling woman"
+  },
+  {
+    id: 'testimonial-4',
+    quote: "I appreciate the modern approach and the easy access to my medical information through their portal.",
+    authorName: "David K.",
+    authorRole: "Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "content man"
+  }
+];

@@ -5,12 +5,15 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Stethoscope, Users, FileText, Building } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Stethoscope, Users, FileText, Building, Info, Bell } from 'lucide-react';
 import Image from 'next/image';
-import { placeholderServices } from '@/lib/placeholder-data'; 
+import { placeholderServices, placeholderAnnouncements, placeholderTestimonials } from '@/lib/placeholder-data'; 
 import { getServiceIcon } from '@/lib/icon-map';
 import { useEffect, useState } from 'react';
-import type { Service } from '@/types';
+import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation } from '@/types';
+import { format } from 'date-fns';
+import TestimonialSlider from '@/components/sections/TestimonialSlider';
 
 const doctors = [
   { id: 'emily-carter', name: 'Dr. Emily Carter', specialty: 'Cardiologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'doctor portrait' },
@@ -20,21 +23,34 @@ const doctors = [
 
 export default function HomePageContent() {
   const [homePageServices, setHomePageServices] = useState<Service[]>([]);
+  const [activeAnnouncements, setActiveAnnouncements] = useState<Announcement[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
     // Filter for specific services to display on the homepage
     const servicesToDisplayNames = ['Cardiology', 'Neurology', 'Orthopedics'];
     const filteredServices = placeholderServices.filter(s => servicesToDisplayNames.includes(s.name));
     
-    // If specific services aren't found, take the first few available as fallback
     if (filteredServices.length < servicesToDisplayNames.length && placeholderServices.length > 0) {
         const fallbackServices = placeholderServices.slice(0, 3);
-        // Ensure no duplicates if some named services were found
         const combined = [...new Map([...filteredServices, ...fallbackServices].map(item => [item['id'], item])).values()];
         setHomePageServices(combined.slice(0,3));
     } else {
       setHomePageServices(filteredServices.slice(0,3));
     }
+
+    // Filter active announcements for homepage
+    const now = new Date();
+    const announcements = placeholderAnnouncements.filter(ann => {
+      const isTargeted = ann.displayLocations.includes('homepage') || ann.displayLocations.includes('all_portals');
+      const isActiveDate = ann.startDate <= now && (!ann.endDate || ann.endDate >= now);
+      return isTargeted && isActiveDate;
+    }).sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime()); // Show newest first
+    setActiveAnnouncements(announcements);
+    
+    // Load testimonials
+    setTestimonials(placeholderTestimonials);
+
   }, []);
 
 
@@ -59,6 +75,29 @@ export default function HomePageContent() {
           </div>
         </div>
       </section>
+
+      {/* Announcements Section */}
+      {activeAnnouncements.length > 0 && (
+        <section className="py-8 md:py-12">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="space-y-4">
+              {activeAnnouncements.map(ann => (
+                <Alert key={ann.id} className="shadow-md">
+                  <Bell className="h-5 w-5 text-primary" />
+                  <AlertTitle className="font-headline text-lg text-primary">{ann.title}</AlertTitle>
+                  <AlertDescription className="text-foreground/90">
+                    {ann.content}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Posted: {format(new Date(ann.createdAt), "PPP")}
+                      {ann.endDate && ` (Ends: ${format(new Date(ann.endDate), "PPP")})`}
+                    </p>
+                  </AlertDescription>
+                </Alert>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Services Section */}
       <section className="py-16 md:py-24">
@@ -167,6 +206,16 @@ export default function HomePageContent() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      {testimonials.length > 0 && (
+        <section className="py-16 md:py-24 bg-primary/5">
+          <div className="container mx-auto px-4 md:px-6">
+            <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">What Our Patients Say</h2>
+            <TestimonialSlider testimonials={testimonials} />
+          </div>
+        </section>
+      )}
+
       {/* Meet Our Doctors Section */}
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
@@ -194,25 +243,38 @@ export default function HomePageContent() {
       </section>
 
       {/* Blog Preview Section */}
-      <section className="bg-primary/5 py-16 md:py-24">
+      <section className="bg-slate-50 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Latest Health Articles</h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {/* Placeholder blog posts */}
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <Image src={`https://placehold.co/600x400.png`} alt={`Blog post ${i}`} data-ai-hint="health article" width={600} height={400} className="w-full h-48 object-cover rounded-t-lg"/>
+            {placeholderBlogPosts.slice(0,3).map((post) => (
+              <Card key={post.slug} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Link href={`/blog/${post.slug}`}>
+                  <Image 
+                    src={post.imageUrl} 
+                    alt={post.title} 
+                    data-ai-hint={post.dataAiHint || 'blog article'} 
+                    width={600} 
+                    height={400} 
+                    className="w-full h-48 object-cover rounded-t-lg"
+                  />
+                </Link>
                 <CardHeader>
-                  <CardTitle className="font-headline text-lg">Tips for a Healthier Lifestyle {i}</CardTitle>
+                  <Link href={`/blog/${post.slug}`}>
+                    <CardTitle className="font-headline text-lg hover:text-primary transition-colors">{post.title}</CardTitle>
+                  </Link>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>Discover simple yet effective ways to improve your daily health and well-being...</CardDescription>
+                  <CardDescription className="line-clamp-3">{post.excerpt}</CardDescription>
                   <Button variant="link" asChild className="mt-2 p-0 text-primary">
-                    <Link href="/blog/sample-post">Read More</Link>
+                    <Link href={`/blog/${post.slug}`}>Read More</Link>
                   </Button>
                 </CardContent>
               </Card>
             ))}
+             {placeholderBlogPosts.length === 0 && (
+              <p className="md:col-span-3 text-center text-muted-foreground">No blog posts available yet. Check back soon!</p>
+            )}
           </div>
           <div className="text-center mt-12">
             <Button size="lg" variant="outline" asChild>

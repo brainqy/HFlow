@@ -22,7 +22,7 @@ export interface Doctor {
 export interface Service {
   id: string;
   name: string;
-  iconName: string; // Changed from icon?: React.ElementType
+  iconName: string; 
   description: string;
   details?: string;
   imageUrl?: string;
@@ -159,4 +159,25 @@ export interface ManagedUser {
   status: 'Active' | 'Inactive'; 
   lastLogin?: string; 
   password?: string; 
+}
+
+export type AnnouncementDisplayLocation = 'homepage' | 'patient_portal' | 'doctor_portal' | 'all_portals';
+
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  displayLocations: AnnouncementDisplayLocation[];
+  startDate: Date;
+  endDate?: Date | null; 
+  createdAt: Date;
+}
+
+export interface Testimonial {
+  id: string;
+  quote: string;
+  authorName: string;
+  authorRole: string;
+  authorImageUrl?: string;
+  dataAiHint?: string;
 }
