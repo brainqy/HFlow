@@ -43,37 +43,40 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
         {testimonials.map((testimonial) => (
           <CarouselItem key={testimonial.id}>
             <div className="p-1">
-              <Card className="shadow-lg overflow-hidden">
-                <CardContent className="flex flex-col items-center justify-center p-6 aspect-video sm:aspect-[16/7] md:aspect-[16/6] text-center relative bg-card">
-                  <Quote className="absolute top-4 left-4 h-8 w-8 text-primary/20" />
-                  <Quote className="absolute bottom-4 right-4 h-8 w-8 text-primary/20 transform scale-x-[-1] scale-y-[-1]" />
-
+              <Card className="shadow-lg overflow-hidden bg-card">
+                <CardContent className="flex flex-col items-center justify-center p-6 md:p-8 min-h-[300px] sm:min-h-[320px] text-center relative">
                   {testimonial.videoUrl && testimonial.videoPlaceholderImageUrl ? (
-                    <div className="mb-6 relative group">
-                      <Image
-                        src={testimonial.videoPlaceholderImageUrl}
-                        alt={`Video testimonial from ${testimonial.authorName}`}
-                        width={320}
-                        height={180}
-                        className="rounded-lg shadow-md"
-                        data-ai-hint="video testimonial placeholder"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors duration-300 rounded-lg">
-                        <Link href={testimonial.videoUrl} target="_blank" rel="noopener noreferrer" aria-label={`Watch video testimonial from ${testimonial.authorName}`}>
-                          <PlayCircle className="h-16 w-16 text-white/80 group-hover:text-white transition-colors duration-300" />
-                        </Link>
+                    <div className="flex flex-col items-center w-full">
+                      <div className="relative group w-full max-w-md aspect-video mb-4">
+                        <Image
+                          src={testimonial.videoPlaceholderImageUrl}
+                          alt={`Video testimonial from ${testimonial.authorName}`}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          style={{ objectFit: "cover" }}
+                          className="rounded-lg shadow-md"
+                          data-ai-hint="video testimonial placeholder"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors duration-300 rounded-lg">
+                          <Link href={testimonial.videoUrl} target="_blank" rel="noopener noreferrer" aria-label={`Watch video testimonial from ${testimonial.authorName}`}>
+                            <PlayCircle className="h-16 w-16 text-white/80 group-hover:text-white transition-colors duration-300" />
+                          </Link>
+                        </div>
                       </div>
-                       <p className="text-xs text-muted-foreground mt-2">Click to watch video testimonial</p>
+                      <p className="text-xs text-muted-foreground mt-1 mb-3">Click to watch video testimonial</p>
                     </div>
                   ) : (
-                    <p className="text-lg md:text-xl font-medium text-foreground leading-relaxed mb-6 italic px-4">
-                      "{testimonial.quote}"
-                    </p>
+                    <>
+                      <Quote className="h-10 w-10 text-primary/30 mb-4" />
+                      <p className="text-base md:text-lg font-medium text-foreground/90 leading-relaxed mb-6">
+                        {testimonial.quote}
+                      </p>
+                    </>
                   )}
 
-                  <div className="flex items-center">
+                  <div className="flex items-center mt-auto pt-4 border-t border-border/50 w-full justify-center">
                     {testimonial.authorImageUrl && (
-                       <Avatar className="h-12 w-12 mr-4">
+                       <Avatar className="h-12 w-12 mr-3 shrink-0">
                          <AvatarImage src={testimonial.authorImageUrl} alt={testimonial.authorName} data-ai-hint={testimonial.dataAiHint || 'person photo'} />
                          <AvatarFallback>{testimonial.authorName.substring(0,1)}</AvatarFallback>
                        </Avatar>
@@ -89,8 +92,8 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious className="hidden sm:flex" />
-      <CarouselNext className="hidden sm:flex" />
+      <CarouselPrevious className="hidden sm:flex left-[-20px] md:left-[-40px]" />
+      <CarouselNext className="hidden sm:flex right-[-20px] md:right-[-40px]" />
     </Carousel>
   )
 }

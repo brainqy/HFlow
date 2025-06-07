@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Stethoscope, Users, FileText, Building, Info, Bell, Hospital, Lightbulb, UserCheck, CheckSquare, Microscope as LabIcon, DoorOpen as EntranceIcon, ConciergeBell as ReceptionIcon } from 'lucide-react';
@@ -344,30 +344,35 @@ export default function HomePageContent() {
         <section className="bg-slate-50 py-16 md:py-24">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Latest Health Articles</h2>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              {placeholderBlogPosts.slice(0,3).map((post) => (
-                <Card key={post.slug} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <Link href={`/blog/${post.slug}`}>
-                    <Image
-                      src={post.imageUrl}
-                      alt={post.title}
-                      data-ai-hint={post.dataAiHint || 'blog article'}
-                      width={600}
-                      height={400}
-                      className="w-full h-48 object-cover rounded-t-lg"
-                    />
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"> {/* This grid will wrap 5 items naturally */}
+              {placeholderBlogPosts.slice(0,5).map((post) => (
+                <Card key={post.slug} className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
+                  <Link href={`/blog/${post.slug}`} className="block">
+                    <div className="relative h-48 w-full">
+                      <Image
+                        src={post.imageUrl}
+                        alt={post.title}
+                        data-ai-hint={post.dataAiHint || 'blog article'}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        style={{objectFit:"cover"}}
+                        className="rounded-t-lg"
+                      />
+                    </div>
                   </Link>
                   <CardHeader>
                     <Link href={`/blog/${post.slug}`}>
                       <CardTitle className="font-headline text-lg hover:text-primary transition-colors">{post.title}</CardTitle>
                     </Link>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex-grow">
                     <CardDescription className="line-clamp-3">{post.excerpt}</CardDescription>
-                    <Button variant="link" asChild className="mt-2 p-0 text-primary">
-                      <Link href={`/blog/${post.slug}`}>Read More</Link>
-                    </Button>
                   </CardContent>
+                  <CardFooter>
+                    <Button variant="link" asChild className="p-0 text-primary">
+                      <Link href={`/blog/${post.slug}`}>Read More &rarr;</Link>
+                    </Button>
+                  </CardFooter>
                 </Card>
               ))}
                {placeholderBlogPosts.length === 0 && (
