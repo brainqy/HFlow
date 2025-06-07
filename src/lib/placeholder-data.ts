@@ -297,6 +297,24 @@ export let placeholderAnnouncements: Announcement[] = [
     endDate: new Date(new Date().setDate(new Date().getDate() + 45)),
     createdAt: new Date(),
   },
+  {
+    id: 'manager-dashboard-tip',
+    title: 'Manager Tip: Utilize the New Reports Feature',
+    content: 'The new reporting tools in the Manager Portal are now live. Generate insights on user activity and service usage.',
+    displayLocations: ['manager_portal'],
+    startDate: new Date(),
+    endDate: new Date(new Date().setDate(new Date().getDate() + 14)),
+    createdAt: new Date(),
+  },
+  {
+    id: 'nurse-reminder-ppe',
+    title: 'Nurse Reminder: PPE Guidelines Update',
+    content: 'Please review the updated PPE guidelines posted in the break room and available in the Nurse Portal resources section.',
+    displayLocations: ['nurse_portal'],
+    startDate: new Date(),
+    endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+    createdAt: new Date(),
+  }
 ];
 
 export let placeholderTestimonials: Testimonial[] = [
@@ -479,3 +497,4 @@ export let heroSlides: HeroSlideItem[] = [
     
 
     
+

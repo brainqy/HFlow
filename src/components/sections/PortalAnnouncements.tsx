@@ -15,18 +15,27 @@ interface PortalAnnouncementsProps {
 
 export default function PortalAnnouncements({ portalType }: PortalAnnouncementsProps) {
   const [activeAnnouncements, setActiveAnnouncements] = useState<Announcement[]>([]);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
 
   useEffect(() => {
     const now = new Date();
-    const announcements = placeholderAnnouncements.filter(ann => {
+    const filtered = placeholderAnnouncements.filter(ann => {
       const isTargeted = ann.displayLocations.includes(portalType) || ann.displayLocations.includes('all_portals');
       const isActiveDate = new Date(ann.startDate) <= now && (!ann.endDate || new Date(ann.endDate) >= now);
       return isTargeted && isActiveDate;
     }).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    setActiveAnnouncements(announcements);
-    // Reset expansion state if announcements change, default to expanded
-    setIsExpanded(true); 
+    
+    setActiveAnnouncements(filtered);
+    
+    // Set expanded state based on filtered announcements: collapsed if more than one
+    if (filtered.length > 1) {
+      setIsExpanded(false);
+    } else {
+      // If only one or zero announcements, the toggle button won't appear.
+      // isExpanded can be true or false, it won't affect the UI significantly here.
+      // Setting to false for consistency.
+      setIsExpanded(false); 
+    }
   }, [portalType]);
 
   if (activeAnnouncements.length === 0) {
@@ -75,3 +84,4 @@ export default function PortalAnnouncements({ portalType }: PortalAnnouncementsP
     </section>
   );
 }
+
