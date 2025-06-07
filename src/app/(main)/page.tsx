@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import TestimonialSlider from '@/components/sections/TestimonialSlider';
 import TrustSignals from '@/components/sections/TrustSignals';
 import PromoBanner from '@/components/sections/PromoBanner';
+import HeroSlider from '@/components/sections/HeroSlider'; // Added HeroSlider import
 
 // Subset of specialized services for the new grid
 const specializedServicesToShow: Service[] = placeholderServices.filter(s => ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Oncology', 'Gastroenterology', 'General Surgery', 'IVF', 'Nephrology', 'Critical Care'].includes(s.name)).slice(0, 12);
@@ -63,6 +64,10 @@ export default function HomePageContent() {
 
   return (
     <>
+      <HeroSlider /> {/* Added HeroSlider component at the top */}
+
+      {/* The original first section is removed as HeroSlider replaces it. */}
+      {/* 
       <section className="bg-primary/10 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl">
@@ -80,7 +85,8 @@ export default function HomePageContent() {
             </Button>
           </div>
         </div>
-      </section>
+      </section> 
+      */}
 
       {isWidgetVisible('announcements') && activeAnnouncements.length > 0 && (
         <section className="py-8 md:py-12">
@@ -304,30 +310,35 @@ export default function HomePageContent() {
         </section>
       )}
 
-      {isWidgetVisible('trustSignals') && trustSignals.length > 0 && <TrustSignals signals={trustSignals} />}
+     
 
       {isWidgetVisible('meetOurDoctors') && (
-         <section className="bg-primary text-primary-foreground py-16 md:py-20 rounded-lg my-12 md:my-16">
-          <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 items-center gap-8">
-            <div className="space-y-4 text-center md:text-left">
-              <h2 className="font-headline text-3xl md:text-4xl font-bold">Meet Our Most Experienced Doctors</h2>
-              <p className="text-lg text-primary-foreground/90">Our Experienced Medical Team: Your Partners in Health</p>
-              <Button variant="secondary" size="lg" asChild className="mt-4 hover:bg-secondary/90">
-                <Link href="/doctors">Meet Our Team</Link>
-              </Button>
-            </div>
-            <div className="relative h-64 md:h-auto md:min-h-[300px] flex justify-center md:justify-end items-center">
-              <Image 
-                src="https://placehold.co/500x350.png" 
-                alt="Team of experienced doctors"
-                data-ai-hint="doctor team group"
-                width={500} 
-                height={350}
-                className="rounded-md object-cover shadow-xl max-w-full h-auto"
-              />
-            </div>
+        <section className="bg-primary text-primary-foreground py-2 md:py-4 rounded-lg my-8 md:my-10">
+        <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 items-center gap-6">
+          <div className="space-y-3 text-center md:text-left">
+            <h2 className="font-headline text-2xl md:text-3xl font-bold">
+              Meet Our Most Experienced Doctors
+            </h2>
+            <p className="text-base text-primary-foreground/90">
+              Our Experienced Medical Team: Your Partners in Health
+            </p>
+            <Button variant="secondary" size="lg" asChild className="mt-3 hover:bg-secondary/90">
+              <Link href="/doctors">Meet Our Team</Link>
+            </Button>
           </div>
-        </section>
+          <div className="relative h-40 md:h-48 flex justify-center md:justify-end items-center">
+            <Image
+              src="/meet-doctor-img.webp"
+              alt="Team of experienced doctors from HealthFlow"
+              width={400}
+              height={300}
+              className="rounded-md object-contain shadow-xl md:top-[500px] max-w-full h-auto translate-y-4 md:translate-y-6"
+            />
+          </div>
+        </div>
+      </section>
+      
+       
       )}
 
       {isWidgetVisible('blogPreview') && (
@@ -377,6 +388,8 @@ export default function HomePageContent() {
           </div>
         </section>
       )}
+
+{isWidgetVisible('trustSignals') && trustSignals.length > 0 && <TrustSignals signals={trustSignals} />}
     </>
   );
 }
