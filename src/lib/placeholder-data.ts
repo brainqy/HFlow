@@ -355,10 +355,3 @@ export let homepageWidgetSettings: HomepageWidgetSetting[] = [
   { id: 'meetOurDoctors', name: 'Meet Our Doctors Section', isVisible: true },
   { id: 'blogPreview', name: 'Blog Preview Section', isVisible: true },
 ];
-
-export function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/\s+/g, '-') 
-    .replace(/[^\w-]+/g, ''); 
-}
