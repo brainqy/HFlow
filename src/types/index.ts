@@ -22,8 +22,8 @@ export interface Doctor {
 export interface Service {
   id: string;
   name: string;
+  iconName: string; // Changed from icon?: React.ElementType
   description: string;
-  icon?: React.ElementType; 
   details?: string;
   imageUrl?: string;
   dataAiHint?: string;

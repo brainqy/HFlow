@@ -1,22 +1,24 @@
+
+"use client"; 
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, Stethoscope, Syringe, Pill, Microscope, HeartPulse, Bone, Brain, Baby } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-
-const servicesList = [
-  { name: 'General Checkups', icon: Stethoscope, description: 'Routine health examinations and preventive care for all ages.', imageHint: 'doctor patient checkup' },
-  { name: 'Vaccinations', icon: Syringe, description: 'Comprehensive immunization services for children and adults.', imageHint: 'vaccination arm' },
-  { name: 'Chronic Disease Management', icon: Activity, description: 'Ongoing care and support for managing chronic conditions like diabetes and hypertension.', imageHint: 'health monitoring' },
-  { name: 'Cardiology', icon: HeartPulse, description: 'Specialized heart care, including ECG, stress tests, and consultations.', imageHint: 'heart EKG' },
-  { name: 'Orthopedics', icon: Bone, description: 'Diagnosis and treatment of musculoskeletal injuries and conditions.', imageHint: 'x-ray joint' },
-  { name: 'Neurology', icon: Brain, description: 'Care for disorders of the nervous system, including migraines and neuropathy.', imageHint: 'brain MRI' },
-  { name: 'Pediatrics', icon: Baby, description: 'Comprehensive healthcare for infants, children, and adolescents.', imageHint: 'child doctor' },
-  { name: 'Lab Services', icon: Microscope, description: 'On-site laboratory for quick and accurate diagnostic testing.', imageHint: 'lab tests' },
-  { name: 'Pharmacy Services', icon: Pill, description: 'Convenient on-site pharmacy for prescriptions and medication counseling.', imageHint: 'pharmacy counter' },
-];
+import { placeholderServices } from '@/lib/placeholder-data'; // Will use the mutable array
+import { getServiceIcon } from '@/lib/icon-map'; 
+import { useEffect, useState } from 'react';
+import type { Service } from '@/types';
 
 export default function ServicesPage() {
+  const [servicesList, setServicesList] = useState<Service[]>([]);
+
+  useEffect(() => {
+    // Simulates fetching or observing the mutable placeholderServices array
+    setServicesList([...placeholderServices]);
+  }, []); 
+
+
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 md:py-16">
       <header className="mb-12 text-center">
@@ -28,36 +30,47 @@ export default function ServicesPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {servicesList.map((service) => (
-          <Card key={service.name} className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <CardHeader className="items-center text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <service.icon className="h-8 w-8" />
-              </div>
-              <CardTitle className="font-headline text-xl">{service.name}</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <Image 
-                src={`https://placehold.co/600x300.png`} 
-                alt={service.name}
-                data-ai-hint={service.imageHint}
-                width={600} 
-                height={300} 
-                className="w-full h-40 object-cover rounded-md mb-4"
-              />
-              <CardDescription className="text-base text-muted-foreground mb-4">
-                {service.description}
-              </CardDescription>
-            </CardContent>
-            <div className="p-6 pt-0">
-              <Button asChild className="w-full">
-                <Link href="/appointments">Book Appointment</Link>
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+      {servicesList.length > 0 ? (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {servicesList.map((service) => {
+            const IconComponent = getServiceIcon(service.iconName);
+            return (
+              <Card key={service.id} className="flex flex-col shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <CardHeader className="items-center text-center">
+                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <IconComponent className="h-8 w-8" />
+                  </div>
+                  <CardTitle className="font-headline text-xl">{service.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <Image 
+                    src={service.imageUrl || `https://placehold.co/600x300.png`} 
+                    alt={service.name}
+                    data-ai-hint={service.dataAiHint || "medical service illustration"}
+                    width={600} 
+                    height={300} 
+                    className="w-full h-40 object-cover rounded-md mb-4"
+                  />
+                  <CardDescription className="text-base text-muted-foreground mb-4">
+                    {service.description}
+                  </CardDescription>
+                </CardContent>
+                <div className="p-6 pt-0">
+                  <Button asChild className="w-full">
+                    <Link href="/appointments">Book Appointment</Link>
+                  </Button>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      ) : (
+         <div className="text-center py-10">
+          <h2 className="font-headline text-2xl text-foreground mb-4">No Services Available</h2>
+          <p className="text-muted-foreground">Please check back later or contact us for more information.</p>
+        </div>
+      )}
+
 
       <section className="mt-16 py-12 bg-slate-50 rounded-lg">
         <div className="container mx-auto px-4 md:px-6 text-center">

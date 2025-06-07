@@ -1,33 +1,43 @@
 
+"use client"; 
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Stethoscope, Users, FileText, HeartPulse, Brain, Bone, Building } from 'lucide-react';
+import { Stethoscope, Users, FileText, Building } from 'lucide-react';
 import Image from 'next/image';
-import { placeholderServices } from '@/lib/placeholder-data'; // Assuming placeholderServices has 'details'
-
-const servicesToDisplay = placeholderServices.filter(s => ['Cardiology', 'Neurology', 'Orthopedics'].includes(s.name));
-
-// Find full service objects for icons and details
-const cardiologyService = placeholderServices.find(s => s.name === 'Cardiology') || { name: 'Cardiology', icon: HeartPulse, description: 'Expert heart care and diagnostics.', details: 'Detailed cardiology service information not available.', dataAiHint: 'heart medical' };
-const neurologyService = placeholderServices.find(s => s.name === 'Neurology') || { name: 'Neurology', icon: Brain, description: 'Comprehensive neurological services.', details: 'Detailed neurology service information not available.', dataAiHint: 'brain scan' };
-const orthopedicsService = placeholderServices.find(s => s.name === 'Orthopedics') || { name: 'Orthopedics', icon: Bone, description: 'Treatment for bone and joint issues.', details: 'Detailed orthopedics service information not available.', dataAiHint: 'x-ray skeleton' };
-
-const homePageServices = [
-  cardiologyService,
-  neurologyService,
-  orthopedicsService,
-];
-
+import { placeholderServices } from '@/lib/placeholder-data'; 
+import { getServiceIcon } from '@/lib/icon-map';
+import { useEffect, useState } from 'react';
+import type { Service } from '@/types';
 
 const doctors = [
-  { id: '1', name: 'Dr. Emily Carter', specialty: 'Cardiologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'doctor portrait' },
-  { id: '2', name: 'Dr. James Lee', specialty: 'Neurologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'physician smiling' },
-  { id: '3', name: 'Dr. Sarah Green', specialty: 'Orthopedic Surgeon', image: 'https://placehold.co/300x300.png', dataAiHint: 'surgeon friendly' },
+  { id: 'emily-carter', name: 'Dr. Emily Carter', specialty: 'Cardiologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'doctor portrait' },
+  { id: 'james-lee', name: 'Dr. James Lee', specialty: 'Neurologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'physician smiling' },
+  { id: 'sarah-green', name: 'Dr. Sarah Green', specialty: 'Orthopedic Surgeon', image: 'https://placehold.co/300x300.png', dataAiHint: 'surgeon friendly' },
 ];
 
 export default function HomePageContent() {
+  const [homePageServices, setHomePageServices] = useState<Service[]>([]);
+
+  useEffect(() => {
+    // Filter for specific services to display on the homepage
+    const servicesToDisplayNames = ['Cardiology', 'Neurology', 'Orthopedics'];
+    const filteredServices = placeholderServices.filter(s => servicesToDisplayNames.includes(s.name));
+    
+    // If specific services aren't found, take the first few available as fallback
+    if (filteredServices.length < servicesToDisplayNames.length && placeholderServices.length > 0) {
+        const fallbackServices = placeholderServices.slice(0, 3);
+        // Ensure no duplicates if some named services were found
+        const combined = [...new Map([...filteredServices, ...fallbackServices].map(item => [item['id'], item])).values()];
+        setHomePageServices(combined.slice(0,3));
+    } else {
+      setHomePageServices(filteredServices.slice(0,3));
+    }
+  }, []);
+
+
   return (
     <>
       {/* Hero Section */}
@@ -54,52 +64,59 @@ export default function HomePageContent() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Our Services</h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {homePageServices.map((service) => (
-              <Card key={service.name} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
-                    <service.icon className="h-8 w-8" />
-                  </div>
-                  <CardTitle className="font-headline">{service.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{service.description}</p>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="link" className="mt-4 text-primary">Learn More</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[525px]">
-                      <DialogHeader>
-                        <DialogTitle className="font-headline text-2xl text-primary flex items-center gap-2">
-                          <service.icon className="h-6 w-6" /> {service.name}
-                        </DialogTitle>
-                        <DialogDescription className="text-base pt-2 text-muted-foreground">
-                          {service.description}
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="py-4 text-foreground">
-                        <p className="leading-relaxed">{service.details || 'More detailed information about this service will be available soon.'}</p>
+          {homePageServices.length > 0 ? (
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {homePageServices.map((service) => {
+                const IconComponent = getServiceIcon(service.iconName);
+                return (
+                  <Card key={service.id} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                    <CardHeader>
+                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+                        <IconComponent className="h-8 w-8" />
                       </div>
-                        {service.imageUrl && (
-                           <Image 
-                            src={service.imageUrl} 
-                            alt={service.name} 
-                            data-ai-hint={service.dataAiHint || "service illustration"}
-                            width={400} 
-                            height={250} 
-                            className="rounded-md object-cover mx-auto mt-2"
-                            />
-                        )}
-                       <Button asChild className="mt-6 w-full">
-                         <Link href="/appointments">Book an Appointment</Link>
-                       </Button>
-                    </DialogContent>
-                  </Dialog>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                      <CardTitle className="font-headline">{service.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">{service.description}</p>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="link" className="mt-4 text-primary">Learn More</Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[525px]">
+                          <DialogHeader>
+                            <DialogTitle className="font-headline text-2xl text-primary flex items-center gap-2">
+                              <IconComponent className="h-6 w-6" /> {service.name}
+                            </DialogTitle>
+                            <DialogDescription className="text-base pt-2 text-muted-foreground">
+                              {service.description}
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="py-4 text-foreground">
+                            <p className="leading-relaxed">{service.details || 'More detailed information about this service will be available soon.'}</p>
+                          </div>
+                            {service.imageUrl && (
+                              <Image 
+                                src={service.imageUrl} 
+                                alt={service.name} 
+                                data-ai-hint={service.dataAiHint || "service illustration"}
+                                width={400} 
+                                height={250} 
+                                className="rounded-md object-cover mx-auto mt-2"
+                                />
+                            )}
+                          <Button asChild className="mt-6 w-full">
+                            <Link href="/appointments">Book an Appointment</Link>
+                          </Button>
+                        </DialogContent>
+                      </Dialog>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+             ) : (
+            <p className="text-muted-foreground text-center">Key services information coming soon. <Link href="/services" className="text-primary hover:underline">View all services</Link>.</p>
+          )}
         </div>
       </section>
       
