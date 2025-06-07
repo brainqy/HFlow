@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial, TrustSignal, HomepageWidgetSetting, HeroSlideItem } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, AnnouncementDisplayLocation, Testimonial, TrustSignal, HomepageWidgetSetting, HeroSlideItem } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays, ShieldCheck, Zap, ActivitySquare as GastroenterologyIcon, Users as PaediatricsIcon } from 'lucide-react';
 
 export let placeholderDoctors: Doctor[] = [
@@ -215,8 +215,8 @@ export const getTodayDate = () => new Date().toISOString().split('T')[0];
 export function generateSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w-]+/g, ''); // Remove all non-word chars
+    .replace(/\s+/g, '-') 
+    .replace(/[^\w-]+/g, ''); 
 }
 
 export let placeholderDoctorPatients: DoctorPatient[] = [
@@ -260,7 +260,17 @@ export let placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da15', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
 ];
 
-export let placeholderAnnouncements: Announcement[] = [];
+export let placeholderAnnouncements: Announcement[] = [
+  {
+    id: 'welcome-new-patients',
+    title: 'Welcome New Patients!',
+    content: 'HealthFlow is pleased to welcome all new patients to our clinic. Explore our services and book your first appointment online.',
+    displayLocations: ['homepage', 'all_portals'], // Will show on homepage and all specific portals
+    startDate: new Date(new Date().setDate(new Date().getDate() - 7)), // Started 7 days ago
+    endDate: new Date(new Date().setDate(new Date().getDate() + 30)), // Ends 30 days from now
+    createdAt: new Date(new Date().setDate(new Date().getDate() - 7)),
+  },
+];
 
 export let placeholderTestimonials: Testimonial[] = [
   {
@@ -299,7 +309,7 @@ export let placeholderTestimonials: Testimonial[] = [
     authorRole: "Patient",
     authorImageUrl: "https://placehold.co/100x100.png",
     dataAiHint: "content man",
-    videoUrl: "#", // Using # as a placeholder for non-functional links
+    videoUrl: "#", 
     videoPlaceholderImageUrl: "https://placehold.co/600x300.png", 
     rating: 4,
   },
@@ -438,5 +448,7 @@ export let heroSlides: HeroSlideItem[] = [
     ctaLink: '/about',
   },
 ];
+
+    
 
     
