@@ -17,8 +17,6 @@ import TestimonialSlider from '@/components/sections/TestimonialSlider';
 import TrustSignals from '@/components/sections/TrustSignals';
 import PromoBanner from '@/components/sections/PromoBanner';
 
-// Removed local 'doctors' array as the section is now a CTA banner
-
 // Subset of specialized services for the new grid
 const specializedServicesToShow: Service[] = placeholderServices.filter(s => ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Oncology', 'Gastroenterology', 'General Surgery', 'IVF', 'Nephrology', 'Critical Care'].includes(s.name)).slice(0, 12);
 
@@ -336,7 +334,7 @@ export default function HomePageContent() {
         <section className="bg-slate-50 py-16 md:py-24">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Latest Health Articles</h2>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"> {/* This grid will wrap 5 items naturally */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
               {placeholderBlogPosts.slice(0,5).map((post) => (
                 <Card key={post.slug} className="shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
                   <Link href={`/blog/${post.slug}`} className="block">
@@ -368,7 +366,7 @@ export default function HomePageContent() {
                 </Card>
               ))}
                {placeholderBlogPosts.length === 0 && (
-                <p className="md:col-span-3 text-center text-muted-foreground">No blog posts available yet. Check back soon!</p>
+                <p className="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-5 text-center text-muted-foreground">No blog posts available yet. Check back soon!</p>
               )}
             </div>
             <div className="text-center mt-12">
@@ -382,3 +380,4 @@ export default function HomePageContent() {
     </>
   );
 }
+
