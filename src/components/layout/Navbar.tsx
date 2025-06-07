@@ -39,7 +39,7 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
     portalName = 'Manager Portal';
   } else if (userType === 'receptionist') {
     dashboardLink = '/receptionist/dashboard';
-    DashboardIconComponent = CalendarCheck; 
+    DashboardIconComponent = CalendarCheck;
     portalName = 'Receptionist Portal';
   }
 
@@ -57,7 +57,8 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
               <Stethoscope className="h-7 w-7 text-primary" />
               <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
             </Link>
-            <Badge variant="outline" className="ml-9 -mt-1 text-xs text-muted-foreground"> {/* Badge below logo text */}
+            {/* Adjusted badge class for smaller text and slightly less negative top margin */}
+            <Badge variant="outline" className="ml-9 -mt-0.5 text-[0.65rem] leading-tight text-muted-foreground self-start">
               {appVersion}
             </Badge>
           </div>
@@ -113,7 +114,8 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
                     <Stethoscope className="h-7 w-7 text-primary" />
                     <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
                   </div>
-                  <Badge variant="outline" className="ml-9 -mt-1 text-xs text-muted-foreground mb-4"> {/* Badge below logo text, mb-4 for spacing */}
+                  {/* Adjusted badge class for smaller text and slightly less negative top margin */}
+                  <Badge variant="outline" className="ml-9 -mt-0.5 text-[0.65rem] leading-tight text-muted-foreground mb-4 self-start">
                     {appVersion}
                   </Badge>
                 </div>
