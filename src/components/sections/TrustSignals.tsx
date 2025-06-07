@@ -20,7 +20,7 @@ export default function TrustSignals({ signals }: TrustSignalsProps) {
   const featuredIn = signals.filter(s => s.type === 'featured');
 
   const SignalCard = ({ signal }: { signal: TrustSignal }) => (
-    <Card className="flex items-center justify-center p-4 h-32 transition-shadow hover:shadow-lg bg-card/50">
+    <Card className="flex items-center justify-center p-4 h-32 transition-shadow hover:shadow-lg bg-card/50 w-40 md:w-48"> {/* Added fixed width for consistency */}
       <Link href={signal.url || '#'} target="_blank" rel="noopener noreferrer" className="block w-full h-full relative">
         <Image
           src={signal.imageUrl}
@@ -39,7 +39,8 @@ export default function TrustSignals({ signals }: TrustSignalsProps) {
     return (
       <div className="mb-10">
         <h3 className="font-headline text-2xl font-semibold text-center text-primary mb-6">{title}</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        {/* Changed from grid to flex for better centering of items */}
+        <div className="flex flex-wrap justify-center items-center gap-6">
           {items.map(item => <SignalCard key={item.id} signal={item} />)}
         </div>
       </div>
@@ -61,3 +62,4 @@ export default function TrustSignals({ signals }: TrustSignalsProps) {
     </section>
   );
 }
+
