@@ -24,7 +24,7 @@ interface TestimonialSliderProps {
 
 const StarRating = ({ rating, className }: { rating: number; className?: string }) => {
   return (
-    <div className={cn("flex items-center justify-center mb-3", className)}>
+    <div className={cn("flex items-center justify-center", className)}>
       {[...Array(5)].map((_, i) => (
         <Star
           key={i}
@@ -40,12 +40,11 @@ const StarRating = ({ rating, className }: { rating: number; className?: string 
 
 const TestimonialCardDisplay = ({ testimonial, type }: { testimonial: Testimonial; type: 'video' | 'text' }) => {
   return (
-    <Card className="shadow-xl overflow-hidden bg-card h-full flex flex-col w-full max-w-lg mx-auto">
-      <CardContent className="flex flex-col items-center justify-start p-6 md:p-8 text-center relative flex-grow min-h-[320px]">
-        {testimonial.rating && <StarRating rating={testimonial.rating} />}
-
+    <Card className="shadow-xl overflow-hidden bg-card h-full flex flex-col w-full max-w-md mx-auto"> {/* max-w-md for wider cards */}
+      <CardContent className="flex flex-col items-center justify-between p-6 md:p-8 text-center relative flex-grow min-h-[280px]"> {/* Reduced min-h */}
+        
         {type === 'video' && testimonial.videoUrl && testimonial.videoPlaceholderImageUrl ? (
-          <div className="flex flex-col items-center w-full mb-4">
+          <div className="flex flex-col items-center w-full mb-3">
             <div className="relative group w-full aspect-video">
               <Image
                 src={testimonial.videoPlaceholderImageUrl}
@@ -62,20 +61,22 @@ const TestimonialCardDisplay = ({ testimonial, type }: { testimonial: Testimonia
                 </Link>
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Click to watch video testimonial</p>
+             {testimonial.rating && <StarRating rating={testimonial.rating} className="mt-3" />}
+            <p className="text-xs text-muted-foreground mt-1">Click to watch video testimonial</p>
           </div>
         ) : (
-          <>
-            <Quote className="h-8 w-8 md:h-10 md:w-10 text-primary/30 mb-3" />
-            <p className="text-base md:text-lg font-medium text-foreground/90 leading-relaxed mb-4 flex-grow">
+          <div className="flex flex-col items-center flex-grow justify-center">
+            <Quote className="h-8 w-8 md:h-10 md:w-10 text-primary/30 mb-2" />
+            <p className="text-base md:text-lg font-medium text-foreground/90 leading-relaxed mb-3">
               {testimonial.quote}
             </p>
-          </>
+            {testimonial.rating && <StarRating rating={testimonial.rating} className="mb-3" />}
+          </div>
         )}
 
-        <div className="flex flex-col items-center mt-auto pt-4 border-t border-border/50 w-full">
+        <div className="flex flex-col items-center mt-auto pt-3 border-t border-border/50 w-full">
           {testimonial.authorImageUrl && (
-             <Avatar className="h-14 w-14 mb-2 shrink-0">
+             <Avatar className="h-12 w-12 mb-2 shrink-0"> {/* Slightly smaller avatar */}
                <AvatarImage src={testimonial.authorImageUrl} alt={testimonial.authorName} data-ai-hint={testimonial.dataAiHint || 'person photo'} />
                <AvatarFallback>{testimonial.authorName.substring(0,1)}</AvatarFallback>
              </Avatar>
@@ -105,39 +106,36 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
 
   const pairedItemsCount = Math.max(videoTestimonials.length, textTestimonials.length);
   const pairedTestimonials = Array.from({ length: pairedItemsCount }).map((_, i) => ({
-    video: videoTestimonials[i], // Will be undefined if not enough video testimonials
-    text: textTestimonials[i],   // Will be undefined if not enough text testimonials
+    video: videoTestimonials[i], 
+    text: textTestimonials[i],   
   }));
 
 
   return (
     <Carousel
       plugins={[plugin.current]}
-      className="w-full max-w-xs sm:max-w-xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto"
+      className="w-full max-w-xs sm:max-w-xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl mx-auto" // Increased max-width for wider layout
       opts={{
-        loop: pairedTestimonials.length > 1, // Loop only if there's more than one effective slide
+        loop: pairedTestimonials.length > 1, 
       }}
     >
       <CarouselContent>
         {pairedTestimonials.map((pair, index) => (
-          <CarouselItem key={index} className="min-h-[420px] md:min-h-[400px]">
+          <CarouselItem key={index} className="min-h-[360px] md:min-h-[340px]"> {/* Adjusted min-h */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-1 h-full">
-              {/* Video Testimonial Column (Left) */}
               {pair.video ? (
                 <div className={cn("w-full h-full", !pair.text && "md:col-span-2 flex justify-center")}>
                   <TestimonialCardDisplay testimonial={pair.video} type="video" />
                 </div>
               ) : (
-                 !pair.text && <div className="hidden md:block"></div> // Placeholder for grid structure if no video and no text (empty slide)
+                 !pair.text && <div className="hidden md:block"></div> 
               )}
-
-              {/* Text Testimonial Column (Right) */}
               {pair.text ? (
                 <div className={cn("w-full h-full", !pair.video && "md:col-span-2 md:col-start-1 flex justify-center")}>
                   <TestimonialCardDisplay testimonial={pair.text} type="text" />
                 </div>
               ) : (
-                !pair.video && <div className="hidden md:block"></div> // Placeholder if no text and no video
+                !pair.video && <div className="hidden md:block"></div>
               )}
             </div>
           </CarouselItem>
@@ -145,8 +143,8 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
       </CarouselContent>
       {pairedTestimonials.length > 1 && (
         <>
-            <CarouselPrevious className="hidden sm:flex left-[-15px] md:left-[-30px] xl:left-[-50px]" />
-            <CarouselNext className="hidden sm:flex right-[-15px] md:right-[-30px] xl:right-[-50px]" />
+            <CarouselPrevious className="hidden sm:flex left-[-15px] md:left-[-25px] xl:left-[-40px]" />
+            <CarouselNext className="hidden sm:flex right-[-15px] md:right-[-25px] xl:right-[-40px]" />
         </>
       )}
     </Carousel>
