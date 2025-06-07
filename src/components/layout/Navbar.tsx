@@ -33,10 +33,10 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
     dashboardLink = '/nurse/dashboard';
     DashboardIconComponent = BriefcaseMedical;
     portalName = 'Nurse Portal';
-  } else if (userType === 'manager') { // Changed from 'admin'
-    dashboardLink = '/manager/dashboard'; // Changed from '/admin/dashboard'
-    DashboardIconComponent = ShieldAlert; // Kept ShieldAlert, can be changed if needed
-    portalName = 'Manager Portal'; // Changed from 'Admin Portal'
+  } else if (userType === 'manager') {
+    dashboardLink = '/manager/dashboard';
+    DashboardIconComponent = ShieldAlert;
+    portalName = 'Manager Portal';
   } else if (userType === 'receptionist') {
     dashboardLink = '/receptionist/dashboard';
     DashboardIconComponent = CalendarCheck; 
@@ -52,11 +52,15 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
               <SidebarTrigger />
             </div>
           )}
-          <Link href={dashboardLink} className="flex items-center gap-2">
-            <Stethoscope className="h-7 w-7 text-primary" />
-            <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
-          </Link>
-          <Badge variant="outline" className="ml-2 text-xs text-muted-foreground">{appVersion}</Badge>
+          <div className="flex flex-col"> {/* Wrapper for Logo and Badge */}
+            <Link href={dashboardLink} className="flex items-center gap-2"> {/* Logo Link */}
+              <Stethoscope className="h-7 w-7 text-primary" />
+              <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
+            </Link>
+            <Badge variant="outline" className="ml-9 -mt-1 text-xs text-muted-foreground"> {/* Badge below logo text */}
+              {appVersion}
+            </Badge>
+          </div>
         </div>
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -104,11 +108,15 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-4 text-lg font-medium mt-8">
-                <div className="flex items-center gap-2 mb-2">
-                  <Stethoscope className="h-7 w-7 text-primary" />
-                  <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
+                <div className="flex flex-col items-start"> {/* Wrapper for Logo and Badge in mobile */}
+                  <div className="flex items-center gap-2"> {/* Logo part */}
+                    <Stethoscope className="h-7 w-7 text-primary" />
+                    <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
+                  </div>
+                  <Badge variant="outline" className="ml-9 -mt-1 text-xs text-muted-foreground mb-4"> {/* Badge below logo text, mb-4 for spacing */}
+                    {appVersion}
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="text-xs text-muted-foreground w-fit mb-4">{appVersion}</Badge>
                 {!userType && mainNavItems.map((item) => (
                   <Link
                     key={item.label}
