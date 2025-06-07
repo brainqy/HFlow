@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,18 +27,21 @@ import { placeholderDoctors } from "@/lib/placeholder-data";
 
 const appointmentFormSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
+  age: z.coerce.number().min(0, {message: "Age cannot be negative."}).max(120, {message: "Please enter a valid age."}).optional(),
+  gender: z.string().optional(),
+  address: z.string().optional(),
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone: z.string().min(10, { message: "Phone number must be at least 10 digits." }),
   doctorId: z.string().min(1, { message: "Please select a doctor." }),
   appointmentDate: z.date({ required_error: "An appointment date is required." }),
-  appointmentTime: z.string().min(1, { message: "Please select a time." }), // Basic time slot selection
+  appointmentTime: z.string().min(1, { message: "Please select a time." }), 
   reason: z.string().min(10, { message: "Reason must be at least 10 characters." }).max(500),
 });
 
 type AppointmentFormValues = z.infer<typeof appointmentFormSchema>;
 
-// Dummy time slots for selection
 const timeSlots = ["09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM", "04:00 PM"];
+const genderOptions = ["Male", "Female", "Other", "Prefer not to say"];
 
 export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: string }) {
   const { toast } = useToast();
@@ -50,11 +54,13 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
       doctorId: initialDoctorId || "",
       appointmentTime: "",
       reason: "",
+      age: undefined,
+      gender: "",
+      address: "",
     },
   });
 
   async function onSubmit(data: AppointmentFormValues) {
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     console.log(data);
     toast({
@@ -72,7 +78,7 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel>Full Name*</FormLabel>
               <FormControl>
                 <Input placeholder="John Doe" {...field} />
               </FormControl>
@@ -83,10 +89,62 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
         <div className="grid md:grid-cols-2 gap-8">
           <FormField
             control={form.control}
+            name="age"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Age</FormLabel>
+                <FormControl>
+                  <Input type="number" placeholder="e.g., 35" {...field} onChange={event => field.onChange(+event.target.value)} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {genderOptions.map(option => (
+                      <SelectItem key={option} value={option.toLowerCase()}>{option}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Textarea placeholder="123 Main St, Anytown, USA" className="resize-none" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="grid md:grid-cols-2 gap-8">
+          <FormField
+            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email Address</FormLabel>
+                <FormLabel>Email Address*</FormLabel>
                 <FormControl>
                   <Input type="email" placeholder="john.doe@example.com" {...field} />
                 </FormControl>
@@ -99,7 +157,7 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone Number</FormLabel>
+                <FormLabel>Phone Number*</FormLabel>
                 <FormControl>
                   <Input type="tel" placeholder="(123) 456-7890" {...field} />
                 </FormControl>
@@ -113,7 +171,7 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
           name="doctorId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Select Doctor</FormLabel>
+              <FormLabel>Select Doctor*</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -136,7 +194,7 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
             name="appointmentDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Appointment Date</FormLabel>
+                <FormLabel>Appointment Date*</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -162,8 +220,8 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
                       selected={field.value}
                       onSelect={field.onChange}
                       disabled={(date) =>
-                        date < new Date(new Date().setDate(new Date().getDate() -1)) || date < new Date("1900-01-01") 
-                      } // Disable past dates
+                        date < new Date(new Date().setDate(new Date().getDate() -1)) || date < new Date("1900-01-01")
+                      }
                       initialFocus
                     />
                   </PopoverContent>
@@ -177,7 +235,7 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
             name="appointmentTime"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Preferred Time Slot</FormLabel>
+                <FormLabel>Preferred Time Slot*</FormLabel>
                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -200,7 +258,7 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
           name="reason"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Reason for Appointment</FormLabel>
+              <FormLabel>Reason for Appointment*</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Briefly describe the reason for your visit..."
@@ -209,7 +267,7 @@ export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: stri
                 />
               </FormControl>
               <FormDescription>
-                Please provide a brief description (max 500 characters).
+                Please provide a brief description (max 500 characters). Fields marked with * are required.
               </FormDescription>
               <FormMessage />
             </FormItem>

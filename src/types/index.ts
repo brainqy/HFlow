@@ -14,15 +14,15 @@ export interface Doctor {
   education: string[];
   experience: string[];
   imageUrl: string;
-  availability?: AvailabilitySlot[]; 
+  availability?: AvailabilitySlot[];
   dataAiHint?: string;
-  email?: string; 
+  email?: string;
 }
 
 export interface Service {
   id: string;
   name: string;
-  iconName: string; 
+  iconName: string;
   description: string;
   details?: string;
   imageUrl?: string;
@@ -58,11 +58,15 @@ export interface Appointment {
   id: string;
   patientId: string;
   doctorId: string;
-  date: string; 
-  time: string; 
+  date: string;
+  time: string;
   reason: string;
   status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
   reminderSent?: boolean;
+  // Fields from appointment form
+  age?: number;
+  gender?: string;
+  address?: string;
 }
 
 export interface MedicalRecordItem {
@@ -70,7 +74,7 @@ export interface MedicalRecordItem {
   date: string;
   type: 'diagnosis' | 'medication' | 'allergy' | 'procedure' | 'note';
   description: string;
-  doctor?: string; 
+  doctor?: string;
 }
 
 export interface Medication {
@@ -80,19 +84,19 @@ export interface Medication {
   frequency: string;
   startDate: string;
   endDate?: string;
-  prescribedBy: string; 
+  prescribedBy: string;
   refillsRemaining?: number;
 }
 
 export interface DoctorAppointment {
   id: string;
-  patientId: string; 
+  patientId: string;
   patientName: string;
-  doctorName: string; 
-  doctorId: string; 
-  time: string; 
+  doctorName: string;
+  doctorId: string;
+  time: string;
   reason: string;
-  date: string; 
+  date: string;
   status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
   reminderSent?: boolean;
 }
@@ -101,8 +105,8 @@ export interface DoctorPatient {
   id: string;
   name: string;
   lastVisit: string;
-  email?: string; 
-  phone?: string; 
+  email?: string;
+  phone?: string;
 }
 
 export interface NursePatientQueueItem {
@@ -155,10 +159,10 @@ export interface ManagedUser {
   id: string;
   name: string;
   role: UserRole;
-  email: string; 
-  status: 'Active' | 'Inactive'; 
-  lastLogin?: string; 
-  password?: string; 
+  email: string;
+  status: 'Active' | 'Inactive';
+  lastLogin?: string;
+  password?: string;
 }
 
 export type AnnouncementDisplayLocation = 'homepage' | 'patient_portal' | 'doctor_portal' | 'all_portals';
@@ -169,7 +173,7 @@ export interface Announcement {
   content: string;
   displayLocations: AnnouncementDisplayLocation[];
   startDate: Date;
-  endDate?: Date | null; 
+  endDate?: Date | null;
   createdAt: Date;
 }
 
@@ -180,6 +184,8 @@ export interface Testimonial {
   authorRole: string;
   authorImageUrl?: string;
   dataAiHint?: string;
+  videoUrl?: string; // For actual video link (e.g. YouTube)
+  videoPlaceholderImageUrl?: string; // For a thumbnail image if videoUrl is present
 }
 
 export interface TrustSignal {

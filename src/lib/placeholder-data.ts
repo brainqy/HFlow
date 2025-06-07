@@ -1,6 +1,6 @@
 
 import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial, TrustSignal, HomepageWidgetSetting } from '@/types';
-import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
+import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays, ShieldCheck, Zap, ActivitySquare as GastroenterologyIcon, Users as PaediatricsIcon } from 'lucide-react';
 
 export let placeholderDoctors: Doctor[] = [
   {
@@ -116,9 +116,16 @@ export let placeholderServices: Service[] = [
   { id: 'cardiology', name: 'Cardiology', iconName: 'HeartPulse', description: 'Specialized heart care, including ECG, stress tests, and consultations.', details: 'Our cardiology department offers advanced diagnostic services and treatment for various heart conditions. We emphasize early detection and management of cardiovascular diseases.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'heart monitor screen' },
   { id: 'orthopedics', name: 'Orthopedics', iconName: 'Bone', description: 'Diagnosis and treatment of musculoskeletal injuries and conditions.', details: 'From sports injuries to arthritis, our orthopedic specialists provide comprehensive care, including non-surgical treatments, physical therapy referrals, and surgical interventions when necessary.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'knee x-ray' },
   { id: 'neurology', name: 'Neurology', iconName: 'Brain', description: 'Care for disorders of the nervous system, including migraines and neuropathy.', details: 'Our neurologists are experts in diagnosing and treating a wide range of neurological conditions. We utilize advanced diagnostic tools and develop individualized treatment plans.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'brain activity chart' },
-  { id: 'pediatrics', name: 'Pediatrics', iconName: 'Baby', description: 'Comprehensive healthcare for infants, children, and adolescents.', details: 'Our pediatric team provides compassionate and comprehensive care for your child from birth through adolescence, including well-child visits, immunizations, and sick care.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'child doctor' },
+  { id: 'pediatrics', name: 'Pediatrics', iconName: 'PaediatricsIcon', description: 'Comprehensive healthcare for infants, children, and adolescents.', details: 'Our pediatric team provides compassionate and comprehensive care for your child from birth through adolescence, including well-child visits, immunizations, and sick care.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'child doctor' },
   { id: 'lab-services', name: 'Lab Services', iconName: 'Microscope', description: 'On-site laboratory for quick and accurate diagnostic testing.', details: 'Our CLIA-certified laboratory offers a wide range of tests, providing fast and reliable results to aid in diagnosis and treatment planning.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'lab tests' },
   { id: 'pharmacy', name: 'Pharmacy Services', iconName: 'Pill', description: 'Convenient on-site pharmacy for prescriptions and medication counseling.', details: 'Our on-site pharmacy makes it easy to get your prescriptions filled quickly. Our pharmacists are also available for medication counseling and to answer any questions.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'pharmacy counter' },
+  // Adding some specialized services based on the user's image
+  { id: 'ivf', name: 'IVF', iconName: 'Baby', description: 'Advanced In Vitro Fertilization services and fertility treatments.', details: 'Our fertility specialists offer comprehensive IVF treatments and support to help you achieve your dream of parenthood.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'fertility clinic' },
+  { id: 'oncology', name: 'Oncology', iconName: 'ShieldCheck', description: 'Comprehensive cancer care including diagnosis, treatment, and support.', details: 'Our oncology department provides multidisciplinary cancer care, from early detection and diagnosis to advanced treatments and survivorship programs.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'cancer care team' },
+  { id: 'gastroenterology', name: 'Gastroenterology', iconName: 'GastroenterologyIcon', description: 'Diagnosis and treatment of digestive system disorders.', details: 'Expert care for conditions affecting the esophagus, stomach, intestines, liver, and pancreas, including endoscopy services.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'digestive system diagram' },
+  { id: 'general-surgery', name: 'General Surgery', iconName: 'Syringe', description: 'Wide range of surgical procedures by experienced surgeons.', details: 'Our general surgeons perform various procedures, from minimally invasive to complex operations, with a focus on patient safety and optimal outcomes.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'operating room' },
+  { id: 'nephrology', name: 'Nephrology', iconName: 'Zap', description: 'Specialized care for kidney diseases and related conditions.', details: 'Comprehensive diagnosis and management of kidney disorders, including dialysis support and transplant referrals.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'kidney health' },
+  { id: 'critical-care', name: 'Critical Care', iconName: 'Ambulance', description: 'Intensive care for critically ill patients.', details: 'Our critical care unit is equipped with advanced technology and staffed by specialists to provide life-saving care.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'icu monitor' },
 ];
 
 export let placeholderBlogPosts: BlogPost[] = [
@@ -167,6 +174,8 @@ export let placeholderMedicalHistory: MedicalRecordItem[] = [
   { id: '7', date: '2024-01-10', type: 'allergy', description: 'Peanuts - anaphylaxis', doctor: 'Dr. Emily Carter' },
   { id: '8', date: '2023-06-22', type: 'medication', description: 'Ibuprofen 200mg PRN for pain', doctor: 'Dr. Sarah Green' },
   { id: '9', date: '2023-03-17', type: 'allergy', description: 'Latex - contact dermatitis', doctor: 'Dr. Michael Brown' },
+  { id: '10', date: '2024-03-01', type: 'allergy', description: 'Dust Mites - mild respiratory symptoms', doctor: 'Dr. Michael Brown' },
+  { id: '11', date: '2022-10-15', type: 'allergy', description: 'Shellfish - severe reaction, carries EpiPen', doctor: 'Dr. Emily Carter' },
 ];
 
 export let placeholderMedications: Medication[] = [
@@ -247,7 +256,9 @@ export let placeholderTestimonials: Testimonial[] = [
     authorName: "John B.",
     authorRole: "Patient",
     authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "satisfied person"
+    dataAiHint: "satisfied person",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // Placeholder video URL
+    videoPlaceholderImageUrl: "https://placehold.co/600x400.png",
   },
   {
     id: 'testimonial-3',
@@ -263,7 +274,9 @@ export let placeholderTestimonials: Testimonial[] = [
     authorName: "David K.",
     authorRole: "Patient",
     authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "content man"
+    dataAiHint: "content man",
+    videoUrl: "#",
+    videoPlaceholderImageUrl: "https://placehold.co/600x400.png", // Generic placeholder
   }
 ];
 
@@ -352,7 +365,9 @@ export let homepageWidgetSettings: HomepageWidgetSetting[] = [
   { id: 'announcements', name: 'Announcements Section', isVisible: true },
   { id: 'promoBanner', name: 'Promotional Banner', isVisible: true },
   { id: 'services', name: 'Our Services Section', isVisible: true },
-  { id: 'whyChooseUs', name: 'Why Choose Us Section', isVisible: true },
+  { id: 'specializedServices', name: 'Specialized Services Grid', isVisible: true },
+  { id: 'whyChooseUs', name: 'Why Choose HealthFlow Section', isVisible: true },
+  { id: 'whyChooseOurHospital', name: 'Why Choose Our Hospital Section', isVisible: true },
   { id: 'testimonials', name: 'Testimonials Section', isVisible: true },
   { id: 'trustSignals', name: 'Trust Signals Section', isVisible: true },
   { id: 'meetOurDoctors', name: 'Meet Our Doctors Section', isVisible: true },
