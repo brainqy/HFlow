@@ -15,6 +15,7 @@ import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation, T
 import { format } from 'date-fns';
 import TestimonialSlider from '@/components/sections/TestimonialSlider';
 import TrustSignals from '@/components/sections/TrustSignals';
+import PromoBanner from '@/components/sections/PromoBanner';
 
 
 const doctors = [
@@ -104,6 +105,9 @@ export default function HomePageContent() {
           </div>
         </section>
       )}
+
+      {/* Promo Banner Section */}
+      <PromoBanner />
 
       {/* Services Section */}
       <section className="py-16 md:py-24">
