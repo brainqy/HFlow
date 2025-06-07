@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial, TrustSignal, HomepageWidgetSetting } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial, TrustSignal, HomepageWidgetSetting, HeroSlideItem } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays, ShieldCheck, Zap, ActivitySquare as GastroenterologyIcon, Users as PaediatricsIcon } from 'lucide-react';
 
 export let placeholderDoctors: Doctor[] = [
@@ -405,3 +405,38 @@ export let homepageWidgetSettings: HomepageWidgetSetting[] = [
   { id: 'meetOurDoctors', name: 'Meet Our Doctors Section', isVisible: true },
   { id: 'blogPreview', name: 'Blog Preview Section', isVisible: true },
 ];
+
+export let heroSlides: HeroSlideItem[] = [
+  {
+    id: 'hero1',
+    imageUrl: 'https://placehold.co/1920x1080.png',
+    altText: 'Modern medical facility with caring staff',
+    dataAiHint: 'modern hospital interior',
+    title: 'Your Health, Our Priority',
+    subtitle: 'Experience compassionate and expert healthcare at HealthFlow. We are dedicated to providing top-quality medical services to our community.',
+    ctaText: 'Book an Appointment',
+    ctaLink: '/appointments',
+  },
+  {
+    id: 'hero2',
+    imageUrl: 'https://placehold.co/1920x1080.png',
+    altText: 'Team of dedicated medical professionals',
+    dataAiHint: 'doctors team smiling',
+    title: 'Expert Care, Advanced Technology',
+    subtitle: 'Our skilled team uses cutting-edge technology to deliver the best possible outcomes.',
+    ctaText: 'Discover Our Services',
+    ctaLink: '/services',
+  },
+  {
+    id: 'hero3',
+    imageUrl: 'https://placehold.co/1920x1080.png',
+    altText: 'Patient focused healthcare environment',
+    dataAiHint: 'doctor patient interaction',
+    title: 'A Community of Wellness',
+    subtitle: 'Join us on your journey to better health and a more vibrant life.',
+    ctaText: 'Learn About Us',
+    ctaLink: '/about',
+  },
+];
+
+    
