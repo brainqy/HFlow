@@ -219,15 +219,15 @@ export let placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da15', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
 ];
 
-export let placeholderAnnouncements: Announcement[] = [];
-
-
 export function generateSlug(title: string): string {
   return title
     .toLowerCase()
-    .replace(/\s+/g, '-') 
-    .replace(/[^\w-]+/g, ''); 
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '');
 }
+
+export let placeholderAnnouncements: Announcement[] = [];
+
 
 export let placeholderTestimonials: Testimonial[] = [
   {
@@ -300,11 +300,11 @@ export let placeholderNurses: Nurse[] = [
 ];
 
 export let placeholderReceptionists: Receptionist[] = [
-    { id: 'recep-1', name: 'Sarah Bell', email: 'receptionist@example.com', employeeId: 'REC001' }, 
+    { id: 'recep-1', name: 'Sarah Bell', email: 'receptionist@example.com', employeeId: 'REC001' },
     { id: 'recep-2', name: 'Michael Chen', email: 'michael.chen@healthflow.clinic', employeeId: 'REC002' },
 ];
 
-export let placeholderManagerUsers: ManagedUser[] = [ 
+export let placeholderManagerUsers: ManagedUser[] = [
     { id: 'manager-1', name: 'Manager User', role: 'Manager', email: 'manager@healthflow.clinic', status: 'Active', lastLogin: new Date().toLocaleDateString() }
 ];
 
