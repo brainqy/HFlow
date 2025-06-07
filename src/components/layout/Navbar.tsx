@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Badge } from '@/components/ui/badge';
 
 const mainNavItems = [
   { href: '/', label: 'Home' },
@@ -52,15 +51,14 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
               <SidebarTrigger />
             </div>
           )}
-          <div className="flex flex-col"> {/* Wrapper for Logo and Badge */}
+          <div className="flex flex-col"> {/* Wrapper for Logo and Version */}
             <Link href={dashboardLink} className="flex items-center gap-2"> {/* Logo Link */}
               <Stethoscope className="h-7 w-7 text-primary" />
               <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
             </Link>
-            {/* Adjusted badge class for smaller text and slightly less negative top margin */}
-            <Badge variant="outline" className="ml-9 -mt-0.5 text-[0.65rem] leading-tight text-muted-foreground self-start">
+            <p className="ml-9 -mt-0.5 text-[0.65rem] leading-tight text-muted-foreground self-start">
               {appVersion}
-            </Badge>
+            </p>
           </div>
         </div>
 
@@ -109,15 +107,14 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-4 text-lg font-medium mt-8">
-                <div className="flex flex-col items-start"> {/* Wrapper for Logo and Badge in mobile */}
+                <div className="flex flex-col items-start"> {/* Wrapper for Logo and Version in mobile */}
                   <div className="flex items-center gap-2"> {/* Logo part */}
                     <Stethoscope className="h-7 w-7 text-primary" />
                     <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
                   </div>
-                  {/* Adjusted badge class for smaller text and slightly less negative top margin */}
-                  <Badge variant="outline" className="ml-9 -mt-0.5 text-[0.65rem] leading-tight text-muted-foreground mb-4 self-start">
+                  <p className="ml-9 -mt-0.5 text-[0.65rem] leading-tight text-muted-foreground mb-4 self-start">
                     {appVersion}
-                  </Badge>
+                  </p>
                 </div>
                 {!userType && mainNavItems.map((item) => (
                   <Link
