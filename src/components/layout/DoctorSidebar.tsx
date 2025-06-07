@@ -20,13 +20,12 @@ const doctorNavItems = [
   { href: '/doctor/dashboard', label: 'Dashboard', icon: LayoutDashboard, tooltip: 'Dashboard' },
   { href: '/doctor/patients', label: 'My Patients', icon: Users, tooltip: 'My Patients' },
   { href: '/doctor/appointments', label: 'Appointments', icon: CalendarCheck, tooltip: 'Appointments' },
-  { href: '/doctor/profile', label: 'Profile Settings', icon: Settings, tooltip: 'Profile Settings' },
+  { href: '/doctor/profile', label: 'My Profile', icon: UserCog, tooltip: 'My Profile & Settings' }, // Changed label and icon
 ];
 
 export default function DoctorSidebar() {
   const { state } = useSidebar();
-  // const doctorName = "Dr. Eleanor Vance"; // Name standardized, but not displayed here anymore
-
+  
   return (
     <Sidebar collapsible={state === 'expanded' ? "icon" : "offcanvas"}>
       <SidebarHeader>
@@ -34,9 +33,6 @@ export default function DoctorSidebar() {
           <UserCog className="h-7 w-7 text-primary" />
           {state === 'expanded' && <h2 className="text-lg font-semibold tracking-tight font-headline text-primary">Doctor Portal</h2>}
         </div>
-        {/* Removed redundant welcome message: 
-        {state === 'expanded' && <p className="text-sm text-muted-foreground">Welcome, {doctorName}!</p>} 
-        */}
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>

@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { UserCog, Mail, Phone, KeyRound, CalendarDays, Clock, Users, Edit, MessageSquare } from 'lucide-react';
+import { UserCog, Mail, Phone, KeyRound, CalendarDays, Clock, Users, Edit, MessageSquare, Briefcase, GraduationCap } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -16,15 +16,40 @@ import { Textarea } from '@/components/ui/textarea';
 
 export default function DoctorProfilePage() {
   const { toast } = useToast();
-  const doctorProfile = placeholderDoctors.find(doc => doc.id === 'emily-carter') || placeholderDoctors[0];
+  // For prototype, always load Dr. Emily Carter or the first doctor if she's not found.
+  const initialDoctorProfile = placeholderDoctors.find(doc => doc.id === 'emily-carter') || placeholderDoctors[0];
+  
+  const [profile, setProfile] = useState(initialDoctorProfile);
+
+  const [isPersonalInfoDialogOpen, setIsPersonalInfoDialogOpen] = useState(false);
+  const [editablePersonalInfo, setEditablePersonalInfo] = useState({
+    name: profile.name,
+    email: profile.email || '',
+    phone: "(123) 555-0123", // Placeholder as not in current Doctor type
+  });
+
   const [isAvailabilityDialogOpen, setIsAvailabilityDialogOpen] = useState(false);
   const [availabilityRequest, setAvailabilityRequest] = useState('');
 
-
-  const handleSaveChanges = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    toast({title: "Profile Updated", description: "Your personal information has been saved."});
+  const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditablePersonalInfo(prev => ({ ...prev, [name]: value }));
   };
+  
+  const handleSaveChanges = () => {
+    // Mock save: In a real app, this would update backend and potentially the profile state.
+    // For this prototype, we'll just show a toast.
+    // To see changes reflect if 'profile' was updated:
+    // setProfile(prev => ({
+    //   ...prev,
+    //   name: editablePersonalInfo.name,
+    //   email: editablePersonalInfo.email,
+    //   // phone is not part of Doctor type, so can't directly update profile state this way
+    // }));
+    toast({title: "Personal Info Updated", description: "Your personal information has been saved (mocked)."});
+    setIsPersonalInfoDialogOpen(false);
+  };
+
 
   const handleUpdatePassword = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,7 +81,7 @@ export default function DoctorProfilePage() {
     }, {} as Record<string, AvailabilitySlot[]>);
   };
 
-  const groupedAvailability = groupAvailabilityByDay(doctorProfile.availability);
+  const groupedAvailability = groupAvailabilityByDay(profile.availability);
   const sortedDays = Object.keys(groupedAvailability).sort((a, b) => {
     const daysOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     return daysOrder.indexOf(a) - daysOrder.indexOf(b);
@@ -67,59 +92,69 @@ export default function DoctorProfilePage() {
     <div className="space-y-8">
       <header>
         <h1 className="font-headline text-3xl font-bold text-primary flex items-center gap-2">
-          <UserCog className="h-8 w-8" /> Profile Settings
+          <UserCog className="h-8 w-8" /> My Profile
         </h1>
         <p className="text-muted-foreground mt-1">
-          Manage your account details and preferences.
+          Manage your account details, professional information, and availability.
         </p>
       </header>
 
-      <form onSubmit={handleSaveChanges}>
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="font-headline text-xl">Personal Information</CardTitle>
-            <CardDescription>Update your personal and contact details.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" defaultValue={doctorProfile.name} className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="specialty">Specialty</Label>
-                <Input id="specialty" defaultValue={doctorProfile.specialty} readOnly className="mt-1 bg-muted/50" />
-              </div>
+      <Card className="shadow-lg">
+          <CardHeader className="flex flex-row justify-between items-center">
+            <div>
+              <CardTitle className="font-headline text-xl">Personal & Contact Information</CardTitle>
+              <CardDescription>Your basic identification and contact details.</CardDescription>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="email">Email Address</Label>
-                <div className="flex items-center mt-1">
-                  <Mail className="h-5 w-5 text-muted-foreground mr-2" />
-                  <Input id="email" type="email" defaultValue={doctorProfile.email} />
+            <Dialog open={isPersonalInfoDialogOpen} onOpenChange={setIsPersonalInfoDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" onClick={() => setEditablePersonalInfo({name: profile.name, email: profile.email || '', phone: editablePersonalInfo.phone})}>
+                  <Edit className="mr-2 h-4 w-4" /> Edit Personal Info
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[525px]">
+                <DialogHeader>
+                  <DialogTitle>Edit Personal Information</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-2">
+                  <div><Label htmlFor="editName">Full Name</Label><Input id="editName" name="name" value={editablePersonalInfo.name} onChange={handlePersonalInfoChange} /></div>
+                  <div><Label htmlFor="editEmail">Email Address</Label><Input id="editEmail" name="email" type="email" value={editablePersonalInfo.email} onChange={handlePersonalInfoChange} /></div>
+                  <div><Label htmlFor="editPhone">Phone Number</Label><Input id="editPhone" name="phone" type="tel" value={editablePersonalInfo.phone} onChange={handlePersonalInfoChange} /></div>
                 </div>
-              </div>
-              <div>
-                <Label htmlFor="phone">Phone Number</Label>
-                <div className="flex items-center mt-1">
-                  <Phone className="h-5 w-5 text-muted-foreground mr-2" />
-                  <Input id="phone" type="tel" defaultValue={"(123) 555-0123"} /> {/* Placeholder phone if not in data */}
-                </div>
-              </div>
+                <DialogFooter><Button onClick={handleSaveChanges}>Save Changes</Button></DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <p><strong className="text-muted-foreground">Name:</strong> {profile.name}</p>
+            <p><strong className="text-muted-foreground">Specialty:</strong> {profile.specialty}</p>
+            <p className="flex items-center gap-1"><Mail className="h-4 w-4 text-muted-foreground" /> {profile.email}</p>
+            <p className="flex items-center gap-1"><Phone className="h-4 w-4 text-muted-foreground" /> {editablePersonalInfo.phone} (Editable via Edit button)</p>
+            
+            <div className="pt-3">
+              <h4 className="font-medium text-muted-foreground mb-1">Bio:</h4>
+              <p className="whitespace-pre-line">{profile.bio}</p>
+            </div>
+             <div className="pt-3">
+              <h4 className="font-medium text-muted-foreground mb-1 flex items-center gap-1"><GraduationCap className="h-4 w-4" />Education:</h4>
+              <ul className="list-disc list-inside pl-1 space-y-0.5">
+                {profile.education.map((edu, index) => <li key={index}>{edu}</li>)}
+              </ul>
+            </div>
+            <div className="pt-3">
+              <h4 className="font-medium text-muted-foreground mb-1 flex items-center gap-1"><Briefcase className="h-4 w-4" />Experience:</h4>
+              <ul className="list-disc list-inside pl-1 space-y-0.5">
+                {profile.experience.map((exp, index) => <li key={index}>{exp}</li>)}
+              </ul>
             </div>
           </CardContent>
-          <CardFooter className="border-t pt-6">
-             <Button type="submit">Save Changes</Button>
-          </CardFooter>
         </Card>
-      </form>
 
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="font-headline text-xl flex items-center gap-2">
             <CalendarDays className="h-5 w-5 text-primary" /> My Availability
           </CardTitle>
-          <CardDescription>Your current weekly schedule including time slots and patient capacity.</CardDescription>
+          <CardDescription>Your current weekly schedule. To make changes, please submit a request.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {sortedDays.length > 0 ? (
@@ -247,3 +282,4 @@ export default function DoctorProfilePage() {
     </div>
   );
 }
+      

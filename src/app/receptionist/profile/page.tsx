@@ -1,26 +1,33 @@
 
 "use client";
 
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { UserCog, Mail, Phone, KeyRound } from 'lucide-react';
+import { UserCog, Mail, Phone, KeyRound, Edit, BadgeInfo } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export default function ReceptionistProfilePage() {
   const { toast } = useToast();
-  // Placeholder data - in a real app, this would come from a backend
-  const receptionistProfile = {
+  
+  const [profile, setProfile] = useState({
     name: 'Sarah Bell',
     email: 'sarah.bell@healthflow.clinic',
     phone: '(123) 555-0789',
     employeeId: 'REC001',
-  };
+  });
 
-  const handleSubmitProfile = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    toast({title: "Profile Saved", description: "Your personal information has been updated."});
+  const [isEditContactOpen, setIsEditContactOpen] = useState(false);
+  const [editableEmail, setEditableEmail] = useState(profile.email);
+  const [editablePhone, setEditablePhone] = useState(profile.phone);
+
+  const handleSaveContactInfo = () => {
+    setProfile(prev => ({ ...prev, email: editableEmail, phone: editablePhone }));
+    toast({title: "Contact Info Updated", description: "Your contact information has been updated."});
+    setIsEditContactOpen(false);
   };
 
   const handleSubmitPassword = (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,45 +46,39 @@ export default function ReceptionistProfilePage() {
         </p>
       </header>
 
-    <form onSubmit={handleSubmitProfile}>
-      <Card className="shadow-lg">
-        <CardHeader>
+    <Card className="shadow-lg">
+      <CardHeader className="flex flex-row justify-between items-center">
+        <div>
           <CardTitle className="font-headline text-xl">Personal Information</CardTitle>
-          <CardDescription>Update your personal and contact details.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" defaultValue={receptionistProfile.name} className="mt-1" />
-            </div>
-            <div>
-              <Label htmlFor="employeeId">Employee ID</Label>
-              <Input id="employeeId" defaultValue={receptionistProfile.employeeId} readOnly className="mt-1 bg-muted/50" />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="email">Email Address</Label>
-              <div className="flex items-center mt-1">
-                <Mail className="h-5 w-5 text-muted-foreground mr-2" />
-                <Input id="email" type="email" defaultValue={receptionistProfile.email} />
+          <CardDescription>Your personal and contact details.</CardDescription>
+        </div>
+         <Dialog open={isEditContactOpen} onOpenChange={setIsEditContactOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" onClick={() => { setEditableEmail(profile.email); setEditablePhone(profile.phone); }}>
+                <Edit className="mr-2 h-4 w-4"/>Edit Contact
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Edit Contact Information</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div><Label htmlFor="editEmail">Email Address</Label><Input id="editEmail" value={editableEmail} onChange={(e) => setEditableEmail(e.target.value)} /></div>
+                <div><Label htmlFor="editPhone">Phone Number</Label><Input id="editPhone" value={editablePhone} onChange={(e) => setEditablePhone(e.target.value)} /></div>
               </div>
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone Number</Label>
-              <div className="flex items-center mt-1">
-                <Phone className="h-5 w-5 text-muted-foreground mr-2" />
-                <Input id="phone" type="tel" defaultValue={receptionistProfile.phone} />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-        <CardFooter className="border-t pt-6">
-            <Button type="submit">Save Changes</Button>
-        </CardFooter>
-      </Card>
-    </form>
+              <DialogFooter><Button onClick={handleSaveContactInfo}>Save Changes</Button></DialogFooter>
+            </DialogContent>
+          </Dialog>
+      </CardHeader>
+      <CardContent className="space-y-3 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+          <p><strong className="text-muted-foreground">Full Name:</strong> {profile.name}</p>
+          <p><strong className="text-muted-foreground">Employee ID:</strong> {profile.employeeId}</p>
+          <p className="flex items-center gap-1"><Mail className="h-4 w-4 text-muted-foreground shrink-0"/> {profile.email}</p>
+          <p className="flex items-center gap-1"><Phone className="h-4 w-4 text-muted-foreground shrink-0"/> {profile.phone}</p>
+        </div>
+      </CardContent>
+    </Card>
 
     <form onSubmit={handleSubmitPassword}>
       <Card className="shadow-lg">
@@ -88,9 +89,9 @@ export default function ReceptionistProfilePage() {
         <CardContent className="space-y-6">
           <div>
             <Label htmlFor="currentPassword">Current Password</Label>
-            <div className="flex items-center mt-1">
-              <KeyRound className="h-5 w-5 text-muted-foreground mr-2" />
-              <Input id="currentPassword" type="password" placeholder="Enter current password" />
+            <div className="relative mt-1">
+              <KeyRound className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input id="currentPassword" type="password" placeholder="Enter current password" className="pl-8" />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

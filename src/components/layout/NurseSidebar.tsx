@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, UsersRound, ActivitySquare, PackageSearch, CalendarClock, Settings, LogOut, BriefcaseMedical } from 'lucide-react';
+import { LayoutDashboard, UsersRound, ActivitySquare, PackageSearch, CalendarClock, UserCog as ProfileIcon, LogOut, BriefcaseMedical } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarHeader, 
@@ -21,7 +21,7 @@ const nurseNavItems = [
   { href: '/nurse/vitals-entry', label: 'Vitals Entry', icon: ActivitySquare, tooltip: 'Vitals Entry' },
   { href: '/nurse/supplies', label: 'Supplies Mgmt', icon: PackageSearch, tooltip: 'Supplies Management' },
   { href: '/nurse/schedule', label: 'My Schedule', icon: CalendarClock, tooltip: 'My Schedule' },
-  { href: '/nurse/profile', label: 'Profile Settings', icon: Settings, tooltip: 'Profile Settings' },
+  { href: '/nurse/profile', label: 'My Profile', icon: ProfileIcon, tooltip: 'My Profile & Settings' },
 ];
 
 export default function NurseSidebar() {

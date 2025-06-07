@@ -8,7 +8,7 @@ import {
   CalendarPlus, 
   UserPlus, 
   Users, 
-  Settings, 
+  Settings as ProfileIcon, // Changed icon for clarity
   LogOut, 
   CalendarCheck
 } from 'lucide-react';
@@ -28,7 +28,7 @@ const receptionistNavItems = [
   { href: '/receptionist/appointments', label: 'Manage Appointments', icon: CalendarPlus, tooltip: 'Manage Appointments' },
   { href: '/receptionist/register-patient', label: 'Register Patient', icon: UserPlus, tooltip: 'Register New Patient' },
   { href: '/receptionist/patients', label: 'Patient Directory', icon: Users, tooltip: 'Patient Directory' },
-  { href: '/receptionist/profile', label: 'My Profile', icon: Settings, tooltip: 'My Profile' },
+  { href: '/receptionist/profile', label: 'My Profile', icon: ProfileIcon, tooltip: 'My Profile & Settings' },
 ];
 
 export default function ReceptionistSidebar() {
