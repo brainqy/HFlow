@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { placeholderDoctorPatients, placeholderMedicalHistory, allClinicAppointments } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase, StickyNote, Edit3, PlusCircle, Calendar as CalendarIconLucide } from 'lucide-react';
+import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase, StickyNote, Edit3, PlusCircle, Calendar as CalendarIconLucide, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import type { DoctorAppointment, MedicalRecordItem } from '@/types';
@@ -23,19 +23,12 @@ import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
-// Removed generateStaticParams as it conflicts with "use client"
-// export async function generateStaticParams() {
-//   return placeholderDoctorPatients.map((patient) => ({
-//     patientId: patient.id,
-//   }));
-// }
-
 const getIconForMedicalRecordType = (type: string) => {
   switch (type.toLowerCase()) {
     case 'diagnosis': return <Stethoscope className="h-4 w-4 mr-1.5" />;
     case 'medication': return <Pill className="h-4 w-4 mr-1.5" />;
     case 'procedure': return <FileText className="h-4 w-4 mr-1.5" />;
-    case 'allergy': return <FileText className="h-4 w-4 mr-1.5" />; 
+    case 'allergy': return <AlertTriangle className="h-4 w-4 mr-1.5 text-amber-600" />; 
     default: return <FileText className="h-4 w-4 mr-1.5" />;
   }
 };
@@ -81,22 +74,23 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
   });
 
   const [currentPatientHistory, setCurrentPatientHistory] = useState<MedicalRecordItem[]>([]);
+  const [patientAllergies, setPatientAllergies] = useState<MedicalRecordItem[]>([]);
 
   useEffect(() => {
     if (patient) {
-      // Simulate fetching more complete details if needed, or use existing placeholders
       const detailsFromSource = {
-        dob: "1980-01-01", // Example, could be derived from patient data if available
-        gender: "Female", // Example
+        dob: "1980-01-01", 
+        gender: "Female", 
         contact: patient.phone || "555-0101",
-        emergencyContact: "Jane Doe (Spouse) - 555-0102" // Placeholder
+        emergencyContact: "Jane Doe (Spouse) - 555-0102" 
       };
       setCurrentPatientDetails(detailsFromSource);
 
       const historyFromSource = placeholderMedicalHistory.filter(
-        (item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === params.patientId) || item.doctor === "Dr. Eleanor Vance"
+        (item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === params.patientId) || item.doctor === "Dr. Eleanor Vance" || item.doctor === "Dr. Emily Carter" || item.doctor === "Dr. James Lee" || item.doctor === "Dr. Sarah Green"
       );
       setCurrentPatientHistory(historyFromSource.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+      setPatientAllergies(historyFromSource.filter(item => item.type === 'allergy'));
     }
   }, [patient, params.patientId]);
 
@@ -117,7 +111,7 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
     }
   });
 
-  useEffect(() => { // To reset form when currentPatientDetails change (e.g. after opening dialog for different patient or initial load)
+  useEffect(() => { 
       editDetailsForm.reset({
           contact: currentPatientDetails.contact,
           emergencyContact: currentPatientDetails.emergencyContact,
@@ -130,7 +124,7 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
     defaultValues: {
       type: 'note',
       description: '',
-      doctor: 'Dr. Eleanor Vance', // Logged in doctor
+      doctor: 'Dr. Eleanor Vance', 
     }
   });
   
@@ -142,13 +136,17 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
 
   const onAddEntrySubmit = (data: AddMedicalEntryFormValues) => {
     const newEntry: MedicalRecordItem = {
-      id: `mr-${Date.now()}`, // Simple unique ID for mock
+      id: `mr-${Date.now()}`, 
       date: format(data.date, 'yyyy-MM-dd'),
       type: data.type,
       description: data.description,
       doctor: data.doctor,
     };
-    setCurrentPatientHistory(prev => [newEntry, ...prev].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    const updatedHistory = [newEntry, ...currentPatientHistory].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    setCurrentPatientHistory(updatedHistory);
+    if (newEntry.type === 'allergy') {
+        setPatientAllergies(prev => [newEntry, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    }
     toast({ title: "Medical Entry Added", description: `A new ${data.type} record was added (mocked).` });
     setIsAddEntryOpen(false);
     addEntryForm.reset();
@@ -221,6 +219,27 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                     <p><strong>Contact:</strong> {currentPatientDetails.contact}</p>
                     <p><strong>Emergency Contact:</strong> {currentPatientDetails.emergencyContact}</p>
                     <p><strong>Last Visit (Recorded):</strong> {new Date(patient.lastVisit).toLocaleDateString()}</p>
+                </CardContent>
+            </Card>
+            <Card className="shadow-lg border-l-4 border-amber-500">
+                <CardHeader>
+                    <CardTitle className="font-headline text-xl flex items-center gap-2 text-amber-700">
+                        <AlertTriangle className="h-5 w-5" /> Allergies & Alerts
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    {patientAllergies.length > 0 ? (
+                        <ul className="space-y-2">
+                            {patientAllergies.map(allergy => (
+                                <li key={allergy.id} className="text-sm">
+                                    <span className="font-semibold text-amber-700">{allergy.description}</span>
+                                    <span className="text-xs text-muted-foreground"> (Recorded: {format(new Date(allergy.date), "PPP")})</span>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">No known allergies recorded.</p>
+                    )}
                 </CardContent>
             </Card>
              <Card className="shadow-lg">
@@ -303,7 +322,7 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
                         <h3 className="text-md font-semibold mb-2 text-primary">Upcoming Appointments</h3>
                         {renderAppointmentList(upcomingAppointments, "Upcoming Appointments")}
                     </div>
-                    <div className="pt-3 border-t">
+                    <div className="pt-3 border-t mt-4">
                         <h3 className="text-md font-semibold mb-2 text-primary">Past Appointments</h3>
                         {renderAppointmentList(pastAppointments, "Past Appointments")}
                     </div>
@@ -413,3 +432,4 @@ export default function PatientChartPage({ params }: { params: { patientId: stri
     </div>
   );
 }
+

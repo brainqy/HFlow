@@ -161,9 +161,12 @@ export let placeholderMedicalHistory: MedicalRecordItem[] = [
   { id: '1', date: '2024-05-10', type: 'diagnosis', description: 'Hypertension Stage 1', doctor: 'Dr. Emily Carter' },
   { id: '2', date: '2024-05-10', type: 'medication', description: 'Lisinopril 10mg daily', doctor: 'Dr. Emily Carter' },
   { id: '3', date: '2023-11-20', type: 'procedure', description: 'Annual Physical Exam', doctor: 'Dr. Emily Carter' },
-  { id: '4', date: '2023-08-15', type: 'allergy', description: 'Penicillin - causes rash', doctor: 'Dr. James Lee' },
+  { id: '4', date: '2023-08-15', type: 'allergy', description: 'Penicillin - causes rash, hives', doctor: 'Dr. James Lee' },
   { id: '5', date: '2023-02-01', type: 'diagnosis', description: 'Seasonal Affective Disorder', doctor: 'Dr. James Lee' },
   { id: '6', date: '2022-09-05', type: 'note', description: 'Patient reports occasional migraines, advised lifestyle changes.', doctor: 'Dr. James Lee'},
+  { id: '7', date: '2024-01-10', type: 'allergy', description: 'Peanuts - anaphylaxis', doctor: 'Dr. Emily Carter' },
+  { id: '8', date: '2023-06-22', type: 'medication', description: 'Ibuprofen 200mg PRN for pain', doctor: 'Dr. Sarah Green' },
+  { id: '9', date: '2023-03-17', type: 'allergy', description: 'Latex - contact dermatitis', doctor: 'Dr. Michael Brown' },
 ];
 
 export let placeholderMedications: Medication[] = [
