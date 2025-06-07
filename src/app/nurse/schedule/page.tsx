@@ -1,9 +1,12 @@
 
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { CalendarClock, Check, X, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { placeholderNurseSchedule } from '@/lib/placeholder-data';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useToast } from "@/hooks/use-toast";
 
 // Dummy data for upcoming shifts for demonstration
 const upcomingShifts = [
@@ -16,11 +19,19 @@ const upcomingShifts = [
 
 
 export default function NurseSchedulePage() {
+  const { toast } = useToast();
   const today = new Date();
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   }
+
+  const handleRequestTimeOff = () => {
+    toast({
+      title: "Time Off Request Submitted",
+      description: "Your time off request has been submitted for approval (mocked).",
+    });
+  };
 
   return (
     <div className="space-y-8">
@@ -95,7 +106,7 @@ export default function NurseSchedulePage() {
             <p className="text-muted-foreground">No pending time off requests.</p>
         </CardContent>
         <CardFooter className="border-t pt-6">
-            <Button><PlusCircle className="mr-2 h-4 w-4"/>Request Time Off</Button>
+            <Button onClick={handleRequestTimeOff}><PlusCircle className="mr-2 h-4 w-4"/>Request Time Off</Button>
         </CardFooter>
       </Card>
     </div>
