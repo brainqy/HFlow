@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Stethoscope, Users, FileText, Building, Info, Bell } from 'lucide-react';
 import Image from 'next/image';
-import { placeholderServices, placeholderAnnouncements, placeholderTestimonials } from '@/lib/placeholder-data'; 
+import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts } from '@/lib/placeholder-data'; 
 import { getServiceIcon } from '@/lib/icon-map';
 import { useEffect, useState } from 'react';
 import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation } from '@/types';
