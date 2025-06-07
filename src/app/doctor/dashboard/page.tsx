@@ -1,19 +1,18 @@
 
-
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { placeholderDoctorAppointments, placeholderDoctorPatients } from '@/lib/placeholder-data';
-import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered } from 'lucide-react';
+import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered, Eye } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 
 export default function DoctorDashboardPage() {
-  const doctorName = "Dr. Eleanor Vance"; // Placeholder
+  const doctorName = "Dr. Eleanor Vance"; 
   const todayISO = new Date().toISOString().split('T')[0];
   const todayFormatted = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  const todaysAppointments = placeholderDoctorAppointments.filter(a => a.date === todayISO);
+  const todaysAppointments = placeholderDoctorAppointments.filter(a => a.date === todayISO && a.doctorName === doctorName); // Filter for logged in doctor
 
   return (
     <div className="space-y-8">
@@ -85,7 +84,11 @@ export default function DoctorDashboardPage() {
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">{appt.reason}</p>
                     <div className="mt-2">
-                      <Button variant="link" size="sm" className="p-0 h-auto text-primary text-xs opacity-50 cursor-not-allowed">View Patient Chart</Button>
+                      <Button variant="link" size="sm" asChild className="p-0 h-auto text-primary text-xs">
+                        <Link href={`/doctor/patients/${appt.patientId}/chart`} className="flex items-center gap-1">
+                           <Eye className="h-3 w-3" /> View Patient Chart
+                        </Link>
+                      </Button>
                     </div>
                   </div>
                 ))}

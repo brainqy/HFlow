@@ -10,7 +10,7 @@ import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import type { DateRange } from 'react-day-picker';
 import { placeholderDoctorAppointments as initialAppointments } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
-import { CalendarCheck, Eye, CheckCircle, Filter, User, CalendarDays, Clock, FileText as ReasonIcon } from 'lucide-react';
+import { CalendarCheck, Eye, CheckCircle, Filter, User, CalendarDays, Clock, FileText as ReasonIcon, XCircle, RotateCcw as RescheduleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
@@ -62,6 +62,13 @@ export default function DoctorAppointmentsPage() {
     toast({
       title: "Appointment Completed",
       description: `Appointment with ${patientName || 'Patient'} marked as completed.`,
+    });
+  };
+
+  const handleMockAction = (action: string, patientName?: string) => {
+    toast({
+      title: `${action} Requested`,
+      description: `${action} for ${patientName || 'Patient'} has been noted (prototype action).`,
     });
   };
 
@@ -160,18 +167,26 @@ export default function DoctorAppointmentsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-wrap gap-2 justify-end border-t pt-4 mt-auto">
-                {(appointment.status === 'Scheduled' || appointment.status === 'Checked-in') && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleMarkAsCompleted(appointment.id)}
-                    className="border-green-500 text-green-600 hover:bg-green-500/10 hover:text-green-700"
-                  >
-                    <CheckCircle className="mr-1 h-3 w-3" /> Mark Completed
-                  </Button>
+                {(appointment.status === 'Scheduled' || appointment.status === 'Checked-in' || appointment.status === 'Pending Confirmation') && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleMarkAsCompleted(appointment.id)}
+                      className="border-green-500 text-green-600 hover:bg-green-500/10 hover:text-green-700"
+                    >
+                      <CheckCircle className="mr-1 h-3 w-3" /> Mark Completed
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-amber-600 hover:bg-amber-500/10 hover:text-amber-700" onClick={() => handleMockAction('Reschedule', appointment.patientName)}>
+                        <RescheduleIcon className="mr-1 h-3 w-3" /> Reschedule
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-destructive hover:bg-red-500/10 hover:text-red-700" onClick={() => handleMockAction('Cancellation', appointment.patientName)}>
+                        <XCircle className="mr-1 h-3 w-3" /> Cancel
+                    </Button>
+                  </>
                 )}
-                 <Button variant="outline" size="sm" asChild className="opacity-50 cursor-not-allowed">
-                  <Link href="#" className="flex items-center gap-1">
+                 <Button variant="outline" size="sm" asChild>
+                  <Link href={`/doctor/patients/${appointment.patientId}/chart`} className="flex items-center gap-1">
                     <Eye className="h-3 w-3" /> View Chart
                   </Link>
                 </Button>

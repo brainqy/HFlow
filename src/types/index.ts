@@ -86,10 +86,11 @@ export interface Medication {
 
 export interface DoctorAppointment {
   id: string;
+  patientId: string; 
   patientName: string;
   doctorName: string; 
   doctorId: string; 
-  time: string; // This likely needs to align with AvailabilitySlot startTime or be derived
+  time: string; 
   reason: string;
   date: string; 
   status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
@@ -148,7 +149,6 @@ export interface Receptionist {
     employeeId: string;
 }
 
-// Combined user type for Manager user management
 export type UserRole = 'Patient' | 'Doctor' | 'Nurse' | 'Receptionist' | 'Manager';
 
 export interface ManagedUser {
@@ -160,4 +160,3 @@ export interface ManagedUser {
   lastLogin?: string; 
   password?: string; 
 }
-
