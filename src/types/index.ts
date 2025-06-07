@@ -181,3 +181,12 @@ export interface Testimonial {
   authorImageUrl?: string;
   dataAiHint?: string;
 }
+
+export interface TrustSignal {
+  id: string;
+  type: 'partner' | 'certification' | 'featured';
+  name: string;
+  imageUrl: string;
+  dataAiHint: string;
+  url?: string;
+}

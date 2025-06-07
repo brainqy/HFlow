@@ -8,12 +8,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Stethoscope, Users, FileText, Building, Info, Bell } from 'lucide-react';
 import Image from 'next/image';
-import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts } from '@/lib/placeholder-data'; 
+import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts, placeholderTrustSignals } from '@/lib/placeholder-data'; 
 import { getServiceIcon } from '@/lib/icon-map';
 import { useEffect, useState } from 'react';
-import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation } from '@/types';
+import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation, TrustSignal } from '@/types';
 import { format } from 'date-fns';
 import TestimonialSlider from '@/components/sections/TestimonialSlider';
+import TrustSignals from '@/components/sections/TrustSignals';
+
 
 const doctors = [
   { id: 'emily-carter', name: 'Dr. Emily Carter', specialty: 'Cardiologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'doctor portrait' },
@@ -25,6 +27,8 @@ export default function HomePageContent() {
   const [homePageServices, setHomePageServices] = useState<Service[]>([]);
   const [activeAnnouncements, setActiveAnnouncements] = useState<Announcement[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [trustSignals, setTrustSignals] = useState<TrustSignal[]>([]);
+
 
   useEffect(() => {
     // Filter for specific services to display on the homepage
@@ -50,6 +54,8 @@ export default function HomePageContent() {
     
     // Load testimonials
     setTestimonials(placeholderTestimonials);
+    setTrustSignals(placeholderTrustSignals);
+
 
   }, []);
 
@@ -215,6 +221,9 @@ export default function HomePageContent() {
           </div>
         </section>
       )}
+
+      {/* Trust Signals Section */}
+      {trustSignals.length > 0 && <TrustSignals signals={trustSignals} />}
 
       {/* Meet Our Doctors Section */}
       <section className="py-16 md:py-24">

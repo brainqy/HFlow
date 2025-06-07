@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial, TrustSignal } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
 
 export let placeholderDoctors: Doctor[] = [
@@ -331,4 +331,16 @@ export let placeholderTestimonials: Testimonial[] = [
     authorImageUrl: "https://placehold.co/100x100.png",
     dataAiHint: "content man"
   }
+];
+
+export let placeholderTrustSignals: TrustSignal[] = [
+  { id: 'ts-partner-1', type: 'partner', name: 'American Medical Association', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'medical association logo', url: '#' },
+  { id: 'ts-partner-2', type: 'partner', name: 'National Health Service', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'health service logo', url: '#' },
+  { id: 'ts-partner-3', type: 'partner', name: 'Wellness Tech Inc.', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'tech company logo', url: '#' },
+  { id: 'ts-cert-1', type: 'certification', name: 'HIPAA Compliant', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'HIPAA badge', url: '#' },
+  { id: 'ts-cert-2', type: 'certification', name: 'ISO 9001 Certified', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'ISO badge quality', url: '#' },
+  { id: 'ts-cert-3', type: 'certification', name: 'Best Clinic Award 2023', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'award seal', url: '#' },
+  { id: 'ts-featured-1', type: 'featured', name: 'Health Today Magazine', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'magazine logo health', url: '#' },
+  { id: 'ts-featured-2', type: 'featured', name: 'TechHealth Conference', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'conference logo tech', url: '#' },
+  { id: 'ts-featured-3', type: 'featured', name: 'Local News Channel 7', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'news channel logo', url: '#' },
 ];
