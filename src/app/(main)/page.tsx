@@ -17,12 +17,7 @@ import TestimonialSlider from '@/components/sections/TestimonialSlider';
 import TrustSignals from '@/components/sections/TrustSignals';
 import PromoBanner from '@/components/sections/PromoBanner';
 
-
-const doctors = [
-  { id: 'emily-carter', name: 'Dr. Emily Carter', specialty: 'Cardiologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'doctor portrait' },
-  { id: 'james-lee', name: 'Dr. James Lee', specialty: 'Neurologist', image: 'https://placehold.co/300x300.png', dataAiHint: 'physician smiling' },
-  { id: 'sarah-green', name: 'Dr. Sarah Green', specialty: 'Orthopedic Surgeon', image: 'https://placehold.co/300x300.png', dataAiHint: 'surgeon friendly' },
-];
+// Removed local 'doctors' array as the section is now a CTA banner
 
 // Subset of specialized services for the new grid
 const specializedServicesToShow: Service[] = placeholderServices.filter(s => ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Oncology', 'Gastroenterology', 'General Surgery', 'IVF', 'Nephrology', 'Critical Care'].includes(s.name)).slice(0, 12);
@@ -314,27 +309,24 @@ export default function HomePageContent() {
       {isWidgetVisible('trustSignals') && trustSignals.length > 0 && <TrustSignals signals={trustSignals} />}
 
       {isWidgetVisible('meetOurDoctors') && (
-        <section className="py-16 md:py-24">
-          <div className="container mx-auto px-4 md:px-6">
-            <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Meet Our Doctors</h2>
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {doctors.map((doctor) => (
-                <Card key={doctor.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <Image src={doctor.image} alt={doctor.name} data-ai-hint={doctor.dataAiHint} width={300} height={300} className="w-full h-56 object-cover" />
-                  <CardContent className="p-6">
-                    <CardTitle className="font-headline text-xl mb-1">{doctor.name}</CardTitle>
-                    <CardDescription className="text-primary mb-3">{doctor.specialty}</CardDescription>
-                    <Button variant="outline" asChild className="w-full">
-                      <Link href={`/doctors/${doctor.id}`}>View Profile</Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <div className="text-center mt-12">
-              <Button size="lg" asChild>
-                <Link href="/doctors">All Doctors</Link>
+         <section className="bg-primary text-primary-foreground py-16 md:py-20 rounded-lg my-12 md:my-16">
+          <div className="container mx-auto px-4 md:px-6 grid md:grid-cols-2 items-center gap-8">
+            <div className="space-y-4 text-center md:text-left">
+              <h2 className="font-headline text-3xl md:text-4xl font-bold">Meet Our Most Experienced Doctors</h2>
+              <p className="text-lg text-primary-foreground/90">Our Experienced Medical Team: Your Partners in Health</p>
+              <Button variant="secondary" size="lg" asChild className="mt-4 hover:bg-secondary/90">
+                <Link href="/doctors">Meet Our Team</Link>
               </Button>
+            </div>
+            <div className="relative h-64 md:h-auto md:min-h-[300px] flex justify-center md:justify-end items-center">
+              <Image 
+                src="https://placehold.co/500x350.png" 
+                alt="Team of experienced doctors"
+                data-ai-hint="doctor team group"
+                width={500} 
+                height={350}
+                className="rounded-md object-cover shadow-xl max-w-full h-auto"
+              />
             </div>
           </div>
         </section>
