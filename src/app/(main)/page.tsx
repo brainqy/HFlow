@@ -8,10 +8,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Stethoscope, Users, FileText, Building, Info, Bell } from 'lucide-react';
 import Image from 'next/image';
-import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts, placeholderTrustSignals } from '@/lib/placeholder-data'; 
+import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts, placeholderTrustSignals, homepageWidgetSettings as globalHomepageWidgetSettings } from '@/lib/placeholder-data'; 
 import { getServiceIcon } from '@/lib/icon-map';
 import { useEffect, useState } from 'react';
-import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation, TrustSignal } from '@/types';
+import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation, TrustSignal, HomepageWidgetSetting } from '@/types';
 import { format } from 'date-fns';
 import TestimonialSlider from '@/components/sections/TestimonialSlider';
 import TrustSignals from '@/components/sections/TrustSignals';
@@ -29,9 +29,14 @@ export default function HomePageContent() {
   const [activeAnnouncements, setActiveAnnouncements] = useState<Announcement[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [trustSignals, setTrustSignals] = useState<TrustSignal[]>([]);
+  const [widgetSettings, setWidgetSettings] = useState<HomepageWidgetSetting[]>([]);
 
 
   useEffect(() => {
+    // Copy widget settings from global to local state on mount
+    // This allows the page to react if globalHomepageWidgetSettings is mutated
+    setWidgetSettings([...globalHomepageWidgetSettings]);
+
     // Filter for specific services to display on the homepage
     const servicesToDisplayNames = ['Cardiology', 'Neurology', 'Orthopedics'];
     const filteredServices = placeholderServices.filter(s => servicesToDisplayNames.includes(s.name));
@@ -58,12 +63,18 @@ export default function HomePageContent() {
     setTrustSignals(placeholderTrustSignals);
 
 
-  }, []);
+  }, []); // Empty dependency array means this runs once on mount. Re-renders if this component's key changes or parent forces it.
+
+  const isWidgetVisible = (widgetId: string): boolean => {
+    const setting = widgetSettings.find(s => s.id === widgetId);
+    // Default to true if setting not found or settings not loaded yet, to prevent hiding content by mistake
+    return setting ? setting.isVisible : true; 
+  };
 
 
   return (
     <>
-      {/* Hero Section */}
+      {/* Hero Section (assuming always visible, not controlled by manager toggle) */}
       <section className="bg-primary/10 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl">
@@ -84,7 +95,7 @@ export default function HomePageContent() {
       </section>
 
       {/* Announcements Section */}
-      {activeAnnouncements.length > 0 && (
+      {isWidgetVisible('announcements') && activeAnnouncements.length > 0 && (
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4 md:px-6">
             <div className="space-y-4">
@@ -107,117 +118,121 @@ export default function HomePageContent() {
       )}
 
       {/* Promo Banner Section */}
-      <PromoBanner />
+      {isWidgetVisible('promoBanner') && <PromoBanner />}
 
       {/* Services Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Our Services</h2>
-          {homePageServices.length > 0 ? (
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-              {homePageServices.map((service) => {
-                const IconComponent = getServiceIcon(service.iconName);
-                return (
-                  <Card key={service.id} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <CardHeader>
-                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
-                        <IconComponent className="h-8 w-8" />
-                      </div>
-                      <CardTitle className="font-headline">{service.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground">{service.description}</p>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="link" className="mt-4 text-primary">Learn More</Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[525px]">
-                          <DialogHeader>
-                            <DialogTitle className="font-headline text-2xl text-primary flex items-center gap-2">
-                              <IconComponent className="h-6 w-6" /> {service.name}
-                            </DialogTitle>
-                            <DialogDescription className="text-base pt-2 text-muted-foreground">
-                              {service.description}
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-foreground">
-                            <p className="leading-relaxed">{service.details || 'More detailed information about this service will be available soon.'}</p>
-                          </div>
-                            {service.imageUrl && (
-                              <Image 
-                                src={service.imageUrl} 
-                                alt={service.name} 
-                                data-ai-hint={service.dataAiHint || "service illustration"}
-                                width={400} 
-                                height={250} 
-                                className="rounded-md object-cover mx-auto mt-2"
-                                />
-                            )}
-                          <Button asChild className="mt-6 w-full">
-                            <Link href="/appointments">Book an Appointment</Link>
-                          </Button>
-                        </DialogContent>
-                      </Dialog>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-             ) : (
-            <p className="text-muted-foreground text-center">Key services information coming soon. <Link href="/services" className="text-primary hover:underline">View all services</Link>.</p>
-          )}
-        </div>
-      </section>
+      {isWidgetVisible('services') && (
+        <section className="py-16 md:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Our Services</h2>
+            {homePageServices.length > 0 ? (
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+                {homePageServices.map((service) => {
+                  const IconComponent = getServiceIcon(service.iconName);
+                  return (
+                    <Card key={service.id} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                      <CardHeader>
+                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+                          <IconComponent className="h-8 w-8" />
+                        </div>
+                        <CardTitle className="font-headline">{service.name}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-muted-foreground">{service.description}</p>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="link" className="mt-4 text-primary">Learn More</Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[525px]">
+                            <DialogHeader>
+                              <DialogTitle className="font-headline text-2xl text-primary flex items-center gap-2">
+                                <IconComponent className="h-6 w-6" /> {service.name}
+                              </DialogTitle>
+                              <DialogDescription className="text-base pt-2 text-muted-foreground">
+                                {service.description}
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="py-4 text-foreground">
+                              <p className="leading-relaxed">{service.details || 'More detailed information about this service will be available soon.'}</p>
+                            </div>
+                              {service.imageUrl && (
+                                <Image 
+                                  src={service.imageUrl} 
+                                  alt={service.name} 
+                                  data-ai-hint={service.dataAiHint || "service illustration"}
+                                  width={400} 
+                                  height={250} 
+                                  className="rounded-md object-cover mx-auto mt-2"
+                                  />
+                              )}
+                            <Button asChild className="mt-6 w-full">
+                              <Link href="/appointments">Book an Appointment</Link>
+                            </Button>
+                          </DialogContent>
+                        </Dialog>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+               ) : (
+              <p className="text-muted-foreground text-center">Key services information coming soon. <Link href="/services" className="text-primary hover:underline">View all services</Link>.</p>
+            )}
+          </div>
+        </section>
+      )}
       
       {/* Why Choose Us Section */}
-      <section className="bg-slate-50 py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="font-headline text-3xl font-bold text-foreground mb-6">Why Choose HealthFlow?</h2>
-              <p className="text-lg text-muted-foreground mb-6">
-                At HealthFlow, we combine state-of-the-art technology with a patient-first approach. Our dedicated team of professionals is committed to your well-being.
-              </p>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <Stethoscope className="h-6 w-6 text-primary mt-1 shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-foreground">Experienced Doctors</h3>
-                    <p className="text-muted-foreground text-sm">Board-certified specialists in various fields.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Users className="h-6 w-6 text-primary mt-1 shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-foreground">Patient-Centered Care</h3>
-                    <p className="text-muted-foreground text-sm">Personalized treatment plans tailored to your needs.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                   <Building className="h-6 w-6 text-primary mt-1 shrink-0" />
-                  <div>
-                    <h3 className="font-semibold text-foreground">Modern Facilities</h3>
-                    <p className="text-muted-foreground text-sm">Equipped with the latest medical technology.</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <Image 
-                src="https://placehold.co/600x400.png" 
-                alt="Smiling doctor with patient"
-                data-ai-hint="doctor patient" 
-                width={600} 
-                height={400} 
-                className="rounded-lg shadow-xl"
-              />
+      {isWidgetVisible('whyChooseUs') && (
+        <section className="bg-slate-50 py-16 md:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="font-headline text-3xl font-bold text-foreground mb-6">Why Choose HealthFlow?</h2>
+                <p className="text-lg text-muted-foreground mb-6">
+                  At HealthFlow, we combine state-of-the-art technology with a patient-first approach. Our dedicated team of professionals is committed to your well-being.
+                </p>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <Stethoscope className="h-6 w-6 text-primary mt-1 shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-foreground">Experienced Doctors</h3>
+                      <p className="text-muted-foreground text-sm">Board-certified specialists in various fields.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Users className="h-6 w-6 text-primary mt-1 shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-foreground">Patient-Centered Care</h3>
+                      <p className="text-muted-foreground text-sm">Personalized treatment plans tailored to your needs.</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                     <Building className="h-6 w-6 text-primary mt-1 shrink-0" />
+                    <div>
+                      <h3 className="font-semibold text-foreground">Modern Facilities</h3>
+                      <p className="text-muted-foreground text-sm">Equipped with the latest medical technology.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <Image 
+                  src="https://placehold.co/600x400.png" 
+                  alt="Smiling doctor with patient"
+                  data-ai-hint="doctor patient" 
+                  width={600} 
+                  height={400} 
+                  className="rounded-lg shadow-xl"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Testimonials Section */}
-      {testimonials.length > 0 && (
+      {isWidgetVisible('testimonials') && testimonials.length > 0 && (
         <section className="py-16 md:py-24 bg-primary/5">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">What Our Patients Say</h2>
@@ -227,75 +242,79 @@ export default function HomePageContent() {
       )}
 
       {/* Trust Signals Section */}
-      {trustSignals.length > 0 && <TrustSignals signals={trustSignals} />}
+      {isWidgetVisible('trustSignals') && trustSignals.length > 0 && <TrustSignals signals={trustSignals} />}
 
       {/* Meet Our Doctors Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Meet Our Doctors</h2>
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {doctors.map((doctor) => (
-              <Card key={doctor.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <Image src={doctor.image} alt={doctor.name} data-ai-hint={doctor.dataAiHint} width={300} height={300} className="w-full h-56 object-cover" />
-                <CardContent className="p-6">
-                  <CardTitle className="font-headline text-xl mb-1">{doctor.name}</CardTitle>
-                  <CardDescription className="text-primary mb-3">{doctor.specialty}</CardDescription>
-                  <Button variant="outline" asChild className="w-full">
-                    <Link href={`/doctors/${doctor.id}`}>View Profile</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+      {isWidgetVisible('meetOurDoctors') && (
+        <section className="py-16 md:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Meet Our Doctors</h2>
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {doctors.map((doctor) => (
+                <Card key={doctor.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <Image src={doctor.image} alt={doctor.name} data-ai-hint={doctor.dataAiHint} width={300} height={300} className="w-full h-56 object-cover" />
+                  <CardContent className="p-6">
+                    <CardTitle className="font-headline text-xl mb-1">{doctor.name}</CardTitle>
+                    <CardDescription className="text-primary mb-3">{doctor.specialty}</CardDescription>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link href={`/doctors/${doctor.id}`}>View Profile</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="text-center mt-12">
+              <Button size="lg" asChild>
+                <Link href="/doctors">All Doctors</Link>
+              </Button>
+            </div>
           </div>
-          <div className="text-center mt-12">
-            <Button size="lg" asChild>
-              <Link href="/doctors">All Doctors</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Blog Preview Section */}
-      <section className="bg-slate-50 py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Latest Health Articles</h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {placeholderBlogPosts.slice(0,3).map((post) => (
-              <Card key={post.slug} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <Link href={`/blog/${post.slug}`}>
-                  <Image 
-                    src={post.imageUrl} 
-                    alt={post.title} 
-                    data-ai-hint={post.dataAiHint || 'blog article'} 
-                    width={600} 
-                    height={400} 
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                </Link>
-                <CardHeader>
+      {isWidgetVisible('blogPreview') && (
+        <section className="bg-slate-50 py-16 md:py-24">
+          <div className="container mx-auto px-4 md:px-6">
+            <h2 className="font-headline text-3xl font-bold text-center mb-12 text-foreground">Latest Health Articles</h2>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {placeholderBlogPosts.slice(0,3).map((post) => (
+                <Card key={post.slug} className="shadow-lg hover:shadow-xl transition-shadow duration-300">
                   <Link href={`/blog/${post.slug}`}>
-                    <CardTitle className="font-headline text-lg hover:text-primary transition-colors">{post.title}</CardTitle>
+                    <Image 
+                      src={post.imageUrl} 
+                      alt={post.title} 
+                      data-ai-hint={post.dataAiHint || 'blog article'} 
+                      width={600} 
+                      height={400} 
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
                   </Link>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="line-clamp-3">{post.excerpt}</CardDescription>
-                  <Button variant="link" asChild className="mt-2 p-0 text-primary">
-                    <Link href={`/blog/${post.slug}`}>Read More</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-             {placeholderBlogPosts.length === 0 && (
-              <p className="md:col-span-3 text-center text-muted-foreground">No blog posts available yet. Check back soon!</p>
-            )}
+                  <CardHeader>
+                    <Link href={`/blog/${post.slug}`}>
+                      <CardTitle className="font-headline text-lg hover:text-primary transition-colors">{post.title}</CardTitle>
+                    </Link>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="line-clamp-3">{post.excerpt}</CardDescription>
+                    <Button variant="link" asChild className="mt-2 p-0 text-primary">
+                      <Link href={`/blog/${post.slug}`}>Read More</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+               {placeholderBlogPosts.length === 0 && (
+                <p className="md:col-span-3 text-center text-muted-foreground">No blog posts available yet. Check back soon!</p>
+              )}
+            </div>
+            <div className="text-center mt-12">
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/blog">Visit Our Blog</Link>
+              </Button>
+            </div>
           </div>
-          <div className="text-center mt-12">
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/blog">Visit Our Blog</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }

@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial, TrustSignal } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, Testimonial, TrustSignal, HomepageWidgetSetting } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays } from 'lucide-react';
 
 export let placeholderDoctors: Doctor[] = [
@@ -219,6 +219,63 @@ export let placeholderDoctorAppointments: DoctorAppointment[] = [
   { id: 'da15', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
 ];
 
+export let placeholderAnnouncements: Announcement[] = [];
+
+
+export function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/\s+/g, '-') 
+    .replace(/[^\w-]+/g, ''); 
+}
+
+export let placeholderTestimonials: Testimonial[] = [
+  {
+    id: 'testimonial-1',
+    quote: "HealthFlow has transformed how I manage my health. The doctors are attentive, and the portal makes everything so easy!",
+    authorName: "Sarah Miller",
+    authorRole: "Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "happy patient"
+  },
+  {
+    id: 'testimonial-2',
+    quote: "Booking appointments is a breeze, and I always feel well-cared for. Highly recommend HealthFlow to everyone.",
+    authorName: "John B.",
+    authorRole: "Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "satisfied person"
+  },
+  {
+    id: 'testimonial-3',
+    quote: "The team at HealthFlow is professional and compassionate. They truly prioritize patient well-being.",
+    authorName: "Alice W.",
+    authorRole: "Long-time Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "smiling woman"
+  },
+  {
+    id: 'testimonial-4',
+    quote: "I appreciate the modern approach and the easy access to my medical information through their portal.",
+    authorName: "David K.",
+    authorRole: "Patient",
+    authorImageUrl: "https://placehold.co/100x100.png",
+    dataAiHint: "content man"
+  }
+];
+
+export let placeholderTrustSignals: TrustSignal[] = [
+  { id: 'ts-partner-1', type: 'partner', name: 'American Medical Association', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'medical association logo', url: '#' },
+  { id: 'ts-partner-2', type: 'partner', name: 'National Health Service', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'health service logo', url: '#' },
+  { id: 'ts-partner-3', type: 'partner', name: 'Wellness Tech Inc.', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'tech company logo', url: '#' },
+  { id: 'ts-cert-1', type: 'certification', name: 'HIPAA Compliant', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'HIPAA badge', url: '#' },
+  { id: 'ts-cert-2', type: 'certification', name: 'ISO 9001 Certified', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'ISO badge quality', url: '#' },
+  { id: 'ts-cert-3', type: 'certification', name: 'Best Clinic Award 2023', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'award seal', url: '#' },
+  { id: 'ts-featured-1', type: 'featured', name: 'Health Today Magazine', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'magazine logo health', url: '#' },
+  { id: 'ts-featured-2', type: 'featured', name: 'TechHealth Conference', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'conference logo tech', url: '#' },
+  { id: 'ts-featured-3', type: 'featured', name: 'Local News Channel 7', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'news channel logo', url: '#' },
+];
+
 export let placeholderNursePatientQueue: NursePatientQueueItem[] = [
   { id: 'nq1', name: 'Edward Scissorhands', status: 'Waiting for Triage', arrivalTime: '09:15 AM' },
   { id: 'nq2', name: 'Fiona Gallagher', status: 'Ready for Vitals', arrivalTime: '09:30 AM' },
@@ -288,8 +345,16 @@ export let allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac20', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getTodayDate(), time: '04:30 PM', reason: 'Blood Pressure Check', status: 'Scheduled', reminderSent: true },
 ];
 
-export let placeholderAnnouncements: Announcement[] = [];
-
+export let homepageWidgetSettings: HomepageWidgetSetting[] = [
+  { id: 'announcements', name: 'Announcements Section', isVisible: true },
+  { id: 'promoBanner', name: 'Promotional Banner', isVisible: true },
+  { id: 'services', name: 'Our Services Section', isVisible: true },
+  { id: 'whyChooseUs', name: 'Why Choose Us Section', isVisible: true },
+  { id: 'testimonials', name: 'Testimonials Section', isVisible: true },
+  { id: 'trustSignals', name: 'Trust Signals Section', isVisible: true },
+  { id: 'meetOurDoctors', name: 'Meet Our Doctors Section', isVisible: true },
+  { id: 'blogPreview', name: 'Blog Preview Section', isVisible: true },
+];
 
 export function generateSlug(title: string): string {
   return title
@@ -297,50 +362,3 @@ export function generateSlug(title: string): string {
     .replace(/\s+/g, '-') 
     .replace(/[^\w-]+/g, ''); 
 }
-
-export let placeholderTestimonials: Testimonial[] = [
-  {
-    id: 'testimonial-1',
-    quote: "HealthFlow has transformed how I manage my health. The doctors are attentive, and the portal makes everything so easy!",
-    authorName: "Sarah Miller",
-    authorRole: "Patient",
-    authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "happy patient"
-  },
-  {
-    id: 'testimonial-2',
-    quote: "Booking appointments is a breeze, and I always feel well-cared for. Highly recommend HealthFlow to everyone.",
-    authorName: "John B.",
-    authorRole: "Patient",
-    authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "satisfied person"
-  },
-  {
-    id: 'testimonial-3',
-    quote: "The team at HealthFlow is professional and compassionate. They truly prioritize patient well-being.",
-    authorName: "Alice W.",
-    authorRole: "Long-time Patient",
-    authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "smiling woman"
-  },
-  {
-    id: 'testimonial-4',
-    quote: "I appreciate the modern approach and the easy access to my medical information through their portal.",
-    authorName: "David K.",
-    authorRole: "Patient",
-    authorImageUrl: "https://placehold.co/100x100.png",
-    dataAiHint: "content man"
-  }
-];
-
-export let placeholderTrustSignals: TrustSignal[] = [
-  { id: 'ts-partner-1', type: 'partner', name: 'American Medical Association', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'medical association logo', url: '#' },
-  { id: 'ts-partner-2', type: 'partner', name: 'National Health Service', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'health service logo', url: '#' },
-  { id: 'ts-partner-3', type: 'partner', name: 'Wellness Tech Inc.', imageUrl: 'https://placehold.co/150x80.png', dataAiHint: 'tech company logo', url: '#' },
-  { id: 'ts-cert-1', type: 'certification', name: 'HIPAA Compliant', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'HIPAA badge', url: '#' },
-  { id: 'ts-cert-2', type: 'certification', name: 'ISO 9001 Certified', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'ISO badge quality', url: '#' },
-  { id: 'ts-cert-3', type: 'certification', name: 'Best Clinic Award 2023', imageUrl: 'https://placehold.co/120x120.png', dataAiHint: 'award seal', url: '#' },
-  { id: 'ts-featured-1', type: 'featured', name: 'Health Today Magazine', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'magazine logo health', url: '#' },
-  { id: 'ts-featured-2', type: 'featured', name: 'TechHealth Conference', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'conference logo tech', url: '#' },
-  { id: 'ts-featured-3', type: 'featured', name: 'Local News Channel 7', imageUrl: 'https://placehold.co/200x60.png', dataAiHint: 'news channel logo', url: '#' },
-];

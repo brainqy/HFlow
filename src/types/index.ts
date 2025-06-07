@@ -190,3 +190,9 @@ export interface TrustSignal {
   dataAiHint: string;
   url?: string;
 }
+
+export interface HomepageWidgetSetting {
+  id: string; // e.g., 'promoBanner', 'testimonialsSection'
+  name: string; // Friendly name for manager UI, e.g., "Promotional Banner"
+  isVisible: boolean;
+}

@@ -4,7 +4,7 @@
 import LinkImport from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { LayoutDashboard, Users, Settings as ClinicSettingsIcon, BarChart2, LogOut, ShieldAlert, FileText, Briefcase, UserCog as ProfileIcon } from 'lucide-react';
+import { LayoutDashboard, Users, Settings as ClinicSettingsIcon, BarChart2, LogOut, ShieldAlert, FileText, Briefcase, UserCog as ProfileIcon, Eye } from 'lucide-react';
 import { 
   Sidebar, 
   SidebarHeader, 
@@ -24,6 +24,7 @@ const managerNavItems = [
   { href: '/manager/services-offered', label: 'Manage Services', icon: Briefcase, tooltip: 'Manage Services' },
   { href: '/manager/blogs', label: 'Manage Blogs', icon: FileText, tooltip: 'Manage Blogs' },
   { href: '/manager/announcements', label: 'Announcements', icon: ShieldAlert, tooltip: 'Clinic Announcements'},
+  { href: '/manager/homepage-settings', label: 'Homepage Widgets', icon: Eye, tooltip: 'Manage Homepage Widgets'},
   { href: '/manager/settings', label: 'Clinic Settings', icon: ClinicSettingsIcon, tooltip: 'Clinic Settings' },
   { href: '/manager/profile', label: 'My Profile', icon: ProfileIcon, tooltip: 'My Profile' },
   { href: '/manager/reports', label: 'Reports', icon: BarChart2, tooltip: 'Reports' },
