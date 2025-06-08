@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -37,7 +38,7 @@ const ImageCardDisplay = ({ image }: { image: ImageSlide }) => (
           src={image.imageUrl}
           alt={image.altText || "Image"}
           fill
-          className="object-contain rounded-lg shadow-md m-0 p-0"
+          className="object-cover rounded-lg shadow-md m-0 p-0"
           sizes="100vw"
           priority
         />
@@ -47,7 +48,7 @@ const ImageCardDisplay = ({ image }: { image: ImageSlide }) => (
         src={image.imageUrl}
         alt={image.altText || "Image"}
         fill
-        className="object-contain rounded-lg shadow-md m-0 p-0"
+        className="object-cover rounded-lg shadow-md m-0 p-0"
         sizes="100vw"
         priority
       />

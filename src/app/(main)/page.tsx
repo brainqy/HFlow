@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -82,7 +83,7 @@ export default function HomePageContent() {
   return (
     <>
       {/* Show one image at a time, auto sliding */}
-      <section className="py-0">
+      <section className="p-0 m-0">
         <ImageSlider
           images={imageSlides}
           imagesPerSlide={1} // Show one image at a time
@@ -414,4 +415,3 @@ export default function HomePageContent() {
     </>
   );
 }
-
