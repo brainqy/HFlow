@@ -464,8 +464,8 @@ export let homepageWidgetSettings: HomepageWidgetSetting[] = [
 export let heroSlides: HeroSlideItem[] = [
   {
     id: 'hero1',
-    imageUrl: '/banner1.jpg',
-    altText: 'Modern medical facility with caring staff',
+    imageUrl: '/meet-doctor-img.webp', // Corrected path for the first slide
+    altText: 'Clean and modern hospital corridor',
     dataAiHint: 'modern hospital interior',
     title: 'Your Health, Our Priority',
     subtitle: 'Experience compassionate and expert healthcare at HealthFlow. We are dedicated to providing top-quality medical services to our community.',
@@ -497,4 +497,5 @@ export let heroSlides: HeroSlideItem[] = [
     
 
     
+
 

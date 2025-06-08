@@ -15,50 +15,10 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { heroSlides } from "@/lib/placeholder-data"; // Import centralized slides
+import type { HeroSlideItem } from "@/types"; // Ensure HeroSlideItem type is available
 
-interface HeroSlideItem {
-  id: string;
-  imageUrl: string;
-  altText: string;
-  dataAiHint: string;
-  title: string;
-  subtitle: string;
-  ctaText: string;
-  ctaLink: string;
-}
-
-const heroSlides: HeroSlideItem[] = [
-  {
-    id: 'hero1',
-    imageUrl: '/banner1.jpg',
-    altText: 'Clean and modern hospital corridor',
-    dataAiHint: 'modern hospital interior',
-    title: 'Your Health, Our Priority',
-    subtitle: 'Experience compassionate and expert healthcare at HealthFlow. We are dedicated to providing top-quality medical services to our community.',
-    ctaText: 'Book an Appointment',
-    ctaLink: '/appointments',
-  },
-  {
-    id: 'hero2',
-    imageUrl: '/banner2.jpg',
-    altText: 'Diverse group of medical professionals smiling',
-    dataAiHint: 'doctors team smiling',
-    title: 'Expert Care, Advanced Technology',
-    subtitle: 'Our skilled team uses cutting-edge technology to deliver the best possible outcomes.',
-    ctaText: 'Discover Our Services',
-    ctaLink: '/services',
-  },
-  {
-    id: 'hero3',
-    imageUrl: '/banner3.jpg',
-    altText: 'Doctor comforting a patient in a clinic room',
-    dataAiHint: 'doctor patient interaction',
-    title: 'A Community of Wellness',
-    subtitle: 'Join us on your journey to better health and a more vibrant life.',
-    ctaText: 'Learn About Us',
-    ctaLink: '/about',
-  },
-];
+// Local heroSlides array is removed
 
 export default function HeroSlider() {
   const plugin = React.useRef(
@@ -85,13 +45,21 @@ export default function HeroSlider() {
     }
 
     api.on("select", onSelect);
-    api.on("reInit", onReInit);
+    api.on("reInit", onReInit); // Listen for reInit, useful if slides change
 
     return () => {
       api.off("select", onSelect);
       api.off("reInit", onReInit);
     };
   }, [api]);
+
+  // Re-initialize count if heroSlides array changes (e.g. due to manager actions)
+   React.useEffect(() => {
+    if (api) {
+      api.reInit(); // This should trigger onReInit to update count
+    }
+  }, [heroSlides, api]);
+
 
   const scrollTo = React.useCallback((index: number) => {
     api?.scrollTo(index);
@@ -104,18 +72,18 @@ export default function HeroSlider() {
         plugins={[plugin.current]}
         className="h-full w-full"
         opts={{
-          loop: true,
+          loop: heroSlides.length > 1, // Ensure loop considers the actual number of slides
         }}
       >
         <CarouselContent className="h-full">
-          {heroSlides.map((slide) => (
+          {heroSlides.map((slide, index) => ( // Add index for priority
             <CarouselItem key={slide.id} className="relative h-full w-full">
               <Image
                 src={slide.imageUrl}
                 alt={slide.altText}
                 data-ai-hint={slide.dataAiHint}
                 fill
-                priority={slide.id === 'hero1'} // Prioritize loading the first image
+                priority={index === 0} // Prioritize loading the first image
                 style={{ objectFit: "cover" }}
                 className="brightness-75" // Add a slight dimming for text readability
               />
@@ -135,11 +103,15 @@ export default function HeroSlider() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 md:h-12 md:w-12 text-white hover:bg-white/20 hover:text-white border-white/50" />
-        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 md:h-12 md:w-12 text-white hover:bg-white/20 hover:text-white border-white/50" />
+        {heroSlides.length > 1 && (
+          <>
+            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 md:h-12 md:w-12 text-white hover:bg-white/20 hover:text-white border-white/50" />
+            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 h-10 w-10 md:h-12 md:w-12 text-white hover:bg-white/20 hover:text-white border-white/50" />
+          </>
+        )}
       </Carousel>
 
-      {count > 0 && (
+      {count > 0 && heroSlides.length > 1 && ( // Only show dots if more than one slide
         <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 flex space-x-2">
           {Array.from({ length: count }).map((_, index) => (
             <Button
@@ -161,4 +133,3 @@ export default function HeroSlider() {
     </section>
   );
 }
-
