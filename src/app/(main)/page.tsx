@@ -64,10 +64,8 @@ export default function HomePageContent() {
 
   return (
     <>
-      <HeroSlider /> {/* Added HeroSlider component at the top */}
-
       {/* The original first section is removed as HeroSlider replaces it. */}
-      {/* 
+      {
       <section className="bg-primary/10 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl">
@@ -86,8 +84,8 @@ export default function HomePageContent() {
           </div>
         </div>
       </section> 
-      */}
-
+      }
+ <HeroSlider />
       {isWidgetVisible('announcements') && activeAnnouncements.length > 0 && (
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4 md:px-6">
