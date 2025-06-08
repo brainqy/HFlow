@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -8,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Stethoscope, Users, FileText, Building, Info, Bell, Hospital, Lightbulb, UserCheck, CheckSquare, Microscope as LabIcon, DoorOpen as EntranceIcon, ConciergeBell as ReceptionIcon, ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
-import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts, placeholderTrustSignals, homepageWidgetSettings as globalHomepageWidgetSettings } from '@/lib/placeholder-data';
+import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts, placeholderTrustSignals, homepageWidgetSettings as globalHomepageWidgetSettings, heroSlides } from '@/lib/placeholder-data';
 import { getServiceIcon } from '@/lib/icon-map';
 import { useEffect, useState } from 'react';
 import type { Service, Announcement, Testimonial, AnnouncementDisplayLocation, TrustSignal, HomepageWidgetSetting } from '@/types';
@@ -16,7 +15,7 @@ import { format } from 'date-fns';
 import TestimonialSlider from '@/components/sections/TestimonialSlider';
 import TrustSignals from '@/components/sections/TrustSignals';
 import PromoBanner from '@/components/sections/PromoBanner';
-import HeroSlider from '@/components/sections/HeroSlider';
+import ImageSlider from '@/components/sections/ImageSlider';
 
 const specializedServicesToShow: Service[] = placeholderServices.filter(s => ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Oncology', 'Gastroenterology', 'General Surgery', 'IVF', 'Nephrology', 'Critical Care'].includes(s.name)).slice(0, 12);
 
@@ -71,9 +70,25 @@ export default function HomePageContent() {
     : [activeAnnouncements[0]];
 
 
+  // Prepare images for the slider (one image per slide)
+  const imageSlides = heroSlides.map(slide => ({
+    id: slide.id,
+    imageUrl: slide.imageUrl,
+    altText: slide.altText,
+    caption: slide.title,
+    link: slide.ctaLink,
+  }));
+
   return (
     <>
-      <HeroSlider />
+      {/* Show one image at a time, auto sliding */}
+      <section className="py-0">
+        <ImageSlider
+          images={imageSlides}
+          imagesPerSlide={1} // Show one image at a time
+        />
+      </section>
+
       {isWidgetVisible('announcements') && activeAnnouncements.length > 0 && (
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4 md:px-6">
