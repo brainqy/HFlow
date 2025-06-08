@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Stethoscope, Users, FileText, Building, Info, Bell, Hospital, Lightbulb, UserCheck, CheckSquare, Microscope as LabIcon, DoorOpen as EntranceIcon, ConciergeBell as ReceptionIcon } from 'lucide-react';
+import { Stethoscope, Users, FileText, Building, Info, Bell, Hospital, Lightbulb, UserCheck, CheckSquare, Microscope as LabIcon, DoorOpen as EntranceIcon, ConciergeBell as ReceptionIcon, ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 import { placeholderServices, placeholderAnnouncements, placeholderTestimonials, placeholderBlogPosts, placeholderTrustSignals, homepageWidgetSettings as globalHomepageWidgetSettings } from '@/lib/placeholder-data';
 import { getServiceIcon } from '@/lib/icon-map';
@@ -16,9 +16,8 @@ import { format } from 'date-fns';
 import TestimonialSlider from '@/components/sections/TestimonialSlider';
 import TrustSignals from '@/components/sections/TrustSignals';
 import PromoBanner from '@/components/sections/PromoBanner';
-import HeroSlider from '@/components/sections/HeroSlider'; // Added HeroSlider import
+import HeroSlider from '@/components/sections/HeroSlider';
 
-// Subset of specialized services for the new grid
 const specializedServicesToShow: Service[] = placeholderServices.filter(s => ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Oncology', 'Gastroenterology', 'General Surgery', 'IVF', 'Nephrology', 'Critical Care'].includes(s.name)).slice(0, 12);
 
 
@@ -28,12 +27,13 @@ export default function HomePageContent() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [trustSignals, setTrustSignals] = useState<TrustSignal[]>([]);
   const [widgetSettings, setWidgetSettings] = useState<HomepageWidgetSetting[]>([]);
+  const [isAnnouncementsExpanded, setIsAnnouncementsExpanded] = useState(false); // State for homepage announcements
 
 
   useEffect(() => {
     setWidgetSettings([...globalHomepageWidgetSettings]);
 
-    const servicesToDisplayNames = ['Cardiology', 'Neurology', 'Orthopedics']; // Main services for the "Our Services" section
+    const servicesToDisplayNames = ['Cardiology', 'Neurology', 'Orthopedics']; 
     const filteredServices = placeholderServices.filter(s => servicesToDisplayNames.includes(s.name));
 
     if (filteredServices.length < servicesToDisplayNames.length && placeholderServices.length > 0) {
@@ -47,10 +47,15 @@ export default function HomePageContent() {
     const now = new Date();
     const announcements = placeholderAnnouncements.filter(ann => {
       const isTargeted = ann.displayLocations.includes('homepage') || ann.displayLocations.includes('all_portals');
-      const isActiveDate = ann.startDate <= now && (!ann.endDate || ann.endDate >= now);
+      const isActiveDate = new Date(ann.startDate) <= now && (!ann.endDate || new Date(ann.endDate) >= now);
       return isTargeted && isActiveDate;
-    }).sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime());
+    }).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     setActiveAnnouncements(announcements);
+    if (announcements.length <= 1) {
+        setIsAnnouncementsExpanded(true); // Expand if only one or zero
+    } else {
+        setIsAnnouncementsExpanded(false); // Collapse if more than one
+    }
 
     setTestimonials(placeholderTestimonials);
     setTrustSignals(placeholderTrustSignals);
@@ -61,36 +66,39 @@ export default function HomePageContent() {
     return setting ? setting.isVisible : true;
   };
 
+  const announcementsToDisplay = isAnnouncementsExpanded || activeAnnouncements.length <= 1
+    ? activeAnnouncements
+    : [activeAnnouncements[0]];
+
 
   return (
     <>
-      {/* The original first section is removed as HeroSlider replaces it. */}
-      {
-      <section className="bg-primary/10 py-16 md:py-24">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <h1 className="font-headline text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl">
-            Your Health, Our Priority
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-foreground/80">
-            Experience compassionate and expert healthcare at HealthFlow. We are dedicated to providing top-quality medical services to our community.
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg" asChild>
-              <Link href="/appointments">Book an Appointment</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/services">Our Services</Link>
-            </Button>
-          </div>
-        </div>
-      </section> 
-      }
- <HeroSlider />
+      <HeroSlider />
       {isWidgetVisible('announcements') && activeAnnouncements.length > 0 && (
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4 md:px-6">
+            {activeAnnouncements.length > 1 && (
+              <div className="flex justify-end mb-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsAnnouncementsExpanded(!isAnnouncementsExpanded)}
+                  className="text-sm text-primary hover:text-primary/80"
+                >
+                  {isAnnouncementsExpanded ? (
+                    <>
+                      <ChevronUp className="mr-1 h-4 w-4" /> Hide Older
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="mr-1 h-4 w-4" /> Show All ({activeAnnouncements.length})
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
             <div className="space-y-4">
-              {activeAnnouncements.map(ann => (
+              {announcementsToDisplay.map(ann => (
                 <Alert key={ann.id} className="shadow-md">
                   <Bell className="h-5 w-5 text-primary" />
                   <AlertTitle className="font-headline text-lg text-primary">{ann.title}</AlertTitle>
