@@ -26,6 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { placeholderDoctors } from "@/lib/placeholder-data";
 
 const appointmentFormSchema = z.object({
+  patientId: z.string().optional(), // For pre-filling from patient profile
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   age: z.coerce.number().min(0, {message: "Age cannot be negative."}).max(120, {message: "Please enter a valid age."}).optional(),
   gender: z.string().optional(),
@@ -43,14 +44,29 @@ type AppointmentFormValues = z.infer<typeof appointmentFormSchema>;
 const timeSlots = ["09:00 AM", "10:00 AM", "11:00 AM", "02:00 PM", "03:00 PM", "04:00 PM"];
 const genderOptions = ["Male", "Female", "Other", "Prefer not to say"];
 
-export function AppointmentForm({ doctorId: initialDoctorId }: { doctorId?: string }) {
+interface AppointmentFormProps {
+  doctorId?: string;
+  initialPatientId?: string;
+  initialPatientName?: string;
+  initialPatientEmail?: string;
+  initialPatientPhone?: string;
+}
+
+export function AppointmentForm({ 
+  doctorId: initialDoctorId,
+  initialPatientId,
+  initialPatientName,
+  initialPatientEmail,
+  initialPatientPhone,
+}: AppointmentFormProps) {
   const { toast } = useToast();
   const form = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
+      patientId: initialPatientId || "",
+      fullName: initialPatientName || "",
+      email: initialPatientEmail || "",
+      phone: initialPatientPhone || "",
       doctorId: initialDoctorId || "",
       appointmentTime: "",
       reason: "",

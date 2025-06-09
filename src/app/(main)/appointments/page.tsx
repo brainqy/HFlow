@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AppointmentForm } from '@/components/forms/AppointmentForm';
@@ -8,6 +9,10 @@ import { useSearchParams } from 'next/navigation';
 export default function AppointmentsPage() {
   const searchParams = useSearchParams();
   const doctorId = searchParams.get('doctorId') || undefined;
+  const patientId = searchParams.get('patientId') || undefined;
+  const patientName = searchParams.get('patientName') || undefined;
+  const patientEmail = searchParams.get('patientEmail') || undefined;
+  const patientPhone = searchParams.get('patientPhone') || undefined;
 
   return (
     <div className="container mx-auto px-4 py-12 md:px-6 md:py-16">
@@ -30,7 +35,13 @@ export default function AppointmentsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AppointmentForm doctorId={doctorId} />
+              <AppointmentForm 
+                doctorId={doctorId} 
+                initialPatientId={patientId}
+                initialPatientName={patientName}
+                initialPatientEmail={patientEmail}
+                initialPatientPhone={patientPhone}
+              />
             </CardContent>
           </Card>
         </div>

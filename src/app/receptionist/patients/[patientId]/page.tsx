@@ -2,7 +2,7 @@
 import { placeholderDoctorPatients, allClinicAppointments } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, CalendarDays, Phone, Mail, Home, Briefcase, FileText } from 'lucide-react';
+import { ArrowLeft, User, CalendarDays, Phone, Mail, Home, Briefcase, FileText, CalendarPlus } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import type { DoctorAppointment } from '@/types';
@@ -66,6 +66,7 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
     );
   };
 
+  const appointmentLink = `/appointments?patientId=${patient.id}&patientName=${encodeURIComponent(patient.name)}&patientEmail=${encodeURIComponent(patient.email || '')}&patientPhone=${encodeURIComponent(patient.phone || '')}`;
 
   return (
     <div className="space-y-8">
@@ -80,7 +81,14 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
             <User className="h-8 w-8" /> Patient: {patient.name}
           </h1>
         </div>
-        <Button variant="outline" className="opacity-50 cursor-not-allowed">Edit Patient Info</Button>
+        <div className="flex flex-col sm:flex-row gap-2">
+            <Button variant="outline" className="opacity-50 cursor-not-allowed">Edit Patient Info</Button>
+            <Button asChild>
+              <Link href={appointmentLink} className="flex items-center gap-2">
+                <CalendarPlus className="h-4 w-4" /> Create Appointment
+              </Link>
+            </Button>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -141,4 +149,3 @@ export default function ReceptionistPatientViewPage({ params }: { params: { pati
     </div>
   );
 }
-
