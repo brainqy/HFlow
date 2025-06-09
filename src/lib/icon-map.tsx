@@ -1,5 +1,5 @@
 
-import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, ShieldCheck, Ambulance, HelpingHand, Thermometer, TestTube2, Ear, Eye, Smile, PersonStanding, Zap, Users as PaediatricsIcon, ActivitySquare as GastroenterologyIcon } from 'lucide-react';
+import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, ShieldCheck, Ambulance, HelpingHand, Thermometer, TestTube2, Ear, Eye, Smile, PersonStanding, Zap, Users as PaediatricsIcon, ActivitySquare as GastroenterologyIcon, UserClock, BriefcaseMedical as NurseIcon } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export const serviceIconMap: Record<string, LucideIcon> = {
@@ -24,6 +24,8 @@ export const serviceIconMap: Record<string, LucideIcon> = {
   Zap, // Generic/Fallback (Endocrinology, Nephrology, Urology, Kidney/Liver Transplant)
   PaediatricsIcon, // Explicit for Paediatrics for clarity if Baby is too generic
   GastroenterologyIcon, // Explicit for Gastroenterology
+  UserClock, // Visiting Doctor Icon
+  NurseIcon, // Nurse Icon
 };
 
 export const serviceIconList: string[] = Object.keys(serviceIconMap).sort();
@@ -32,7 +34,7 @@ export const getServiceIcon = (iconName?: string): LucideIcon => {
   if (iconName && serviceIconMap[iconName]) {
     return serviceIconMap[iconName];
   }
-  return Zap; // Default icon if not found or not provided, changed from Activity to Zap
+  return Zap; 
 };
 
-export const defaultServiceIconName = 'Zap'; // Changed default to Zap for more neutrality
+export const defaultServiceIconName = 'Zap';

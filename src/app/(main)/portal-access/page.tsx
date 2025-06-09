@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { User, UserCog, BriefcaseMedical, ShieldAlert, ArrowRight, CalendarCheck } from 'lucide-react';
+import { User, UserCog, BriefcaseMedical, ShieldAlert, ArrowRight, CalendarCheck, UserClock } from 'lucide-react';
 import Image from 'next/image';
 
 const portalOptions = [
@@ -21,6 +21,13 @@ const portalOptions = [
     imageHint: 'doctor interface tablet',
   },
   {
+    title: 'Visiting Doctor Portal',
+    description: 'Access your assigned schedule and patient information for your temporary engagement.',
+    href: '/visiting-doctor-login',
+    icon: UserClock,
+    imageHint: 'doctor temporary schedule',
+  },
+  {
     title: 'Nurse Portal',
     description: 'View patient queues, record vitals, manage schedules, and access nursing tools.',
     href: '/nurse-login',
@@ -35,11 +42,11 @@ const portalOptions = [
     imageHint: 'receptionist desk computer',
   },
   {
-    title: 'Manager Portal', // Changed from Admin Portal
-    description: 'Manage users, system settings, and view site analytics.', // Description can remain general
-    href: '/manager-login', // Changed from /admin-login
-    icon: ShieldAlert, // Kept icon, can be changed if desired
-    imageHint: 'manager panel secure', // Changed from admin panel secure
+    title: 'Manager Portal',
+    description: 'Manage users, system settings, and view site analytics.',
+    href: '/manager-login',
+    icon: ShieldAlert,
+    imageHint: 'manager panel secure',
   },
 ];
 
@@ -55,7 +62,7 @@ export default function PortalAccessPage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"> {}
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {portalOptions.map((option) => (
           <Card key={option.title} className="flex flex-col overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300">
             <div className="relative h-52 w-full bg-primary/10 flex items-center justify-center">

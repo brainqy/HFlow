@@ -19,6 +19,14 @@ export interface Doctor {
   email?: string;
 }
 
+export interface VisitingDoctorProfile {
+  id: string;
+  name: string;
+  specialty: string;
+  email: string;
+  assignmentPeriod?: string; // e.g., "Aug 15 - Aug 30, 2024"
+}
+
 export interface Service {
   id: string;
   name: string;
@@ -57,13 +65,12 @@ export interface Patient {
 export interface Appointment {
   id: string;
   patientId: string;
-  doctorId: string;
+  doctorId: string; // Can be permanent or visiting doctor ID
   date: string;
   time: string;
   reason: string;
   status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
   reminderSent?: boolean;
-  // Fields from appointment form
   age?: number;
   gender?: string;
   address?: string;
@@ -74,7 +81,8 @@ export interface MedicalRecordItem {
   date: string;
   type: 'diagnosis' | 'medication' | 'allergy' | 'procedure' | 'note';
   description: string;
-  doctor?: string;
+  doctor?: string; // Name of the doctor who made the entry
+  recordedBy?: string; // Could be ID of doctor/visiting doctor
 }
 
 export interface Medication {
@@ -93,7 +101,7 @@ export interface DoctorAppointment {
   patientId: string;
   patientName: string;
   doctorName: string;
-  doctorId: string;
+  doctorId: string; // Can be permanent or visiting doctor ID
   time: string;
   reason: string;
   date: string;
@@ -107,6 +115,7 @@ export interface DoctorPatient {
   lastVisit: string;
   email?: string;
   phone?: string;
+  assignedVisitingDoctorId?: string; // To link patients to visiting doctors for demo
 }
 
 export interface NursePatientQueueItem {
@@ -153,7 +162,7 @@ export interface Receptionist {
     employeeId: string;
 }
 
-export type UserRole = 'Patient' | 'Doctor' | 'Nurse' | 'Receptionist' | 'Manager';
+export type UserRole = 'Patient' | 'Doctor' | 'Nurse' | 'Receptionist' | 'Manager' | 'Visiting Doctor';
 
 export interface ManagedUser {
   id: string;
@@ -163,6 +172,8 @@ export interface ManagedUser {
   status: 'Active' | 'Inactive';
   lastLogin?: string;
   password?: string;
+  specialty?: string; // For Doctor and Visiting Doctor roles
+  assignmentPeriod?: string; // For Visiting Doctor role
 }
 
 export type AnnouncementDisplayLocation = 
@@ -172,6 +183,7 @@ export type AnnouncementDisplayLocation =
   | 'nurse_portal'
   | 'receptionist_portal'
   | 'manager_portal'
+  | 'visiting_doctor_portal' // Added
   | 'all_portals';
 
 export interface Announcement {

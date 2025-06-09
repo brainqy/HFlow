@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck } from 'lucide-react';
+import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck, UserClock } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const mainNavItems = [
@@ -14,7 +14,7 @@ const mainNavItems = [
   { href: '/appointments', label: 'Book Appointment' },
 ];
 
-export default function Navbar({ userType, showSidebarToggle }: { userType?: 'patient' | 'doctor' | 'nurse' | 'manager' | 'receptionist', showSidebarToggle?: boolean }) {
+export default function Navbar({ userType, showSidebarToggle }: { userType?: 'patient' | 'doctor' | 'nurse' | 'manager' | 'receptionist' | 'visiting_doctor', showSidebarToggle?: boolean }) {
   let dashboardLink = '/';
   let DashboardIconComponent = LayoutDashboard;
   let portalName = '';
@@ -40,7 +40,12 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
     dashboardLink = '/receptionist/dashboard';
     DashboardIconComponent = CalendarCheck;
     portalName = 'Receptionist Portal';
+  } else if (userType === 'visiting_doctor') {
+    dashboardLink = '/visiting-doctor/dashboard';
+    DashboardIconComponent = UserClock; 
+    portalName = 'Visiting Doctor Portal';
   }
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
@@ -51,8 +56,8 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
               <SidebarTrigger />
             </div>
           )}
-          <div className="flex flex-col"> {/* Wrapper for Logo and Version */}
-            <Link href={dashboardLink} className="flex items-center gap-2"> {/* Logo Link */}
+          <div className="flex flex-col">
+            <Link href={dashboardLink} className="flex items-center gap-2">
               <Stethoscope className="h-7 w-7 text-primary" />
               <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
             </Link>
@@ -107,8 +112,8 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
             </SheetTrigger>
             <SheetContent side="right">
               <nav className="grid gap-4 text-lg font-medium mt-8">
-                <div className="flex flex-col items-start"> {/* Wrapper for Logo and Version in mobile */}
-                  <div className="flex items-center gap-2"> {/* Logo part */}
+                <div className="flex flex-col items-start">
+                  <div className="flex items-center gap-2">
                     <Stethoscope className="h-7 w-7 text-primary" />
                     <h1 className="text-2xl font-headline font-semibold text-primary">HealthFlow</h1>
                   </div>

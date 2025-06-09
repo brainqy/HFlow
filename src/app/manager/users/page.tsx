@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
 
 
-const userRoles: UserRole[] = ['Patient', 'Doctor', 'Nurse', 'Receptionist', 'Manager'];
+const userRoles: UserRole[] = ['Patient', 'Doctor', 'Nurse', 'Receptionist', 'Manager', 'Visiting Doctor']; // Added Visiting Doctor
 
 const userFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -26,6 +26,8 @@ const userFormSchema = z.object({
   role: z.enum(userRoles as [UserRole, ...UserRole[]], { required_error: "Role is required."}), 
   password: z.string().min(8, "Password must be at least 8 characters.").optional(), 
   status: z.enum(['Active', 'Inactive']).optional(),
+  specialty: z.string().optional(), // For Doctor and Visiting Doctor
+  assignmentPeriod: z.string().optional(), // For Visiting Doctor
 });
 
 type UserFormValues = z.infer<typeof userFormSchema>;
@@ -38,7 +40,8 @@ const mapToManagedUser = (data: any[], role: UserRole, defaultEmailDomain: strin
         role: role,
         email: item.email || `${item.name.toLowerCase().replace(/\s+/g, '.').replace('dr.', '')}@${defaultEmailDomain}`,
         status: 'Active' as const,
-        lastLogin: new Date(new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 30))).toLocaleDateString()
+        lastLogin: new Date(new Date().setDate(new Date().getDate() - Math.floor(Math.random() * 30))).toLocaleDateString(),
+        specialty: role === 'Doctor' ? item.specialty : undefined,
     }));
 };
 
@@ -58,7 +61,7 @@ export default function ManagerUsersPage() {
       ...mapToManagedUser(placeholderDoctors, 'Doctor', 'healthflow.clinic'),
       ...mapToManagedUser(placeholderNurses, 'Nurse', 'healthflow.clinic'),
       ...mapToManagedUser(placeholderReceptionists, 'Receptionist', 'healthflow.clinic'),
-      ...placeholderManagerUsers 
+      ...placeholderManagerUsers // Includes Admin and Visiting Doctors
     ];
     setUsers(initialUsers);
   }, []);
@@ -72,33 +75,38 @@ export default function ManagerUsersPage() {
       .filter(user => roleFilter === 'all' || user.role === roleFilter);
   }, [users, searchTerm, roleFilter]);
 
-  const { register: registerAdd, handleSubmit: handleSubmitAdd, control: controlAdd, reset: resetAdd, formState: { errors: errorsAdd } } = useForm<UserFormValues>({
+  const { register: registerAdd, handleSubmit: handleSubmitAdd, control: controlAdd, reset: resetAdd, watch: watchAdd, formState: { errors: errorsAdd } } = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema.refine(data => data.password, { message: "Password is required for new users.", path: ["password"]})),
   });
 
-  const { register: registerEdit, handleSubmit: handleSubmitEdit, control: controlEdit, reset: resetEdit, formState: { errors: errorsEdit }, setValue: setValueEdit } = useForm<UserFormValues>({
+  const { register: registerEdit, handleSubmit: handleSubmitEdit, control: controlEdit, reset: resetEdit, watch: watchEdit, formState: { errors: errorsEdit }, setValue: setValueEdit } = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
   });
 
+  const selectedRoleAdd = watchAdd("role");
+  const selectedRoleEdit = watchEdit("role");
+
   const handleOpenAddUserDialog = () => {
-    resetAdd({ name: '', email: '', role: undefined, password: ''});
+    resetAdd({ name: '', email: '', role: undefined, password: '', specialty: '', assignmentPeriod: ''});
     setIsAddUserDialogOpen(true);
   };
 
   const handleOpenEditUserDialog = (user: ManagedUser) => {
     setCurrentUserToEdit(user);
-    resetEdit({ name: user.name, email: user.email, role: user.role, status: user.status });
+    resetEdit({ name: user.name, email: user.email, role: user.role, status: user.status, specialty: user.specialty, assignmentPeriod: user.assignmentPeriod });
     setIsEditUserDialogOpen(true);
   };
 
   const onAddUserSubmit = (data: UserFormValues) => {
     const newUser: ManagedUser = {
-      id: `${data.role.toLowerCase()}-${new Date().getTime()}`, 
+      id: `${data.role.toLowerCase().replace(' ', '-')}-${new Date().getTime()}`, 
       name: data.name,
       email: data.email,
       role: data.role,
       status: 'Active',
       lastLogin: 'Never',
+      specialty: (data.role === 'Doctor' || data.role === 'Visiting Doctor') ? data.specialty : undefined,
+      assignmentPeriod: data.role === 'Visiting Doctor' ? data.assignmentPeriod : undefined,
     };
     setUsers(prev => [newUser, ...prev]);
     toast({ title: "User Added", description: `${data.name} has been added successfully.` });
@@ -107,7 +115,14 @@ export default function ManagerUsersPage() {
 
   const onEditUserSubmit = (data: UserFormValues) => {
     if (!currentUserToEdit) return;
-    setUsers(prev => prev.map(u => u.id === currentUserToEdit.id ? { ...u, ...data, status: data.status || u.status } : u));
+    const updatedUser = { 
+        ...currentUserToEdit, 
+        ...data, 
+        status: data.status || currentUserToEdit.status,
+        specialty: (data.role === 'Doctor' || data.role === 'Visiting Doctor') ? data.specialty : undefined,
+        assignmentPeriod: data.role === 'Visiting Doctor' ? data.assignmentPeriod : undefined,
+    };
+    setUsers(prev => prev.map(u => u.id === currentUserToEdit.id ? updatedUser : u));
     toast({ title: "User Updated", description: `${data.name}'s information has been updated.` });
     setIsEditUserDialogOpen(false);
     setCurrentUserToEdit(null);
@@ -130,10 +145,11 @@ export default function ManagerUsersPage() {
   const getRoleBadgeVariant = (role: UserRole) => {
     switch(role) {
         case 'Doctor': return 'secondary';
-        case 'Manager': return 'destructive'; // Replaced 'Admin'
+        case 'Manager': return 'destructive';
         case 'Nurse': return 'default'; 
         case 'Receptionist': return 'outline'; 
         case 'Patient': return 'outline';
+        case 'Visiting Doctor': return 'default'; // Using 'default' which is primary color
         default: return 'outline';
     }
   };
@@ -186,6 +202,7 @@ export default function ManagerUsersPage() {
                   <TableHead>Name</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead className="hidden md:table-cell">Email</TableHead>
+                  <TableHead className="hidden md:table-cell">Specialty/Assignment</TableHead>
                   <TableHead className="hidden sm:table-cell">Status</TableHead>
                   <TableHead className="hidden lg:table-cell">Last Login</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -196,11 +213,18 @@ export default function ManagerUsersPage() {
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell>
-                        <Badge variant={getRoleBadgeVariant(user.role)} className={user.role === 'Receptionist' ? 'border-purple-500 text-purple-600' : ''}>
+                        <Badge 
+                            variant={getRoleBadgeVariant(user.role)} 
+                            className={cn(user.role === 'Receptionist' ? 'border-purple-500 text-purple-600' : '', user.role === 'Visiting Doctor' ? 'bg-teal-500 hover:bg-teal-600 text-white' : '')}
+                        >
                             {user.role}
                         </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{user.email}</TableCell>
+                    <TableCell className="hidden md:table-cell text-xs">
+                        {user.role === 'Doctor' && user.specialty}
+                        {user.role === 'Visiting Doctor' && `${user.specialty || 'N/A'} (${user.assignmentPeriod || 'N/A'})`}
+                    </TableCell>
                     <TableCell className="hidden sm:table-cell">
                         <Badge variant={user.status === 'Active' ? 'default' : 'destructive'} className={user.status === 'Active' ? 'bg-green-500 hover:bg-green-600' : ''}>
                             {user.status}
@@ -228,7 +252,7 @@ export default function ManagerUsersPage() {
 
       {/* Add User Dialog */}
       <Dialog open={isAddUserDialogOpen} onOpenChange={setIsAddUserDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>Fill in the details for the new user account.</DialogDescription>
@@ -260,6 +284,20 @@ export default function ManagerUsersPage() {
                 />
                 {errorsAdd.role && <p className="text-xs text-destructive mt-1">{errorsAdd.role.message}</p>}
             </div>
+             {(selectedRoleAdd === 'Doctor' || selectedRoleAdd === 'Visiting Doctor') && (
+                <div>
+                    <Label htmlFor="add-specialty">Specialty</Label>
+                    <Input id="add-specialty" {...registerAdd("specialty")} />
+                    {errorsAdd.specialty && <p className="text-xs text-destructive mt-1">{errorsAdd.specialty.message}</p>}
+                </div>
+            )}
+            {selectedRoleAdd === 'Visiting Doctor' && (
+                <div>
+                    <Label htmlFor="add-assignmentPeriod">Assignment Period (e.g., Aug 15 - Aug 30)</Label>
+                    <Input id="add-assignmentPeriod" {...registerAdd("assignmentPeriod")} />
+                    {errorsAdd.assignmentPeriod && <p className="text-xs text-destructive mt-1">{errorsAdd.assignmentPeriod.message}</p>}
+                </div>
+            )}
             <div>
               <Label htmlFor="add-password">Password</Label>
               <Input id="add-password" type="password" {...registerAdd("password")} />
@@ -275,7 +313,7 @@ export default function ManagerUsersPage() {
       {/* Edit User Dialog */}
       {currentUserToEdit && (
         <Dialog open={isEditUserDialogOpen} onOpenChange={setIsEditUserDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
               <DialogTitle>Edit User: {currentUserToEdit.name}</DialogTitle>
               <DialogDescription>Update the user's information.</DialogDescription>
@@ -307,6 +345,20 @@ export default function ManagerUsersPage() {
                 />
                 {errorsEdit.role && <p className="text-xs text-destructive mt-1">{errorsEdit.role.message}</p>}
               </div>
+              {(selectedRoleEdit === 'Doctor' || selectedRoleEdit === 'Visiting Doctor') && (
+                <div>
+                    <Label htmlFor="edit-specialty">Specialty</Label>
+                    <Input id="edit-specialty" {...registerEdit("specialty")} />
+                    {errorsEdit.specialty && <p className="text-xs text-destructive mt-1">{errorsEdit.specialty.message}</p>}
+                </div>
+              )}
+              {selectedRoleEdit === 'Visiting Doctor' && (
+                  <div>
+                      <Label htmlFor="edit-assignmentPeriod">Assignment Period (e.g., Aug 15 - Aug 30)</Label>
+                      <Input id="edit-assignmentPeriod" {...registerEdit("assignmentPeriod")} />
+                      {errorsEdit.assignmentPeriod && <p className="text-xs text-destructive mt-1">{errorsEdit.assignmentPeriod.message}</p>}
+                  </div>
+              )}
                <div>
                 <Label htmlFor="edit-status">Status</Label>
                  <Controller

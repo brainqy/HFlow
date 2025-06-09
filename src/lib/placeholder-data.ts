@@ -1,5 +1,5 @@
 
-import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, AnnouncementDisplayLocation, Testimonial, TrustSignal, HomepageWidgetSetting, HeroSlideItem } from '@/types';
+import type { Doctor, Service, BlogPost, MedicalRecordItem, Medication, DoctorAppointment, DoctorPatient, NursePatientQueueItem, NurseAlert, NurseShiftSchedule, SupplyItem, Nurse, Receptionist, AvailabilitySlot, ManagedUser, Announcement, AnnouncementDisplayLocation, Testimonial, TrustSignal, HomepageWidgetSetting, HeroSlideItem, VisitingDoctorProfile } from '@/types';
 import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, CalendarDays, ShieldCheck, Zap, ActivitySquare as GastroenterologyIcon, Users as PaediatricsIcon } from 'lucide-react';
 
 export let placeholderDoctors: Doctor[] = [
@@ -109,6 +109,23 @@ export let placeholderDoctors: Doctor[] = [
   },
 ];
 
+export let placeholderVisitingDoctors: VisitingDoctorProfile[] = [
+  {
+    id: 'visiting-doc-1',
+    name: 'Dr. Robert Wilson',
+    specialty: 'General Practitioner',
+    email: 'robert.wilson.vd@healthflow.clinic',
+    assignmentPeriod: 'Aug 15, 2024 - Aug 30, 2024',
+  },
+  {
+    id: 'visiting-doc-2',
+    name: 'Dr. Linda Harris',
+    specialty: 'Endocrinologist',
+    email: 'linda.harris.vd@healthflow.clinic',
+    assignmentPeriod: 'Sep 1, 2024 - Sep 15, 2024',
+  },
+];
+
 export let placeholderServices: Service[] = [
   { id: 'general-checkups', name: 'General Checkups', iconName: 'Stethoscope', description: 'Routine health examinations and preventive care for all ages.', details: 'Our general checkups include a thorough physical examination, review of medical history, vital signs check, and age-appropriate screenings. We focus on preventive care to help you maintain optimal health.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'doctor patient consultation' },
   { id: 'vaccinations', name: 'Vaccinations', iconName: 'Syringe', description: 'Comprehensive immunization services for children and adults.', details: 'We offer a full range of vaccines for infants, children, adolescents, and adults, including flu shots, travel vaccinations, and routine immunizations, following CDC guidelines.', imageUrl: 'https://placehold.co/600x400.png', dataAiHint: 'nurse giving injection' },
@@ -199,6 +216,8 @@ export let placeholderMedicalHistory: MedicalRecordItem[] = [
   { id: '11', date: '2022-10-15', type: 'allergy', description: 'Shellfish - severe reaction, carries EpiPen', doctor: 'Dr. Emily Carter' },
   { id: '12', date: '2024-07-01', type: 'allergy', description: 'Ragweed Pollen - seasonal allergic rhinitis', doctor: 'Dr. James Lee' },
   { id: '13', date: '2023-09-10', type: 'allergy', description: 'Aspirin - gastrointestinal upset', doctor: 'Dr. Sarah Green' },
+  { id: 'vd-note-1', date: '2024-08-16', type: 'note', description: 'Patient Laura Croft seen for routine check. BP 125/82. Advised on diet.', doctor: 'Dr. Robert Wilson', recordedBy: 'visiting-doc-1' },
+  { id: 'vd-note-2', date: '2024-08-16', type: 'diagnosis', description: 'Mild Sprain - Left Ankle', doctor: 'Dr. Robert Wilson', recordedBy: 'visiting-doc-1' },
 ];
 
 export let placeholderMedications: Medication[] = [
@@ -234,8 +253,8 @@ export let placeholderDoctorPatients: DoctorPatient[] = [
   { id: 'dp12', name: 'Jack Frost', lastVisit: getPastDate(35), email: 'jack.frost@example.com', phone: '555-0112'},
   { id: 'dp13', name: 'George Jetson', lastVisit: getPastDate(55), email: 'george.jetson@example.com', phone: '555-0113'},
   { id: 'dp14', name: 'Hannah Montana', lastVisit: getPastDate(65), email: 'hannah.montana@example.com', phone: '555-0114'},
-  { id: 'dp15', name: 'Laura Croft', lastVisit: getPastDate(20), email: 'laura.croft@example.com', phone: '555-0115'},
-  { id: 'dp16', name: 'Peter Parker', lastVisit: getPastDate(80), email: 'peter.parker@example.com', phone: '555-0116'},
+  { id: 'dp15', name: 'Laura Croft', lastVisit: getPastDate(20), email: 'laura.croft@example.com', phone: '555-0115', assignedVisitingDoctorId: 'visiting-doc-1' },
+  { id: 'dp16', name: 'Peter Parker', lastVisit: getPastDate(80), email: 'peter.parker@example.com', phone: '555-0116', assignedVisitingDoctorId: 'visiting-doc-1'},
 ];
 
 const patientIdMap = new Map(placeholderDoctorPatients.map(p => [p.name, p.id]));
@@ -313,6 +332,15 @@ export let placeholderAnnouncements: Announcement[] = [
     displayLocations: ['nurse_portal'],
     startDate: new Date(),
     endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
+    createdAt: new Date(),
+  },
+  {
+    id: 'visiting-doctor-welcome',
+    title: 'Welcome Visiting Practitioners',
+    content: 'We are pleased to have you with us. Your dashboard provides access to your assigned patients and schedule for your engagement period. Please familiarize yourself with our clinic protocols.',
+    displayLocations: ['visiting_doctor_portal'],
+    startDate: new Date(),
+    endDate: null, 
     createdAt: new Date(),
   }
 ];
@@ -410,7 +438,9 @@ export let placeholderReceptionists: Receptionist[] = [
 ];
 
 export let placeholderManagerUsers: ManagedUser[] = [
-    { id: 'manager-1', name: 'Manager User', role: 'Manager', email: 'manager@healthflow.clinic', status: 'Active', lastLogin: new Date().toLocaleDateString() }
+    { id: 'manager-1', name: 'Manager User', role: 'Manager', email: 'manager@healthflow.clinic', status: 'Active', lastLogin: new Date().toLocaleDateString() },
+    { id: 'vd-user-1', name: 'Dr. Robert Wilson', role: 'Visiting Doctor', email: 'robert.wilson.vd@healthflow.clinic', status: 'Active', lastLogin: getPastDate(2), specialty: 'General Practitioner', assignmentPeriod: 'Aug 15, 2024 - Aug 30, 2024'},
+    { id: 'vd-user-2', name: 'Dr. Linda Harris', role: 'Visiting Doctor', email: 'linda.harris.vd@healthflow.clinic', status: 'Active', lastLogin: 'Never', specialty: 'Endocrinologist', assignmentPeriod: 'Sep 1, 2024 - Sep 15, 2024'},
 ];
 
 export let placeholderSupplyItems: SupplyItem[] = [
@@ -424,6 +454,7 @@ export let placeholderSupplyItems: SupplyItem[] = [
 ];
 
 export let allClinicAppointments: DoctorAppointment[] = [
+  // ... (existing appointments)
   { id: 'ac1', patientId: patientIdMap.get('Alice Wonderland') || 'dp1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(30), time: '10:00 AM', reason: 'Follow-up for hypertension', status: 'Completed', reminderSent: true },
   { id: 'ac1-upcoming', patientId: patientIdMap.get('Alice Wonderland') || 'dp1', patientName: 'Alice Wonderland', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getFutureDate(20), time: '10:00 AM', reason: 'Routine Check-up', status: 'Scheduled', reminderSent: false },
   { id: 'ac2', patientId: patientIdMap.get('Bob The Builder') || 'dp2', patientName: 'Bob The Builder', doctorName: 'Dr. James Lee', doctorId: 'james-lee', date: getFutureDate(3), time: '11:30 AM', reason: 'Annual physical', status: 'Scheduled', reminderSent: true },
@@ -446,6 +477,10 @@ export let allClinicAppointments: DoctorAppointment[] = [
   { id: 'ac18', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getPastDate(120), time: '10:00 AM', reason: 'Annual Wellness Visit', status: 'Completed', reminderSent: true },
   { id: 'ac19', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Sarah Green', doctorId: 'sarah-green', date: getFutureDate(40), time: '04:00 PM', reason: 'Physical Therapy Referral', status: 'Pending Confirmation', reminderSent: false },
   { id: 'ac20', patientId: patientIdMap.get('Jane Doe (Patient Portal User)') || 'dp9', patientName: 'Jane Doe (Patient Portal User)', doctorName: 'Dr. Emily Carter', doctorId: 'emily-carter', date: getTodayDate(), time: '04:30 PM', reason: 'Blood Pressure Check', status: 'Scheduled', reminderSent: true },
+  // Appointments for Visiting Doctors
+  { id: 'vd-appt-1', patientId: patientIdMap.get('Laura Croft') || 'dp15', patientName: 'Laura Croft', doctorName: 'Dr. Robert Wilson', doctorId: 'visiting-doc-1', date: getTodayDate(), time: '09:00 AM', reason: 'Flu Symptoms', status: 'Scheduled', reminderSent: false },
+  { id: 'vd-appt-2', patientId: patientIdMap.get('Peter Parker') || 'dp16', patientName: 'Peter Parker', doctorName: 'Dr. Robert Wilson', doctorId: 'visiting-doc-1', date: getTodayDate(), time: '10:00 AM', reason: 'Rash evaluation', status: 'Scheduled', reminderSent: true },
+  { id: 'vd-appt-3', patientId: patientIdMap.get('Laura Croft') || 'dp15', patientName: 'Laura Croft', doctorName: 'Dr. Robert Wilson', doctorId: 'visiting-doc-1', date: getFutureDate(2), time: '09:00 AM', reason: 'Follow-up on flu', status: 'Scheduled', reminderSent: false },
 ];
 
 export let homepageWidgetSettings: HomepageWidgetSetting[] = [
@@ -462,11 +497,11 @@ export let homepageWidgetSettings: HomepageWidgetSetting[] = [
 ];
 
 export let heroSlides: HeroSlideItem[] = [
-  {
+   {
     id: 'hero1',
-    imageUrl: '/banner1.jpg', // Corrected path for the first slide
-    altText: 'Clean and modern hospital corridor',
-    dataAiHint: 'modern hospital interior',
+    imageUrl: '/meet-doctor-img.webp', // Corrected path
+    altText: 'Team of experienced doctors from HealthFlow',
+    dataAiHint: 'doctors team smiling',
     title: 'Your Health, Our Priority',
     subtitle: 'Experience compassionate and expert healthcare at HealthFlow. We are dedicated to providing top-quality medical services to our community.',
     ctaText: 'Book an Appointment',
@@ -493,9 +528,3 @@ export let heroSlides: HeroSlideItem[] = [
     ctaLink: '/about',
   },
 ];
-
-    
-
-    
-
-
