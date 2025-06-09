@@ -109,15 +109,6 @@ export interface DoctorAppointment {
   reminderSent?: boolean;
 }
 
-export interface DoctorPatient {
-  id: string;
-  name: string;
-  lastVisit: string;
-  email?: string;
-  phone?: string;
-  assignedVisitingDoctorId?: string; // To link patients to visiting doctors for demo
-}
-
 export interface NursePatientQueueItem {
   id: string;
   name: string;

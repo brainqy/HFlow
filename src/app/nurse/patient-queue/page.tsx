@@ -1,14 +1,36 @@
 
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { UsersRound, ListFilter } from 'lucide-react';
+import { UsersRound, ListFilter, UserCheck, SendToBack } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { placeholderNursePatientQueue } from '@/lib/placeholder-data';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import type { NursePatientQueueItem } from '@/types';
 
 export default function NursePatientQueuePage() {
+  const { toast } = useToast();
+  const [patientQueue, setPatientQueue] = useState<NursePatientQueueItem[]>(placeholderNursePatientQueue);
+
+  const handleStatusChange = (patientId: string, newStatus: NursePatientQueueItem['status']) => {
+    const updatedQueue = patientQueue.map(p => p.id === patientId ? { ...p, status: newStatus } : p);
+    setPatientQueue(updatedQueue);
+    // For prototype, also update the global placeholder array if you want changes to persist across page reloads (not ideal for real apps)
+    const globalIndex = placeholderNursePatientQueue.findIndex(p => p.id === patientId);
+    if (globalIndex !== -1) {
+        placeholderNursePatientQueue[globalIndex].status = newStatus;
+    }
+    toast({
+      title: "Patient Status Updated",
+      description: `${patientQueue.find(p=>p.id === patientId)?.name || 'Patient'}'s status changed to ${newStatus}.`
+    });
+  };
+
   return (
     <div className="space-y-8">
       <header>
@@ -39,7 +61,7 @@ export default function NursePatientQueuePage() {
           </div>
         </CardHeader>
         <CardContent>
-          {placeholderNursePatientQueue.length > 0 ? (
+          {patientQueue.length > 0 ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -50,7 +72,7 @@ export default function NursePatientQueuePage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {placeholderNursePatientQueue.map((patient) => (
+                {patientQueue.map((patient) => (
                   <TableRow key={patient.id}>
                     <TableCell className="font-medium">{patient.name}</TableCell>
                     <TableCell>{patient.arrivalTime}</TableCell>
@@ -60,11 +82,12 @@ export default function NursePatientQueuePage() {
                             patient.status === 'Waiting for Triage' ? 'destructive' : 
                             patient.status === 'Ready for Vitals' ? 'secondary' : 
                             patient.status === 'Waiting for Doctor' ? 'default' :
+                            patient.status === 'With Doctor' ? 'outline' : // Neutral for "With Doctor"
                             'outline'
                         }
-                        className="capitalize"
+                        className={`capitalize ${patient.status === 'With Doctor' ? 'border-blue-500 text-blue-600 bg-blue-500/10' : ''}`}
                       >
-                        {patient.status.toLowerCase()}
+                        {patient.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right space-x-2">
@@ -77,7 +100,16 @@ export default function NursePatientQueuePage() {
                            <Link href="/nurse/vitals-entry">Record Vitals</Link>
                         </Button>
                       )}
-                      {patient.status === 'Waiting for Triage' && <Button size="sm" variant="secondary">Triage</Button>}
+                       {(patient.status === 'Ready for Vitals' || patient.status === 'Waiting for Doctor') && (
+                        <Button size="sm" variant="secondary" onClick={() => handleStatusChange(patient.id, 'With Doctor')}>
+                           <SendToBack className="mr-1 h-3 w-3"/> Send to Doctor
+                        </Button>
+                      )}
+                      {patient.status === 'Waiting for Triage' && (
+                        <Button size="sm" variant="secondary" onClick={() => handleStatusChange(patient.id, 'Ready for Vitals')}>
+                          <UserCheck className="mr-1 h-3 w-3"/> Start Triage
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
