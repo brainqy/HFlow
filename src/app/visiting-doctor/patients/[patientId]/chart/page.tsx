@@ -1,17 +1,17 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; // Import React for React.use
 import { placeholderDoctorPatients, placeholderMedicalHistory, allClinicAppointments, placeholderVisitingDoctors } from '@/lib/placeholder-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase, StickyNote, PlusCircle, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, User, CalendarDays, Stethoscope, FileText, Pill, Briefcase, StickyNote, PlusCircle, AlertTriangle, CalendarIcon as CalendarIconLucide } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import type { DoctorAppointment, MedicalRecordItem } from '@/types';
 import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useForm, Controller } from 'react-hook-form';
@@ -21,7 +21,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-import { CalendarIcon as CalendarIconLucide } from 'lucide-react'; // Renamed to avoid conflict
 
 const getIconForMedicalRecordType = (type: string) => {
   switch (type.toLowerCase()) {
@@ -51,11 +50,14 @@ const addMedicalNoteSchema = z.object({
 type AddMedicalNoteFormValues = z.infer<typeof addMedicalNoteSchema>;
 
 
-export default function VisitingDoctorPatientChartPage({ params }: { params: { patientId: string } }) {
+export default function VisitingDoctorPatientChartPage({ params: paramsInput }: { params: { patientId: string } }) {
+  // Unwrap the params object using React.use() as suggested by the Next.js warning
+  const resolvedParams = React.use(paramsInput as unknown as Promise<{ patientId: string }>);
+  const patientId = resolvedParams.patientId;
+
   const { toast } = useToast();
-  const patient = placeholderDoctorPatients.find((p) => p.id === params.patientId);
+  const patient = placeholderDoctorPatients.find((p) => p.id === patientId);
   
-  // For prototype, assume a logged-in visiting doctor. Hardcode ID for data filtering.
   const visitingDoctorId = "visiting-doc-1"; 
   const visitingDoctorProfile = placeholderVisitingDoctors.find(vd => vd.id === visitingDoctorId);
   const doctorName = visitingDoctorProfile?.name || "Visiting Doctor";
@@ -75,7 +77,6 @@ export default function VisitingDoctorPatientChartPage({ params }: { params: { p
 
   useEffect(() => {
     if (patient) {
-      // Mock patient details for now
       setCurrentPatientDetails({
         dob: "1985-05-15", 
         gender: "Male", 
@@ -83,12 +84,12 @@ export default function VisitingDoctorPatientChartPage({ params }: { params: { p
         emergencyContact: "Partner - 555-9876"
       });
       const historyFromSource = placeholderMedicalHistory.filter(
-        (item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === params.patientId) || item.doctor === "Dr. Emily Carter" || item.doctor === "Dr. James Lee" || item.doctor === "Dr. Sarah Green" || item.recordedBy === visitingDoctorId
+        (item, index) => index % placeholderDoctorPatients.length === placeholderDoctorPatients.findIndex(p => p.id === patientId) || item.doctor === "Dr. Emily Carter" || item.doctor === "Dr. James Lee" || item.doctor === "Dr. Sarah Green" || item.recordedBy === visitingDoctorId
       );
       setCurrentPatientHistory(historyFromSource.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       setPatientAllergies(historyFromSource.filter(item => item.type === 'allergy'));
     }
-  }, [patient, params.patientId, visitingDoctorId]);
+  }, [patient, patientId, visitingDoctorId]);
 
   const addNoteForm = useForm<AddMedicalNoteFormValues>({
     resolver: zodResolver(addMedicalNoteSchema),
@@ -104,10 +105,9 @@ export default function VisitingDoctorPatientChartPage({ params }: { params: { p
       date: format(data.date, 'yyyy-MM-dd'),
       type: 'note',
       description: data.note,
-      doctor: doctorName, // Attributed to the current visiting doctor
+      doctor: doctorName, 
       recordedBy: visitingDoctorId,
     };
-    // Mutate global placeholderMedicalHistory for prototype
     placeholderMedicalHistory.unshift(newEntry);
     const updatedHistory = [newEntry, ...currentPatientHistory].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setCurrentPatientHistory(updatedHistory);
