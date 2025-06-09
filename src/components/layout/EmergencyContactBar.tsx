@@ -14,12 +14,12 @@ export default function EmergencyContactBar() {
             <span>For Emergency Ambulance/Appointment:</span>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="https://wa.me/918888822222" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="hover:opacity-80 transition-opacity">
+            <Link href="https://wa.me/919561402263" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" className="hover:opacity-80 transition-opacity">
               <MessageCircle className="h-6 w-6 text-green-600" />
             </Link>
-            <Link href="tel:+918888822222" className="text-lg font-bold text-destructive hover:underline flex items-center gap-1">
+            <Link href="tel:+919561402263" className="text-lg font-bold text-destructive hover:underline flex items-center gap-1">
               <Phone className="h-5 w-5" />
-              +91 88888 22222
+              +91 9561402263
             </Link>
           </div>
         </div>
