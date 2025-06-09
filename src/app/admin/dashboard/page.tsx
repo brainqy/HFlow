@@ -1,17 +1,43 @@
 
+"use client";
+
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { placeholderDoctorPatients, placeholderDoctors, placeholderDoctorAppointments } from '@/lib/placeholder-data'; // Assuming appointments can be counted here
-import { Users, Stethoscope, CalendarCheck, AlertTriangle, Settings } from 'lucide-react';
+import { placeholderDoctorPatients, placeholderDoctors, placeholderDoctorAppointments } from '@/lib/placeholder-data';
+import { Users, Stethoscope, CalendarCheck, AlertTriangle, Settings, Filter, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import type { DateRange } from "react-day-picker";
+import { format } from "date-fns";
 
 export default function AdminDashboardPage() {
-  const adminName = "Admin"; // Placeholder
+  const adminName = "Admin"; 
   const todayFormatted = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
-  const totalPatients = placeholderDoctorPatients.length; // Using doctor patients as a proxy for total patients
+  const totalPatients = placeholderDoctorPatients.length; 
   const totalDoctors = placeholderDoctors.length;
-  const totalAppointments = placeholderDoctorAppointments.length; // Placeholder, ideally fetched/calculated differently
+  
+  const displayedAppointments = useMemo(() => {
+    if (dateRange?.from) {
+      const fromDate = format(dateRange.from, "LLL dd, y");
+      const toDate = dateRange.to ? format(dateRange.to, "LLL dd, y") : fromDate;
+      const rangeLabel = dateRange.to && dateRange.from !== dateRange.to ? `${fromDate} - ${toDate}` : fromDate;
+      return {
+        count: Math.floor(placeholderDoctorAppointments.length / 3) + Math.floor(Math.random() * 10), // Simulated count
+        label: `Appointments (${rangeLabel})`,
+      };
+    }
+    return {
+      count: placeholderDoctorAppointments.length,
+      label: "Total Appointments (All Time)",
+    };
+  }, [dateRange]);
+
+  const clearDateFilter = () => {
+    setDateRange(undefined);
+  };
 
   return (
     <div className="space-y-8">
@@ -26,6 +52,26 @@ export default function AdminDashboardPage() {
           </Link>
         </Button>
       </header>
+
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-lg font-medium flex items-center gap-2">
+            <Filter className="h-5 w-5 text-primary" />
+            Filter Statistics by Date
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row gap-4 items-end">
+          <div className="flex-grow">
+            <label htmlFor="dashboardDateRange" className="block text-sm font-medium text-foreground mb-1">Date Range</label>
+            <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
+          </div>
+          {dateRange && (
+            <Button onClick={clearDateFilter} variant="outline" size="sm">
+              <RotateCcw className="mr-2 h-4 w-4" /> Clear Filter
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Quick Stats/Overview */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -51,12 +97,12 @@ export default function AdminDashboardPage() {
         </Card>
         <Card className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
+            <CardTitle className="text-sm font-medium">Appointments</CardTitle>
             <CalendarCheck className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalAppointments}</div>
-            <p className="text-xs text-muted-foreground">(Placeholder: all time)</p>
+            <div className="text-2xl font-bold">{displayedAppointments.count}</div>
+            <p className="text-xs text-muted-foreground">{displayedAppointments.label.replace('Total Appointments ', '')}</p>
           </CardContent>
         </Card>
          <Card className="shadow-md bg-destructive/10">
