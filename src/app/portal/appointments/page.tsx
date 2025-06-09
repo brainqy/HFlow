@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, User, Clock, Stethoscope, CheckCircle, Info, Filter as FilterIcon, RotateCcw, RefreshCcw as RescheduleIcon, PlaySquare } from 'lucide-react';
+import { CalendarDays, User, Clock, Stethoscope, CheckCircle, Info, Filter as FilterIcon, RotateCcw, RefreshCcw as RescheduleIcon, PlaySquare, Ticket } from 'lucide-react';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
 import { Badge } from '@/components/ui/badge';
@@ -24,9 +24,15 @@ export default function PatientAppointmentsPage() {
 
   const [doctorFilter, setDoctorFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<DateRange | undefined>(undefined);
+  const [currentAppointments, setCurrentAppointments] = useState<DoctorAppointment[]>([]);
+
+  useEffect(() => {
+    // Simulate fetching/observing the shared allClinicAppointments for mutations
+    setCurrentAppointments(JSON.parse(JSON.stringify(allClinicAppointments))); 
+  }, []);
 
   const patientAppointments = useMemo(() => {
-    return allClinicAppointments
+    return currentAppointments
       .filter(appt => appt.patientName === patientName)
       .filter(appt => doctorFilter === 'all' || appt.doctorId === doctorFilter)
       .filter(appt => {
@@ -44,13 +50,23 @@ export default function PatientAppointmentsPage() {
 
         return apptDate >= fromDate && apptDate <= toDate;
       })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.time.localeCompare(a.time));
-  }, [patientName, doctorFilter, dateFilter]);
+      .sort((a, b) => {
+        const dateComparison = new Date(b.date).getTime() - new Date(a.date).getTime();
+        if (dateComparison !== 0) return dateComparison;
+        if (a.ticketNumber && b.ticketNumber) return a.ticketNumber - b.ticketNumber;
+        return b.time.localeCompare(a.time);
+      });
+  }, [currentAppointments, patientName, doctorFilter, dateFilter]);
 
   const upcomingAppointments = useMemo(() => {
     return patientAppointments
       .filter(appt => new Date(appt.date) >= new Date(new Date().setHours(0,0,0,0)) && appt.status !== 'Cancelled' && appt.status !== 'Completed')
-      .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time));
+      .sort((a,b) => {
+        const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+        if (dateComparison !== 0) return dateComparison;
+        if (a.ticketNumber && b.ticketNumber) return a.ticketNumber - b.ticketNumber;
+        return a.time.localeCompare(b.time);
+      });
   }, [patientAppointments]);
 
   const pastAppointments = useMemo(() => {
@@ -102,12 +118,11 @@ export default function PatientAppointmentsPage() {
               <Stethoscope className="h-5 w-5 text-primary" /> 
               {appointment.doctorName}
             </CardTitle>
-            <Badge 
-                variant={getStatusBadgeVariant(appointment.status)}
-                className={getStatusBadgeClassName(appointment.status)}
-            >
-                {appointment.status}
-            </Badge>
+            {appointment.ticketNumber && (appointment.status === 'Checked-in' || appointment.status === 'In Consultation') && (
+              <Badge variant="outline" className="text-sm flex items-center gap-1">
+                  <Ticket className="h-4 w-4"/> #{appointment.ticketNumber}
+              </Badge>
+            )}
           </div>
           {doctor && <CardDescription className="text-sm">{doctor.specialty}</CardDescription>}
         </CardHeader>
@@ -124,6 +139,15 @@ export default function PatientAppointmentsPage() {
             <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" /> 
             <span className="text-muted-foreground"><strong className="text-foreground">Reason:</strong> {appointment.reason}</span>
           </p>
+           <div className="flex items-center gap-2">
+            <span className="font-medium text-foreground">Status:</span>
+            <Badge 
+                variant={getStatusBadgeVariant(appointment.status)}
+                className={getStatusBadgeClassName(appointment.status)}
+            >
+                {appointment.status}
+            </Badge>
+          </div>
           {appointment.reminderSent && (
             <p className="flex items-center gap-2 text-xs text-green-600">
                 <CheckCircle className="h-3 w-3"/> Reminder Sent
@@ -224,4 +248,3 @@ export default function PatientAppointmentsPage() {
     </div>
   );
 }
-

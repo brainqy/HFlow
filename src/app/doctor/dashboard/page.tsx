@@ -4,8 +4,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { placeholderDoctorAppointments, placeholderDoctorPatients, placeholderDoctors } from '@/lib/placeholder-data';
-import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered, Eye, Filter, RotateCcw } from 'lucide-react';
+import { placeholderDoctorAppointments, placeholderDoctorPatients, placeholderDoctors, allClinicAppointments } from '@/lib/placeholder-data';
+import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered, Eye, Filter, RotateCcw, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,7 @@ import { ToastAction } from '@/components/ui/toast';
 import { useRouter } from 'next/navigation';
 
 export default function DoctorDashboardPage() {
-  const doctorProfile = placeholderDoctors.find(doc => doc.name === "Dr. Eleanor Vance") || placeholderDoctors[0]; // Default to first doctor if specific one not found
+  const doctorProfile = placeholderDoctors.find(doc => doc.name === "Dr. Eleanor Vance") || placeholderDoctors[0]; 
   const doctorName = doctorProfile.name;
   const currentDoctorId = doctorProfile.id;
   
@@ -34,8 +34,6 @@ export default function DoctorDashboardPage() {
         const notificationDataString = localStorage.getItem(notificationKey);
         if (notificationDataString) {
           const notificationData = JSON.parse(notificationDataString);
-          // Optional: Check timestamp to avoid very old notifications if needed
-          // For now, just show it once and clear.
           toast({
             title: "Patient En Route",
             description: `${notificationData.patientName} has been sent for consultation.`,
@@ -54,14 +52,14 @@ export default function DoctorDashboardPage() {
       } catch (error) {
         console.error("Error checking for doctor notification:", error);
       }
-    }, 5000); // Check every 5 seconds
+    }, 5000); 
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    return () => clearInterval(intervalId); 
   }, [currentDoctorId, toast, router]);
 
 
   const displayedAppointments = useMemo(() => {
-    const allDoctorAppointments = placeholderDoctorAppointments.filter(a => a.doctorName === doctorName);
+    const relevantAppointments = allClinicAppointments.filter(a => a.doctorId === currentDoctorId);
 
     if (dateRange?.from) {
       const fromDate = new Date(dateRange.from);
@@ -73,7 +71,7 @@ export default function DoctorDashboardPage() {
         ? `${format(dateRange.from, "LLL dd, y")} - ${format(dateRange.to, "LLL dd, y")}`
         : format(dateRange.from, "LLL dd, y");
 
-      const filtered = allDoctorAppointments.filter(appt => {
+      const filtered = relevantAppointments.filter(appt => {
         const apptDate = new Date(appt.date);
         apptDate.setHours(0, 0, 0, 0);
         return apptDate >= fromDate && apptDate <= toDate;
@@ -81,18 +79,26 @@ export default function DoctorDashboardPage() {
       return {
         count: filtered.length,
         label: `Appointments (${rangeLabel})`,
-        list: filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time)),
+        list: filtered.sort((a, b) => {
+            const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+            if (dateComparison !== 0) return dateComparison;
+            if (a.ticketNumber && b.ticketNumber) return a.ticketNumber - b.ticketNumber;
+            return a.time.localeCompare(b.time);
+        }),
       };
     }
 
     const todayISO = new Date().toISOString().split('T')[0];
-    const todays = allDoctorAppointments.filter(a => a.date === todayISO);
+    const todays = relevantAppointments.filter(a => a.date === todayISO);
     return {
       count: todays.length,
       label: "Today's Appointments",
-      list: todays,
+      list: todays.sort((a,b) => {
+        if (a.ticketNumber && b.ticketNumber) return a.ticketNumber - b.ticketNumber;
+        return a.time.localeCompare(b.time);
+      }),
     };
-  }, [dateRange, doctorName]);
+  }, [dateRange, currentDoctorId]);
 
   const clearDateFilter = () => {
     setDateRange(undefined);
@@ -134,7 +140,6 @@ export default function DoctorDashboardPage() {
         </CardContent>
       </Card>
 
-      {/* Quick Stats/Overview */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -169,7 +174,6 @@ export default function DoctorDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Schedule List */}
         <Card className="shadow-lg lg:col-span-2">
           <CardHeader>
             <CardTitle className="font-headline text-xl flex items-center gap-2">
@@ -183,7 +187,7 @@ export default function DoctorDashboardPage() {
                   <div key={appt.id} className="p-3 border rounded-md bg-primary/5 hover:bg-primary/10 transition-colors">
                     <div className="flex justify-between items-center">
                         <div>
-                            <p className="font-semibold text-foreground">{appt.patientName}</p>
+                            <p className="font-semibold text-foreground">{appt.patientName} {appt.ticketNumber && <span className="text-xs text-muted-foreground">(Ticket #{appt.ticketNumber})</span>}</p>
                             <p className="text-sm text-muted-foreground">{new Date(appt.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {appt.time}</p>
                         </div>
                         <Badge variant="outline">{appt.status}</Badge>
@@ -208,7 +212,6 @@ export default function DoctorDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Quick Actions Column */}
         <div className="space-y-6">
             <Card className="shadow-lg">
                 <CardHeader>

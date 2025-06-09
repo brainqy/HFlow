@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data'; 
 import type { DoctorAppointment } from '@/types';
-import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send, User, Stethoscope as DoctorIcon, Clock, FileText as ReasonIcon, CalendarDays, PlaySquare, UserCheck } from 'lucide-react';
+import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send, User, Stethoscope as DoctorIcon, Clock, FileText as ReasonIcon, CalendarDays, PlaySquare, UserCheck, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,8 @@ export default function ReceptionistAppointmentsPage() {
   );
 
   useEffect(() => {
+    // This effect ensures that if allClinicAppointments is mutated elsewhere (like assigning ticket numbers),
+    // this component's state reflects those changes.
     setAppointments(JSON.parse(JSON.stringify(allClinicAppointments)));
   }, []);
 
@@ -59,28 +61,37 @@ export default function ReceptionistAppointmentsPage() {
       })
       .filter(appt => doctorFilter === 'all' || appt.doctorId === doctorFilter)
       .filter(appt => statusFilter === 'all' || appt.status === statusFilter)
-      .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time)); 
+      .sort((a,b) => {
+        const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+        if (dateComparison !== 0) return dateComparison;
+        // If dates are same, sort by ticket number if both exist, otherwise by time
+        if (a.ticketNumber && b.ticketNumber) return a.ticketNumber - b.ticketNumber;
+        return a.time.localeCompare(b.time);
+      });
 
   }, [appointments, searchTerm, dateRange, doctorFilter, statusFilter]);
 
-  const updateAppointmentStatus = (appointmentId: string, newStatus: AppointmentStatus, message: string) => {
+  const updateAppointmentStatus = (appointmentId: string, newStatus: AppointmentStatus, message: string, newTicketNumber?: number) => {
     const appointment = appointments.find(a => a.id === appointmentId);
     if (!appointment) return;
     
     setAppointments(prev => 
       prev.map(appt => 
-        appt.id === appointmentId ? { ...appt, status: newStatus } : appt
+        appt.id === appointmentId ? { ...appt, status: newStatus, ticketNumber: newTicketNumber !== undefined ? newTicketNumber : appt.ticketNumber } : appt
       )
     );
 
     const globalIndex = allClinicAppointments.findIndex(appt => appt.id === appointmentId);
     if (globalIndex !== -1) {
       allClinicAppointments[globalIndex].status = newStatus;
+      if (newTicketNumber !== undefined) {
+        allClinicAppointments[globalIndex].ticketNumber = newTicketNumber;
+      }
     }
     
     toast({
       title: message,
-      description: `${appointment.patientName}'s appointment is now ${newStatus}.`,
+      description: `${appointment.patientName}'s appointment is now ${newStatus}${newTicketNumber ? ` (Ticket #${newTicketNumber})` : ''}.`,
     });
 
     if (newStatus === 'In Consultation') {
@@ -98,7 +109,19 @@ export default function ReceptionistAppointmentsPage() {
   };
 
   const handleCheckIn = (appointmentId: string) => {
-    updateAppointmentStatus(appointmentId, 'Checked-in', "Patient Checked-in");
+    const appointmentToCheckIn = allClinicAppointments.find(a => a.id === appointmentId);
+    if (!appointmentToCheckIn) return;
+
+    // Assign ticket number
+    const appointmentsForDoctorToday = allClinicAppointments.filter(
+      appt => appt.doctorId === appointmentToCheckIn.doctorId && 
+              appt.date === appointmentToCheckIn.date &&
+              appt.ticketNumber 
+    );
+    const maxTicket = appointmentsForDoctorToday.reduce((max, appt) => Math.max(max, appt.ticketNumber || 0), 0);
+    const newTicketNumber = maxTicket + 1;
+
+    updateAppointmentStatus(appointmentId, 'Checked-in', "Patient Checked-in", newTicketNumber);
   };
   
   const handleSendToDoctor = (appointmentId: string) => {
@@ -200,9 +223,16 @@ export default function ReceptionistAppointmentsPage() {
           {filteredAppointments.map((appointment) => (
             <Card key={appointment.id} className="shadow-lg flex flex-col">
               <CardHeader>
-                <CardTitle className="font-headline text-lg flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" /> {appointment.patientName}
-                </CardTitle>
+                <div className="flex justify-between items-start">
+                    <CardTitle className="font-headline text-lg flex items-center gap-2">
+                    <User className="h-5 w-5 text-primary" /> {appointment.patientName}
+                    </CardTitle>
+                    {appointment.ticketNumber && (appointment.status === 'Checked-in' || appointment.status === 'In Consultation') && (
+                        <Badge variant="outline" className="text-sm flex items-center gap-1">
+                            <Ticket className="h-4 w-4"/> #{appointment.ticketNumber}
+                        </Badge>
+                    )}
+                </div>
                 <CardDescription className="flex items-center gap-1 text-sm">
                   <DoctorIcon className="h-4 w-4" /> With {appointment.doctorName}
                 </CardDescription>

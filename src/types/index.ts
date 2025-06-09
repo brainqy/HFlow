@@ -74,6 +74,7 @@ export interface Appointment {
   age?: number;
   gender?: string;
   address?: string;
+  ticketNumber?: number;
 }
 
 export interface MedicalRecordItem {
@@ -107,6 +108,7 @@ export interface DoctorAppointment {
   date: string;
   status: 'Scheduled' | 'Checked-in' | 'In Consultation' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
   reminderSent?: boolean;
+  ticketNumber?: number;
 }
 
 export interface NursePatientQueueItem {
@@ -114,6 +116,7 @@ export interface NursePatientQueueItem {
   name: string;
   status: 'Waiting for Triage' | 'Ready for Vitals' | 'Waiting for Doctor' | 'With Doctor' | 'Discharged';
   arrivalTime: string;
+  ticketNumber?: number; // Added for consistency if needed here
 }
 
 export interface NurseAlert {

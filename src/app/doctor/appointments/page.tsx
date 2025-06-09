@@ -8,9 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import type { DateRange } from 'react-day-picker';
-import { placeholderDoctorAppointments as initialAppointments } from '@/lib/placeholder-data';
+import { placeholderDoctorAppointments as initialAppointments, allClinicAppointments } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
-import { CalendarCheck, Eye, CheckCircle, Filter, User, CalendarDays, Clock, FileText as ReasonIcon, XCircle, RotateCcw as RescheduleIcon, PlaySquare } from 'lucide-react';
+import { CalendarCheck, Eye, CheckCircle, Filter, User, CalendarDays, Clock, FileText as ReasonIcon, XCircle, RotateCcw as RescheduleIcon, PlaySquare, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
@@ -21,12 +21,18 @@ const appointmentStatuses = ['Scheduled', 'Checked-in', 'In Consultation', 'Comp
 type AppointmentStatus = (typeof appointmentStatuses)[number];
 
 export default function DoctorAppointmentsPage() {
-  const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
+  const [appointments, setAppointments] = useState<DoctorAppointment[]>([]);
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Simulate fetching/observing the shared allClinicAppointments for mutations
+    setAppointments(JSON.parse(JSON.stringify(allClinicAppointments))); 
+  }, []);
+
 
   useEffect(() => {
     const patientQuery = searchParams.get('patientName');
@@ -39,7 +45,7 @@ export default function DoctorAppointmentsPage() {
     switch (status) {
       case 'Scheduled': return 'default'; 
       case 'Checked-in': return 'secondary';
-      case 'In Consultation': return 'default'; // Or another distinct color
+      case 'In Consultation': return 'default'; 
       case 'Completed': return 'outline';
       case 'Cancelled': return 'destructive';
       case 'Pending Confirmation': return 'outline'; 
@@ -55,25 +61,33 @@ export default function DoctorAppointmentsPage() {
     return '';
   };
 
-  const updateAppointmentStatus = (appointmentId: string, newStatus: AppointmentStatus, successMessage: string) => {
+  const updateAppointmentStatusAndGlobal = (appointmentId: string, newStatus: AppointmentStatus, successMessage: string) => {
+    const appointment = appointments.find(a => a.id === appointmentId);
+    if (!appointment) return;
+
      setAppointments(prevAppointments =>
       prevAppointments.map(appt =>
         appt.id === appointmentId ? { ...appt, status: newStatus } : appt
       )
     );
-    const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
+    // Also update the global placeholder for prototype persistence
+    const globalIndex = allClinicAppointments.findIndex(appt => appt.id === appointmentId);
+    if (globalIndex !== -1) {
+        allClinicAppointments[globalIndex].status = newStatus;
+    }
+
     toast({
       title: successMessage,
-      description: `Appointment with ${patientName || 'Patient'} is now ${newStatus}.`,
+      description: `Appointment with ${appointment.patientName || 'Patient'} is now ${newStatus}.`,
     });
   }
 
   const handleMarkAsCompleted = (appointmentId: string) => {
-    updateAppointmentStatus(appointmentId, 'Completed', 'Appointment Completed');
+    updateAppointmentStatusAndGlobal(appointmentId, 'Completed', 'Appointment Completed');
   };
 
   const handleStartConsultation = (appointmentId: string) => {
-    updateAppointmentStatus(appointmentId, 'In Consultation', 'Consultation Started');
+    updateAppointmentStatusAndGlobal(appointmentId, 'In Consultation', 'Consultation Started');
   };
 
   const handleDoctorReschedule = (appointment: DoctorAppointment) => {
@@ -112,7 +126,13 @@ export default function DoctorAppointmentsPage() {
         return apptDate >= fromDate && apptDate <= toDate;
       })
       .filter(appt => statusFilter === 'all' || appt.status === statusFilter)
-      .sort((a,b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time));
+      .sort((a,b) => {
+        const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+        if (dateComparison !== 0) return dateComparison;
+        // If dates are same, sort by ticket number if both exist, otherwise by time
+        if (a.ticketNumber && b.ticketNumber) return a.ticketNumber - b.ticketNumber;
+        return a.time.localeCompare(b.time);
+      });
   }, [appointments, searchTerm, dateRange, statusFilter]);
 
 
@@ -163,9 +183,16 @@ export default function DoctorAppointmentsPage() {
             return(
             <Card key={appointment.id} className="shadow-lg flex flex-col">
               <CardHeader>
-                <CardTitle className="font-headline text-lg flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" /> {appointment.patientName}
-                </CardTitle>
+                <div className="flex justify-between items-start">
+                    <CardTitle className="font-headline text-lg flex items-center gap-2">
+                    <User className="h-5 w-5 text-primary" /> {appointment.patientName}
+                    </CardTitle>
+                    {appointment.ticketNumber && (appointment.status === 'Checked-in' || appointment.status === 'In Consultation') && (
+                        <Badge variant="outline" className="text-sm flex items-center gap-1">
+                            <Ticket className="h-4 w-4"/> #{appointment.ticketNumber}
+                        </Badge>
+                    )}
+                </div>
               </CardHeader>
               <CardContent className="space-y-3 text-sm flex-grow">
                 <div className="flex items-center gap-2">
@@ -240,4 +267,3 @@ export default function DoctorAppointmentsPage() {
     </div>
   );
 }
-
