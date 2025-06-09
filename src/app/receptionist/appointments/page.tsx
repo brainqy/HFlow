@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data'; 
 import type { DoctorAppointment } from '@/types';
-import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send, User, Stethoscope as DoctorIcon, Clock, FileText as ReasonIcon, CalendarDays } from 'lucide-react';
+import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send, User, Stethoscope as DoctorIcon, Clock, FileText as ReasonIcon, CalendarDays, PlaySquare } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import type { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
 
-const appointmentStatuses = ['Scheduled', 'Checked-in', 'Completed', 'Cancelled', 'Pending Confirmation'] as const;
+const appointmentStatuses = ['Scheduled', 'Checked-in', 'In Consultation', 'Completed', 'Cancelled', 'Pending Confirmation'] as const;
+type AppointmentStatus = (typeof appointmentStatuses)[number];
 
 
 export default function ReceptionistAppointmentsPage() {
@@ -80,10 +81,11 @@ export default function ReceptionistAppointmentsPage() {
     });
   };
   
-  const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
+  const getStatusBadgeVariant = (status: AppointmentStatus) => {
     switch (status) {
       case 'Scheduled': return 'default';
       case 'Checked-in': return 'secondary'; 
+      case 'In Consultation': return 'default';
       case 'Completed': return 'outline';
       case 'Cancelled': return 'destructive';
       case 'Pending Confirmation': return 'outline'; 
@@ -91,10 +93,11 @@ export default function ReceptionistAppointmentsPage() {
     }
   };
   
-  const getStatusBadgeClassName = (status: DoctorAppointment['status']) => {
+  const getStatusBadgeClassName = (status: AppointmentStatus) => {
     if (status === 'Completed') return 'border-green-500 text-green-600 bg-green-500/10';
     if (status === 'Checked-in') return 'border-yellow-500 text-yellow-600 bg-yellow-500/10';
     if (status === 'Pending Confirmation') return 'border-blue-500 text-blue-600 bg-blue-500/10';
+    if (status === 'In Consultation') return 'border-purple-500 text-purple-600 bg-purple-500/10';
     return '';
   }
 
@@ -225,3 +228,4 @@ export default function ReceptionistAppointmentsPage() {
     </div>
   );
 }
+

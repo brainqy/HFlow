@@ -4,7 +4,7 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, User, Clock, Stethoscope, CheckCircle, Info, Filter as FilterIcon, RotateCcw, RefreshCcw as RescheduleIcon } from 'lucide-react';
+import { CalendarDays, User, Clock, Stethoscope, CheckCircle, Info, Filter as FilterIcon, RotateCcw, RefreshCcw as RescheduleIcon, PlaySquare } from 'lucide-react';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import type { DateRange } from "react-day-picker";
 import { useToast } from "@/hooks/use-toast";
+
+type AppointmentStatus = DoctorAppointment['status'];
 
 export default function PatientAppointmentsPage() {
   const patientName = "Jane Doe (Patient Portal User)";
@@ -68,10 +70,11 @@ export default function PatientAppointmentsPage() {
     });
   };
 
-  const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
+  const getStatusBadgeVariant = (status: AppointmentStatus) => {
     switch (status) {
       case 'Scheduled': return 'default';
       case 'Checked-in': return 'secondary';
+      case 'In Consultation': return 'default';
       case 'Completed': return 'outline';
       case 'Cancelled': return 'destructive';
       case 'Pending Confirmation': return 'outline';
@@ -79,10 +82,11 @@ export default function PatientAppointmentsPage() {
     }
   };
   
-  const getStatusBadgeClassName = (status: DoctorAppointment['status']) => {
+  const getStatusBadgeClassName = (status: AppointmentStatus) => {
     if (status === 'Completed') return 'border-green-500 text-green-600 bg-green-500/10';
     if (status === 'Checked-in') return 'border-yellow-500 text-yellow-600 bg-yellow-500/10';
     if (status === 'Pending Confirmation') return 'border-blue-500 text-blue-600 bg-blue-500/10';
+    if (status === 'In Consultation') return 'border-purple-500 text-purple-600 bg-purple-500/10';
     return '';
   };
 
@@ -140,8 +144,8 @@ export default function PatientAppointmentsPage() {
     );
   };
 
-  const renderAppointmentGrid = (appointments: DoctorAppointment[], emptyMessage: string) => {
-    if (appointments.length === 0) {
+  const renderAppointmentGrid = (appointmentsToRender: DoctorAppointment[], emptyMessage: string) => {
+    if (appointmentsToRender.length === 0) {
       return (
         <Card>
           <CardContent className="pt-6">
@@ -152,7 +156,7 @@ export default function PatientAppointmentsPage() {
     }
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {appointments.map(appt => <AppointmentCard key={appt.id} appointment={appt} />)}
+        {appointmentsToRender.map(appt => <AppointmentCard key={appt.id} appointment={appt} />)}
       </div>
     );
   };
@@ -220,3 +224,4 @@ export default function PatientAppointmentsPage() {
     </div>
   );
 }
+

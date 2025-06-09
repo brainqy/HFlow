@@ -10,14 +10,15 @@ import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import type { DateRange } from 'react-day-picker';
 import { placeholderDoctorAppointments as initialAppointments } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
-import { CalendarCheck, Eye, CheckCircle, Filter, User, CalendarDays, Clock, FileText as ReasonIcon, XCircle, RotateCcw as RescheduleIcon } from 'lucide-react';
+import { CalendarCheck, Eye, CheckCircle, Filter, User, CalendarDays, Clock, FileText as ReasonIcon, XCircle, RotateCcw as RescheduleIcon, PlaySquare } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from "@/hooks/use-toast";
 import { format } from 'date-fns';
 import { useSearchParams } from 'next/navigation';
 
-const appointmentStatuses = ['Scheduled', 'Checked-in', 'Completed', 'Cancelled', 'Pending Confirmation'] as const;
+const appointmentStatuses = ['Scheduled', 'Checked-in', 'In Consultation', 'Completed', 'Cancelled', 'Pending Confirmation'] as const;
+type AppointmentStatus = (typeof appointmentStatuses)[number];
 
 export default function DoctorAppointmentsPage() {
   const [appointments, setAppointments] = useState<DoctorAppointment[]>(initialAppointments);
@@ -34,10 +35,11 @@ export default function DoctorAppointmentsPage() {
     }
   }, [searchParams]);
 
-  const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
+  const getStatusBadgeVariant = (status: AppointmentStatus) => {
     switch (status) {
       case 'Scheduled': return 'default'; 
       case 'Checked-in': return 'secondary';
+      case 'In Consultation': return 'default'; // Or another distinct color
       case 'Completed': return 'outline';
       case 'Cancelled': return 'destructive';
       case 'Pending Confirmation': return 'outline'; 
@@ -45,24 +47,33 @@ export default function DoctorAppointmentsPage() {
     }
   };
   
-  const getStatusBadgeClassName = (status: DoctorAppointment['status']) => {
+  const getStatusBadgeClassName = (status: AppointmentStatus) => {
     if (status === 'Completed') return 'border-green-500 text-green-600 bg-green-500/10';
     if (status === 'Checked-in') return 'border-yellow-500 text-yellow-600 bg-yellow-500/10';
     if (status === 'Pending Confirmation') return 'border-blue-500 text-blue-600 bg-blue-500/10';
+    if (status === 'In Consultation') return 'border-purple-500 text-purple-600 bg-purple-500/10';
     return '';
   };
 
-  const handleMarkAsCompleted = (appointmentId: string) => {
-    setAppointments(prevAppointments =>
+  const updateAppointmentStatus = (appointmentId: string, newStatus: AppointmentStatus, successMessage: string) => {
+     setAppointments(prevAppointments =>
       prevAppointments.map(appt =>
-        appt.id === appointmentId ? { ...appt, status: 'Completed' as const } : appt
+        appt.id === appointmentId ? { ...appt, status: newStatus } : appt
       )
     );
     const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
     toast({
-      title: "Appointment Completed",
-      description: `Appointment with ${patientName || 'Patient'} marked as completed.`,
+      title: successMessage,
+      description: `Appointment with ${patientName || 'Patient'} is now ${newStatus}.`,
     });
+  }
+
+  const handleMarkAsCompleted = (appointmentId: string) => {
+    updateAppointmentStatus(appointmentId, 'Completed', 'Appointment Completed');
+  };
+
+  const handleStartConsultation = (appointmentId: string) => {
+    updateAppointmentStatus(appointmentId, 'In Consultation', 'Consultation Started');
   };
 
   const handleDoctorReschedule = (appointment: DoctorAppointment) => {
@@ -145,7 +156,9 @@ export default function DoctorAppointmentsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredAppointments.map((appointment) => {
             const canRescheduleOrCancel = (appointment.status === 'Scheduled' || appointment.status === 'Pending Confirmation') && new Date(appointment.date) >= new Date(new Date().setHours(0,0,0,0));
-            const canComplete = (appointment.status === 'Scheduled' || appointment.status === 'Checked-in' || appointment.status === 'Pending Confirmation');
+            const canStartConsultation = appointment.status === 'Checked-in';
+            const canComplete = appointment.status === 'Checked-in' || appointment.status === 'In Consultation' || appointment.status === 'Scheduled';
+
 
             return(
             <Card key={appointment.id} className="shadow-lg flex flex-col">
@@ -178,6 +191,16 @@ export default function DoctorAppointmentsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-wrap gap-2 justify-end border-t pt-4 mt-auto">
+                {canStartConsultation && (
+                   <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={() => handleStartConsultation(appointment.id)}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    <PlaySquare className="mr-1 h-3 w-3" /> Start Consultation
+                  </Button>
+                )}
                 {canComplete && (
                   <Button 
                     variant="outline" 
@@ -217,3 +240,4 @@ export default function DoctorAppointmentsPage() {
     </div>
   );
 }
+

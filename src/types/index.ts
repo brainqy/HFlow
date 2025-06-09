@@ -69,7 +69,7 @@ export interface Appointment {
   date: string;
   time: string;
   reason: string;
-  status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
+  status: 'Scheduled' | 'Checked-in' | 'In Consultation' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
   reminderSent?: boolean;
   age?: number;
   gender?: string;
@@ -105,7 +105,7 @@ export interface DoctorAppointment {
   time: string;
   reason: string;
   date: string;
-  status: 'Scheduled' | 'Checked-in' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
+  status: 'Scheduled' | 'Checked-in' | 'In Consultation' | 'Completed' | 'Cancelled' | 'Pending Confirmation';
   reminderSent?: boolean;
 }
 
@@ -224,3 +224,4 @@ export interface HeroSlideItem {
   ctaText: string;
   ctaLink: string;
 }
+
