@@ -4,13 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data'; 
 import type { DoctorAppointment } from '@/types';
-import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send, User, Stethoscope as DoctorIcon, Clock, FileText as ReasonIcon, CalendarDays, PlaySquare } from 'lucide-react';
+import { CalendarPlus, Eye, Edit, Trash2, Filter, CheckSquare, Send, User, Stethoscope as DoctorIcon, Clock, FileText as ReasonIcon, CalendarDays, PlaySquare, UserCheck } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import type { DateRange } from 'react-day-picker';
 import { format } from 'date-fns';
@@ -21,7 +21,18 @@ type AppointmentStatus = (typeof appointmentStatuses)[number];
 
 export default function ReceptionistAppointmentsPage() {
   const { toast } = useToast();
-  const [appointments, setAppointments] = useState<DoctorAppointment[]>(allClinicAppointments);
+  // Use a state that's initialized from allClinicAppointments but can be updated.
+  const [appointments, setAppointments] = useState<DoctorAppointment[]>(() => 
+    JSON.parse(JSON.stringify(allClinicAppointments)) // Deep copy for local mutable state
+  );
+
+  // Effect to re-sync if allClinicAppointments changes externally (for prototype purposes)
+  useEffect(() => {
+    // This is a simplified sync. In a real app, this would be handled by a state manager or backend updates.
+    setAppointments(JSON.parse(JSON.stringify(allClinicAppointments)));
+  }, []);
+
+
   const [searchTerm, setSearchTerm] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [doctorFilter, setDoctorFilter] = useState<string>('all');
@@ -55,17 +66,34 @@ export default function ReceptionistAppointmentsPage() {
 
   }, [appointments, searchTerm, dateRange, doctorFilter, statusFilter]);
 
-  const handleCheckIn = (appointmentId: string) => {
+  const updateAppointmentStatus = (appointmentId: string, newStatus: AppointmentStatus, message: string) => {
+    const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
+    
+    // Update local state
     setAppointments(prev => 
       prev.map(appt => 
-        appt.id === appointmentId ? { ...appt, status: 'Checked-in' } : appt
+        appt.id === appointmentId ? { ...appt, status: newStatus } : appt
       )
     );
-    const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
+
+    // Update the master placeholder data for prototype-wide reflection
+    const globalIndex = allClinicAppointments.findIndex(appt => appt.id === appointmentId);
+    if (globalIndex !== -1) {
+      allClinicAppointments[globalIndex].status = newStatus;
+    }
+    
     toast({
-      title: "Patient Checked-in",
-      description: `${patientName || 'Patient'} has been successfully checked-in.`,
+      title: message,
+      description: `${patientName || 'Patient'}'s appointment is now ${newStatus}.`,
     });
+  };
+
+  const handleCheckIn = (appointmentId: string) => {
+    updateAppointmentStatus(appointmentId, 'Checked-in', "Patient Checked-in");
+  };
+  
+  const handleSendToDoctor = (appointmentId: string) => {
+    updateAppointmentStatus(appointmentId, 'In Consultation', "Patient Sent to Doctor");
   };
 
   const handleSendReminder = (appointmentId: string) => {
@@ -74,6 +102,11 @@ export default function ReceptionistAppointmentsPage() {
         appt.id === appointmentId ? { ...appt, reminderSent: true } : appt
       )
     );
+     // Update the master placeholder data
+    const globalIndex = allClinicAppointments.findIndex(appt => appt.id === appointmentId);
+    if (globalIndex !== -1) {
+      allClinicAppointments[globalIndex].reminderSent = true;
+    }
     const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
     toast({
       title: "Reminder Sent",
@@ -203,7 +236,12 @@ export default function ReceptionistAppointmentsPage() {
                 )}
                 {appointment.status === 'Scheduled' && (
                   <Button variant="default" size="sm" onClick={() => handleCheckIn(appointment.id)}>
-                    <CheckSquare className="mr-1 h-3 w-3" /> Check-in
+                    <UserCheck className="mr-1 h-3 w-3" /> Check-in
+                  </Button>
+                )}
+                {appointment.status === 'Checked-in' && (
+                  <Button variant="secondary" size="sm" onClick={() => handleSendToDoctor(appointment.id)} className="bg-blue-500 hover:bg-blue-600 text-white">
+                    <Send className="mr-1 h-3 w-3" /> Send to Doctor
                   </Button>
                 )}
                 <Button variant="ghost" size="sm" className="text-yellow-600 hover:text-yellow-700 opacity-50 cursor-not-allowed">
