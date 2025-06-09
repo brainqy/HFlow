@@ -21,14 +21,11 @@ type AppointmentStatus = (typeof appointmentStatuses)[number];
 
 export default function ReceptionistAppointmentsPage() {
   const { toast } = useToast();
-  // Use a state that's initialized from allClinicAppointments but can be updated.
   const [appointments, setAppointments] = useState<DoctorAppointment[]>(() => 
-    JSON.parse(JSON.stringify(allClinicAppointments)) // Deep copy for local mutable state
+    JSON.parse(JSON.stringify(allClinicAppointments))
   );
 
-  // Effect to re-sync if allClinicAppointments changes externally (for prototype purposes)
   useEffect(() => {
-    // This is a simplified sync. In a real app, this would be handled by a state manager or backend updates.
     setAppointments(JSON.parse(JSON.stringify(allClinicAppointments)));
   }, []);
 
@@ -67,16 +64,15 @@ export default function ReceptionistAppointmentsPage() {
   }, [appointments, searchTerm, dateRange, doctorFilter, statusFilter]);
 
   const updateAppointmentStatus = (appointmentId: string, newStatus: AppointmentStatus, message: string) => {
-    const patientName = appointments.find(a => a.id === appointmentId)?.patientName;
+    const appointment = appointments.find(a => a.id === appointmentId);
+    if (!appointment) return;
     
-    // Update local state
     setAppointments(prev => 
       prev.map(appt => 
         appt.id === appointmentId ? { ...appt, status: newStatus } : appt
       )
     );
 
-    // Update the master placeholder data for prototype-wide reflection
     const globalIndex = allClinicAppointments.findIndex(appt => appt.id === appointmentId);
     if (globalIndex !== -1) {
       allClinicAppointments[globalIndex].status = newStatus;
@@ -84,8 +80,21 @@ export default function ReceptionistAppointmentsPage() {
     
     toast({
       title: message,
-      description: `${patientName || 'Patient'}'s appointment is now ${newStatus}.`,
+      description: `${appointment.patientName}'s appointment is now ${newStatus}.`,
     });
+
+    if (newStatus === 'In Consultation') {
+      try {
+        localStorage.setItem(`doctorNotification_${appointment.doctorId}`, JSON.stringify({
+          appointmentId: appointment.id,
+          patientId: appointment.patientId,
+          patientName: appointment.patientName,
+          timestamp: Date.now()
+        }));
+      } catch (error) {
+        console.error("Error setting localStorage for doctor notification:", error);
+      }
+    }
   };
 
   const handleCheckIn = (appointmentId: string) => {
@@ -102,7 +111,6 @@ export default function ReceptionistAppointmentsPage() {
         appt.id === appointmentId ? { ...appt, reminderSent: true } : appt
       )
     );
-     // Update the master placeholder data
     const globalIndex = allClinicAppointments.findIndex(appt => appt.id === appointmentId);
     if (globalIndex !== -1) {
       allClinicAppointments[globalIndex].reminderSent = true;
@@ -266,4 +274,3 @@ export default function ReceptionistAppointmentsPage() {
     </div>
   );
 }
-

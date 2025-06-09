@@ -1,10 +1,10 @@
 
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { placeholderDoctorAppointments, placeholderDoctorPatients } from '@/lib/placeholder-data';
+import { placeholderDoctorAppointments, placeholderDoctorPatients, placeholderDoctors } from '@/lib/placeholder-data';
 import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered, Eye, Filter, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -13,11 +13,52 @@ import PortalAnnouncements from '@/components/sections/PortalAnnouncements';
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
+import { useToast } from '@/hooks/use-toast';
+import { ToastAction } from '@/components/ui/toast';
+import { useRouter } from 'next/navigation';
 
 export default function DoctorDashboardPage() {
-  const doctorName = "Dr. Eleanor Vance"; 
+  const doctorProfile = placeholderDoctors.find(doc => doc.name === "Dr. Eleanor Vance") || placeholderDoctors[0]; // Default to first doctor if specific one not found
+  const doctorName = doctorProfile.name;
+  const currentDoctorId = doctorProfile.id;
+  
   const todayFormatted = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const { toast } = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      try {
+        const notificationKey = `doctorNotification_${currentDoctorId}`;
+        const notificationDataString = localStorage.getItem(notificationKey);
+        if (notificationDataString) {
+          const notificationData = JSON.parse(notificationDataString);
+          // Optional: Check timestamp to avoid very old notifications if needed
+          // For now, just show it once and clear.
+          toast({
+            title: "Patient En Route",
+            description: `${notificationData.patientName} has been sent for consultation.`,
+            action: (
+              <ToastAction
+                altText="View Patient Chart"
+                onClick={() => router.push(`/doctor/patients/${notificationData.patientId}/chart`)}
+              >
+                View Chart
+              </ToastAction>
+            ),
+            duration: 10000, 
+          });
+          localStorage.removeItem(notificationKey);
+        }
+      } catch (error) {
+        console.error("Error checking for doctor notification:", error);
+      }
+    }, 5000); // Check every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, [currentDoctorId, toast, router]);
+
 
   const displayedAppointments = useMemo(() => {
     const allDoctorAppointments = placeholderDoctorAppointments.filter(a => a.doctorName === doctorName);
@@ -111,7 +152,7 @@ export default function DoctorDashboardPage() {
             <Users className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{placeholderDoctorPatients.length}</div>
+            <div className="text-2xl font-bold">{placeholderDoctorPatients.filter(p => p.primaryDoctorId === currentDoctorId || allClinicAppointments.some(app => app.patientId === p.id && app.doctorId === currentDoctorId)).length}</div>
             <p className="text-xs text-muted-foreground">under your care</p>
           </CardContent>
         </Card>
@@ -145,9 +186,9 @@ export default function DoctorDashboardPage() {
                             <p className="font-semibold text-foreground">{appt.patientName}</p>
                             <p className="text-sm text-muted-foreground">{new Date(appt.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} at {appt.time}</p>
                         </div>
-                        <Badge variant="outline">{appt.reason}</Badge>
+                        <Badge variant="outline">{appt.status}</Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">{appt.reason}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Reason: {appt.reason}</p>
                     <div className="mt-2">
                       <Button variant="link" size="sm" asChild className="p-0 h-auto text-primary text-xs">
                         <Link href={`/doctor/patients/${appt.patientId}/chart`} className="flex items-center gap-1">
