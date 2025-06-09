@@ -65,6 +65,13 @@ export default function DoctorAppointmentsPage() {
     });
   };
 
+  const handleDoctorReschedule = (appointment: DoctorAppointment) => {
+    toast({
+      title: "Reschedule Initiated",
+      description: `Reschedule requested for ${appointment.patientName}'s appointment on ${format(new Date(appointment.date), "PPP")}. Please coordinate with the patient or receptionist.`,
+    });
+  };
+
   const handleMockAction = (action: string, patientName?: string) => {
     toast({
       title: `${action} Requested`,
@@ -136,7 +143,11 @@ export default function DoctorAppointmentsPage() {
 
       {filteredAppointments.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredAppointments.map((appointment) => (
+          {filteredAppointments.map((appointment) => {
+            const canRescheduleOrCancel = (appointment.status === 'Scheduled' || appointment.status === 'Pending Confirmation') && new Date(appointment.date) >= new Date(new Date().setHours(0,0,0,0));
+            const canComplete = (appointment.status === 'Scheduled' || appointment.status === 'Checked-in' || appointment.status === 'Pending Confirmation');
+
+            return(
             <Card key={appointment.id} className="shadow-lg flex flex-col">
               <CardHeader>
                 <CardTitle className="font-headline text-lg flex items-center gap-2">
@@ -167,17 +178,19 @@ export default function DoctorAppointmentsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex flex-wrap gap-2 justify-end border-t pt-4 mt-auto">
-                {(appointment.status === 'Scheduled' || appointment.status === 'Checked-in' || appointment.status === 'Pending Confirmation') && (
+                {canComplete && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleMarkAsCompleted(appointment.id)}
+                    className="border-green-500 text-green-600 hover:bg-green-500/10 hover:text-green-700"
+                  >
+                    <CheckCircle className="mr-1 h-3 w-3" /> Mark Completed
+                  </Button>
+                )}
+                {canRescheduleOrCancel && (
                   <>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => handleMarkAsCompleted(appointment.id)}
-                      className="border-green-500 text-green-600 hover:bg-green-500/10 hover:text-green-700"
-                    >
-                      <CheckCircle className="mr-1 h-3 w-3" /> Mark Completed
-                    </Button>
-                    <Button variant="ghost" size="sm" className="text-amber-600 hover:bg-amber-500/10 hover:text-amber-700" onClick={() => handleMockAction('Reschedule', appointment.patientName)}>
+                    <Button variant="ghost" size="sm" className="text-amber-600 hover:bg-amber-500/10 hover:text-amber-700" onClick={() => handleDoctorReschedule(appointment)}>
                         <RescheduleIcon className="mr-1 h-3 w-3" /> Reschedule
                     </Button>
                     <Button variant="ghost" size="sm" className="text-destructive hover:bg-red-500/10 hover:text-red-700" onClick={() => handleMockAction('Cancellation', appointment.patientName)}>
@@ -192,7 +205,7 @@ export default function DoctorAppointmentsPage() {
                 </Button>
               </CardFooter>
             </Card>
-          ))}
+          )})}
         </div>
       ) : (
         <Card>

@@ -4,7 +4,7 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, User, Clock, Stethoscope, CheckCircle, Info, Filter as FilterIcon, RotateCcw } from 'lucide-react';
+import { CalendarDays, User, Clock, Stethoscope, CheckCircle, Info, Filter as FilterIcon, RotateCcw, RefreshCcw as RescheduleIcon } from 'lucide-react';
 import { allClinicAppointments, placeholderDoctors } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
 import { Badge } from '@/components/ui/badge';
@@ -14,9 +14,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import type { DateRange } from "react-day-picker";
+import { useToast } from "@/hooks/use-toast";
 
 export default function PatientAppointmentsPage() {
   const patientName = "Jane Doe (Patient Portal User)";
+  const { toast } = useToast();
 
   const [doctorFilter, setDoctorFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<DateRange | undefined>(undefined);
@@ -59,6 +61,13 @@ export default function PatientAppointmentsPage() {
     setDateFilter(undefined);
   };
 
+  const handleRequestReschedule = (appointment: DoctorAppointment) => {
+    toast({
+      title: "Reschedule Request Submitted",
+      description: `Your request to reschedule the appointment with ${appointment.doctorName} on ${format(new Date(appointment.date), "PPP")} has been submitted. We will contact you to confirm a new time.`,
+    });
+  };
+
   const getStatusBadgeVariant = (status: DoctorAppointment['status']) => {
     switch (status) {
       case 'Scheduled': return 'default';
@@ -79,6 +88,8 @@ export default function PatientAppointmentsPage() {
 
   const AppointmentCard = ({ appointment }: { appointment: DoctorAppointment }) => {
     const doctor = placeholderDoctors.find(d => d.id === appointment.doctorId);
+    const canReschedule = (appointment.status === 'Scheduled' || appointment.status === 'Pending Confirmation') && new Date(appointment.date) >= new Date(new Date().setHours(0,0,0,0));
+
     return (
       <Card className="shadow-md hover:shadow-lg transition-shadow">
         <CardHeader>
@@ -116,8 +127,10 @@ export default function PatientAppointmentsPage() {
           )}
         </CardContent>
         <CardFooter className="flex justify-end gap-2">
-          {(appointment.status === 'Scheduled' || appointment.status === 'Pending Confirmation') && (
-            <Button variant="outline" size="sm" className="opacity-70 cursor-not-allowed">Reschedule</Button>
+          {canReschedule && (
+            <Button variant="outline" size="sm" onClick={() => handleRequestReschedule(appointment)}>
+              <RescheduleIcon className="mr-1 h-3 w-3" /> Request Reschedule
+            </Button>
           )}
           <Button variant="link" size="sm" asChild className="p-0">
             <Link href={`/doctors/${appointment.doctorId}`}>View Doctor Profile</Link>
