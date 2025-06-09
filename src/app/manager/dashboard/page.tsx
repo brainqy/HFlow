@@ -17,22 +17,43 @@ export default function ManagerDashboardPage() {
   const todayFormatted = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
-  const totalPatients = placeholderDoctorPatients.length; 
-  const totalDoctors = placeholderDoctors.length;
-  
-  const displayedAppointments = useMemo(() => {
+  const { totalPatients, totalDoctors, appointments } = useMemo(() => {
+    const allPatients = placeholderDoctorPatients.length;
+    const allDoctors = placeholderDoctors.length;
+    const allAppointments = placeholderDoctorAppointments.length;
+
     if (dateRange?.from) {
       const fromDate = format(dateRange.from, "LLL dd, y");
       const toDate = dateRange.to ? format(dateRange.to, "LLL dd, y") : fromDate;
       const rangeLabel = dateRange.to && dateRange.from !== dateRange.to ? `${fromDate} - ${toDate}` : fromDate;
       return {
-        count: Math.floor(placeholderDoctorAppointments.length / 2) + Math.floor(Math.random() * 5), // Simulated count
-        label: `Appointments (${rangeLabel})`,
+        totalPatients: {
+          count: Math.floor(allPatients / 4) + Math.floor(Math.random() * 3), // Simulated new patients
+          label: `New Patients (${rangeLabel})`,
+        },
+        totalDoctors: {
+          count: allDoctors,
+          label: "Total Doctors",
+        },
+        appointments: {
+          count: Math.floor(allAppointments / 2) + Math.floor(Math.random() * 5), // Simulated count
+          label: `Appointments (${rangeLabel})`,
+        },
       };
     }
     return {
-      count: placeholderDoctorAppointments.length,
-      label: "Total Appointments (All Time)",
+      totalPatients: {
+        count: allPatients,
+        label: "Total Patients (All Time)",
+      },
+      totalDoctors: {
+        count: allDoctors,
+        label: "Total Doctors",
+      },
+      appointments: {
+        count: allAppointments,
+        label: "Total Appointments (All Time)",
+      },
     };
   }, [dateRange]);
 
@@ -80,21 +101,22 @@ export default function ManagerDashboardPage() {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <Card className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
+            <CardTitle className="text-sm font-medium">{totalPatients.label.startsWith("New") ? "New Patients" : "Total Patients"}</CardTitle>
             <Users className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalPatients}</div>
-            <Link href="/manager/users?role=patient" className="text-xs text-primary hover:underline">View Patients</Link>
+            <div className="text-2xl font-bold">{totalPatients.count}</div>
+             <p className="text-xs text-muted-foreground">{totalPatients.label.replace("Total Patients ", "").replace("New Patients ", "")}</p>
+            {!dateRange && <Link href="/manager/users?role=patient" className="text-xs text-primary hover:underline">View Patients</Link>}
           </CardContent>
         </Card>
         <Card className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Doctors</CardTitle>
+            <CardTitle className="text-sm font-medium">{totalDoctors.label}</CardTitle>
             <Stethoscope className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalDoctors}</div>
+            <div className="text-2xl font-bold">{totalDoctors.count}</div>
             <Link href="/manager/users?role=doctor" className="text-xs text-primary hover:underline">View Doctors</Link>
           </CardContent>
         </Card>
@@ -104,8 +126,8 @@ export default function ManagerDashboardPage() {
             <CalendarCheck className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{displayedAppointments.count}</div>
-             <p className="text-xs text-muted-foreground">{displayedAppointments.label.replace('Total Appointments ', '')}</p>
+            <div className="text-2xl font-bold">{appointments.count}</div>
+             <p className="text-xs text-muted-foreground">{appointments.label.replace('Total Appointments ', '')}</p>
           </CardContent>
         </Card>
          <Card className="shadow-md bg-destructive/10">
