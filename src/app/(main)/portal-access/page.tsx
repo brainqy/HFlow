@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { User, UserCog, BriefcaseMedical, ShieldAlert, ArrowRight, CalendarCheck, UserClock } from 'lucide-react';
+import { User, UserCog, BriefcaseMedical, ShieldAlert, ArrowRight, CalendarCheck, UserRound } from 'lucide-react';
 import Image from 'next/image';
 
 const portalOptions = [
@@ -24,7 +24,7 @@ const portalOptions = [
     title: 'Visiting Doctor Portal',
     description: 'Access your assigned schedule and patient information for your temporary engagement.',
     href: '/visiting-doctor-login',
-    icon: UserClock,
+    icon: UserRound, // Changed from UserClock
     imageHint: 'doctor temporary schedule',
   },
   {

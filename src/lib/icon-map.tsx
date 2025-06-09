@@ -1,5 +1,5 @@
 
-import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, ShieldCheck, Ambulance, HelpingHand, Thermometer, TestTube2, Ear, Eye, Smile, PersonStanding, Zap, Users as PaediatricsIcon, ActivitySquare as GastroenterologyIcon, UserClock, BriefcaseMedical as NurseIcon } from 'lucide-react';
+import { HeartPulse, Brain, Bone, Activity, Stethoscope, Syringe, Pill, Microscope, Baby, ShieldCheck, Ambulance, HelpingHand, Thermometer, TestTube2, Ear, Eye, Smile, PersonStanding, Zap, Users as PaediatricsIcon, ActivitySquare as GastroenterologyIcon, UserRound, BriefcaseMedical as NurseIcon } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 export const serviceIconMap: Record<string, LucideIcon> = {
@@ -24,7 +24,7 @@ export const serviceIconMap: Record<string, LucideIcon> = {
   Zap, // Generic/Fallback (Endocrinology, Nephrology, Urology, Kidney/Liver Transplant)
   PaediatricsIcon, // Explicit for Paediatrics for clarity if Baby is too generic
   GastroenterologyIcon, // Explicit for Gastroenterology
-  UserClock, // Visiting Doctor Icon
+  UserRound, // Visiting Doctor Icon (Changed from UserClock)
   NurseIcon, // Nurse Icon
 };
 

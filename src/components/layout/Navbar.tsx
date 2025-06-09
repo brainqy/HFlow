@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck, UserClock } from 'lucide-react';
+import { Menu, Stethoscope, User, BriefcaseMedical, UserCog, LogOut, LayoutDashboard, LogIn, ShieldAlert, CalendarCheck, UserRound } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const mainNavItems = [
@@ -42,7 +42,7 @@ export default function Navbar({ userType, showSidebarToggle }: { userType?: 'pa
     portalName = 'Receptionist Portal';
   } else if (userType === 'visiting_doctor') {
     dashboardLink = '/visiting-doctor/dashboard';
-    DashboardIconComponent = UserClock; 
+    DashboardIconComponent = UserRound; 
     portalName = 'Visiting Doctor Portal';
   }
 
