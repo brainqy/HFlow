@@ -3,6 +3,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button'; // Added this import
 import { allClinicAppointments, placeholderVisitingDoctors } from '@/lib/placeholder-data';
 import type { DoctorAppointment } from '@/types';
 import { CalendarCheck, Eye, User, Clock, FileText as ReasonIcon, CalendarDays } from 'lucide-react';
@@ -104,3 +105,4 @@ export default function VisitingDoctorSchedulePage() {
     </div>
   );
 }
+
