@@ -1,19 +1,61 @@
 
+"use client";
+
+import React, { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { placeholderDoctorAppointments, placeholderDoctorPatients } from '@/lib/placeholder-data';
-import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered, Eye } from 'lucide-react';
+import { CalendarCheck, Users, Brain, ClipboardPlus, ListOrdered, Eye, Filter, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import PortalAnnouncements from '@/components/sections/PortalAnnouncements';
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import type { DateRange } from "react-day-picker";
+import { format } from "date-fns";
 
 export default function DoctorDashboardPage() {
   const doctorName = "Dr. Eleanor Vance"; 
-  const todayISO = new Date().toISOString().split('T')[0];
   const todayFormatted = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
 
-  const todaysAppointments = placeholderDoctorAppointments.filter(a => a.date === todayISO && a.doctorName === doctorName); // Filter for logged in doctor
+  const displayedAppointments = useMemo(() => {
+    const allDoctorAppointments = placeholderDoctorAppointments.filter(a => a.doctorName === doctorName);
+
+    if (dateRange?.from) {
+      const fromDate = new Date(dateRange.from);
+      fromDate.setHours(0, 0, 0, 0);
+      const toDate = dateRange.to ? new Date(dateRange.to) : fromDate;
+      toDate.setHours(0, 0, 0, 0);
+
+      const rangeLabel = dateRange.to && dateRange.from.getTime() !== dateRange.to.getTime()
+        ? `${format(dateRange.from, "LLL dd, y")} - ${format(dateRange.to, "LLL dd, y")}`
+        : format(dateRange.from, "LLL dd, y");
+
+      const filtered = allDoctorAppointments.filter(appt => {
+        const apptDate = new Date(appt.date);
+        apptDate.setHours(0, 0, 0, 0);
+        return apptDate >= fromDate && apptDate <= toDate;
+      });
+      return {
+        count: filtered.length,
+        label: `Appointments (${rangeLabel})`,
+        list: filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time)),
+      };
+    }
+
+    const todayISO = new Date().toISOString().split('T')[0];
+    const todays = allDoctorAppointments.filter(a => a.date === todayISO);
+    return {
+      count: todays.length,
+      label: "Today's Appointments",
+      list: todays,
+    };
+  }, [dateRange, doctorName]);
+
+  const clearDateFilter = () => {
+    setDateRange(undefined);
+  };
 
   return (
     <div className="space-y-8">
@@ -31,16 +73,36 @@ export default function DoctorDashboardPage() {
       
       <PortalAnnouncements portalType="doctor_portal" />
 
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-lg font-medium flex items-center gap-2">
+            <Filter className="h-5 w-5 text-primary" />
+            Filter Appointments by Date
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row gap-4 items-end">
+          <div className="flex-grow">
+            <label htmlFor="dashboardDateRange" className="block text-sm font-medium text-foreground mb-1">Date Range</label>
+            <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
+          </div>
+          {dateRange && (
+            <Button onClick={clearDateFilter} variant="outline" size="sm">
+              <RotateCcw className="mr-2 h-4 w-4" /> Clear Filter
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Quick Stats/Overview */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Appointments</CardTitle>
+            <CardTitle className="text-sm font-medium">{displayedAppointments.label}</CardTitle>
             <CalendarCheck className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{todaysAppointments.length}</div>
-            <p className="text-xs text-muted-foreground">scheduled for today</p>
+            <div className="text-2xl font-bold">{displayedAppointments.count}</div>
+             <Link href="/doctor/appointments" className="text-xs text-primary hover:underline">View Full Schedule</Link>
           </CardContent>
         </Card>
         <Card className="shadow-md">
@@ -66,17 +128,17 @@ export default function DoctorDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Today's Appointments List */}
+        {/* Schedule List */}
         <Card className="shadow-lg lg:col-span-2">
           <CardHeader>
             <CardTitle className="font-headline text-xl flex items-center gap-2">
-              <CalendarCheck className="h-6 w-6 text-primary" /> Today's Schedule
+              <CalendarCheck className="h-6 w-6 text-primary" /> {dateRange ? `Schedule for ${displayedAppointments.label.replace('Appointments (','').replace(')','')}` : "Today's Schedule"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {todaysAppointments.length > 0 ? (
+            {displayedAppointments.list.length > 0 ? (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {todaysAppointments.map(appt => (
+                {displayedAppointments.list.map(appt => (
                   <div key={appt.id} className="p-3 border rounded-md bg-primary/5 hover:bg-primary/10 transition-colors">
                     <div className="flex justify-between items-center">
                         <div>
@@ -97,7 +159,7 @@ export default function DoctorDashboardPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground">No appointments scheduled for today.</p>
+              <p className="text-muted-foreground">No appointments scheduled for {dateRange ? `the selected period` : "today"}.</p>
             )}
             <Button asChild className="mt-4 w-full">
               <Link href="/doctor/appointments">View Full Schedule</Link>
