@@ -26,7 +26,7 @@ import {
 const receptionistNavItems = [
   { href: '/receptionist/dashboard', label: 'Dashboard', icon: LayoutDashboard, tooltip: 'Dashboard' },
   { href: '/receptionist/appointments', label: 'Manage Appointments', icon: CalendarPlus, tooltip: 'Manage Appointments' },
-  { href: '/receptionist/register-patient', label: 'Register Patient', icon: UserPlus, tooltip: 'Register New Patient' },
+  // { href: '/receptionist/register-patient', label: 'Register Patient', icon: UserPlus, tooltip: 'Register New Patient' }, // Removed this line
   { href: '/receptionist/patients', label: 'Patient Directory', icon: Users, tooltip: 'Patient Directory' },
   { href: '/receptionist/profile', label: 'My Profile', icon: ProfileIcon, tooltip: 'My Profile & Settings' },
 ];
