@@ -26,7 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { placeholderDoctors } from "@/lib/placeholder-data";
 
 const appointmentFormSchema = z.object({
-  patientId: z.string().optional(), // For pre-filling from patient profile
+  patientId: z.string().optional(), 
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   age: z.coerce.number().min(0, {message: "Age cannot be negative."}).max(120, {message: "Please enter a valid age."}).optional(),
   gender: z.string().optional(),
@@ -82,6 +82,12 @@ export function AppointmentForm({
     toast({
       title: "Appointment Requested!",
       description: `Thank you, ${data.fullName}. We've received your request for an appointment on ${format(data.appointmentDate, "PPP")} at ${data.appointmentTime}. We will contact you shortly to confirm.`,
+    });
+    // Simulate email notification
+    toast({
+      title: "Email Notification Sent (Simulated)",
+      description: `A confirmation email has been 'sent' to ${data.email}.`,
+      duration: 4000, 
     });
     form.reset();
   }

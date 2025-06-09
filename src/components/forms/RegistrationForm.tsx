@@ -74,6 +74,12 @@ export function RegistrationForm() {
       title: "Registration Successful!",
       description: `Welcome, ${data.firstName}! Your account has been created. Please proceed to login.`,
     });
+    // Simulate email notification
+    toast({
+      title: "Email Notification Sent (Simulated)",
+      description: `A welcome email with account details has been 'sent' to ${data.email}.`,
+      duration: 4000,
+    });
     form.reset();
     // Potentially redirect to login page or patient portal
   }

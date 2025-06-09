@@ -17,9 +17,10 @@ export default function ManagerSettingsPage() {
   const clinicSettings = {
     clinicName: "HealthFlow Central Clinic",
     address: "123 Health St, Wellness City, CA 90210",
-    contactEmail: "contact@healthflow.clinic", // Changed from manager@healthflow.clinic to a more general one
+    contactEmail: "contact@healthflow.clinic", 
     contactPhone: "(123) 456-7890",
     maintenanceMode: false,
+    emailNotificationsEnabled: true, // Added for prototype
   };
 
   const handleSubmitGeneral = (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,6 +32,14 @@ export default function ManagerSettingsPage() {
   const handleSubmitBranding = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     toast({title: "Branding Updated", description: "Theme and branding settings have been saved."});
+  };
+
+  const handleSystemConfigSave = () => {
+    // In a real app, collect data from switches and send to backend
+    const maintenanceMode = (document.getElementById('maintenanceMode') as HTMLButtonElement)?.dataset.state === 'checked';
+    const emailNotifications = (document.getElementById('notifications') as HTMLButtonElement)?.dataset.state === 'checked';
+    console.log("System Config to Save:", { maintenanceMode, emailNotifications });
+    toast({title: "System Config Saved", description: "System configurations have been updated."});
   };
 
   return (
@@ -109,7 +118,7 @@ export default function ManagerSettingsPage() {
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="font-headline text-xl flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" /> System Configuration</CardTitle>
-          <CardDescription>Manage system-wide settings like maintenance mode.</CardDescription>
+          <CardDescription>Manage system-wide settings like maintenance mode and notifications.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between rounded-lg border p-4">
@@ -128,11 +137,11 @@ export default function ManagerSettingsPage() {
                 Enable or disable system-wide email notifications.
               </p>
             </div>
-            <Switch id="notifications" defaultChecked={true} />
+            <Switch id="notifications" defaultChecked={clinicSettings.emailNotificationsEnabled} />
           </div>
         </CardContent>
          <CardFooter className="border-t pt-6">
-            <Button onClick={() => toast({title: "System Config Saved", description: "System configurations have been updated."})}>Save System Config</Button>
+            <Button onClick={handleSystemConfigSave}>Save System Config</Button>
           </CardFooter>
       </Card>
     </div>
