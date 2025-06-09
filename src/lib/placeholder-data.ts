@@ -48,7 +48,7 @@ export let placeholderDoctors: Doctor[] = [
       { day: 'Tuesday', startTime: '05:00 PM', endTime: '06:00 PM', maxPatients: 2 },
       { day: 'Thursday', startTime: '09:00 AM', endTime: '10:00 AM', maxPatients: 4 },
       { day: 'Thursday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 4 },
-      { day: 'Thursday', startTime: '11:00 AM', endTime: '12:00 PM', maxPatients: 4 },
+      { day: 'Thursday', startTime: '10:00 AM', endTime: '11:00 AM', maxPatients: 4 },
     ],
   },
   {
@@ -497,9 +497,9 @@ export let homepageWidgetSettings: HomepageWidgetSetting[] = [
 ];
 
 export let heroSlides: HeroSlideItem[] = [
-   {
+  {
     id: 'hero1',
-    imageUrl: '/meet-doctor-img.webp', // Corrected path
+    imageUrl: '/meet-doctor-img.webp',
     altText: 'Team of experienced doctors from HealthFlow',
     dataAiHint: 'doctors team smiling',
     title: 'Your Health, Our Priority',
